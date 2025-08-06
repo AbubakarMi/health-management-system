@@ -1,16 +1,12 @@
 {
-  "/admin/admissions/page": "app/admin/admissions/page.js",
-  "/admin/identification/page": "app/admin/identification/page.js",
   "/admin/page": "app/admin/page.js",
-  "/admin/patients/[id]/page": "app/admin/patients/[id]/page.js",
   "/admin/patients/page": "app/admin/patients/page.js",
-  "/admin/referrals/page": "app/admin/referrals/page.js",
-  "/admin/rooms/page": "app/admin/rooms/page.js",
-  "/admin/staff/page": "app/admin/staff/page.js",
   "/doctor/admissions/page": "app/doctor/admissions/page.js",
   "/doctor/deceased/page": "app/doctor/deceased/page.js",
   "/doctor/page": "app/doctor/page.js",
   "/doctor/patients/[id]/page": "app/doctor/patients/[id]/page.js",
   "/doctor/patients/page": "app/doctor/patients/page.js",
+  "/doctor/risk-assessment/page": "app/doctor/risk-assessment/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"
 }

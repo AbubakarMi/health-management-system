@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///home/user/studio/src/app/finance/invoices/page.tsx"],"sourcesContent":["\n\"use client\";\n\nimport { useEffect } from \"react\";\nimport { useRouter } from \"next/navigation\";\n\nexport default function Page() {\n    const router = useRouter();\n\n    useEffect(() => {\n        router.replace('/finance/billing');\n    }, [router]);\n\n    return null;\n}\n"],"names":[],"mappings":";;;AAGA;AACA;AAHA;;;AAKe,SAAS;IACpB,MAAM,SAAS,CAAA,GAAA,kIAAA,CAAA,YAAS,AAAD;IAEvB,CAAA,GAAA,qMAAA,CAAA,YAAS,AAAD,EAAE;QACN,OAAO,OAAO,CAAC;IACnB,GAAG;QAAC;KAAO;IAEX,OAAO;AACX","debugId":null}}]
-}
