@@ -1,0 +1,16 @@
+{
+  "node": {
+    "408e1c90a32cf82489f8737cf674ffbb07d85377be": {
+      "workers": {
+        "app/doctor/risk-assessment/page": {
+          "moduleId": "[project]/.next-internal/server/app/doctor/risk-assessment/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/health-risk-assessment.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/doctor/risk-assessment/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

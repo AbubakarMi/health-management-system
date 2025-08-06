@@ -1,0 +1,16 @@
+{
+  "node": {
+    "409ee7d73026a46bb7586a4d2606aff277b14d150a": {
+      "workers": {
+        "app/admin/patients/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/patients/[id]/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}
