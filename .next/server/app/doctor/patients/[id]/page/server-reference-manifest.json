@@ -1,0 +1,49 @@
+{
+  "node": {
+    "40039d80c2b68c80fb9d08d2f1ca3fade892e5df9b": {
+      "workers": {
+        "app/doctor/patients/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/doctor/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-recommendations.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-death-report.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/generate-referral-letter.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/doctor/patients/[id]/page": "action-browser"
+      }
+    },
+    "4009284d02bdcc4b61bacf56fd5a794097262ffc6e": {
+      "workers": {
+        "app/doctor/patients/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/doctor/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-recommendations.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-death-report.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/generate-referral-letter.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/doctor/patients/[id]/page": "action-browser"
+      }
+    },
+    "4009682e048aeb22d9f3bbe793b99212d618f797e7": {
+      "workers": {
+        "app/doctor/patients/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/doctor/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-recommendations.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-death-report.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/generate-referral-letter.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/doctor/patients/[id]/page": "action-browser"
+      }
+    },
+    "409ee7d73026a46bb7586a4d2606aff277b14d150a": {
+      "workers": {
+        "app/doctor/patients/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/doctor/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-recommendations.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-death-report.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/generate-referral-letter.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/doctor/patients/[id]/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,16 @@
+{
+  "node": {
+    "402eee073a91c719552bca99a90aa65f53a8356e7b": {
+      "workers": {
+        "app/admin/identification/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/identification/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/identify-patient.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/identification/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}
