@@ -1,5 +1,16 @@
 {
   "node": {
+    "408e1c90a32cf82489f8737cf674ffbb07d85377be": {
+      "workers": {
+        "app/doctor/risk-assessment/page": {
+          "moduleId": "[project]/.next-internal/server/app/doctor/risk-assessment/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/health-risk-assessment.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/doctor/risk-assessment/page": "action-browser"
+      }
+    },
     "40039d80c2b68c80fb9d08d2f1ca3fade892e5df9b": {
       "workers": {
         "app/doctor/patients/[id]/page": {
@@ -35,29 +46,13 @@
     },
     "409ee7d73026a46bb7586a4d2606aff277b14d150a": {
       "workers": {
-        "app/admin/patients/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
         "app/doctor/patients/[id]/page": {
           "moduleId": "[project]/.next-internal/server/app/doctor/patients/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/generate-recommendations.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/ai/flows/generate-death-report.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE2 => \"[project]/src/ai/flows/generate-referral-letter.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE3 => \"[project]/src/ai/flows/generate-medical-note.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
       "layer": {
-        "app/admin/patients/[id]/page": "action-browser",
         "app/doctor/patients/[id]/page": "action-browser"
-      }
-    },
-    "402eee073a91c719552bca99a90aa65f53a8356e7b": {
-      "workers": {
-        "app/admin/identification/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/identification/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/ai/flows/identify-patient.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/admin/identification/page": "action-browser"
       }
     }
   },
