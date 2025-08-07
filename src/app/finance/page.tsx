@@ -1,70 +1,66 @@
 
 "use client";
 
+import { useMemo } from "react";
 import { FinancialOverviewChart } from "@/components/charts/financial-overview-chart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { initialInvoices } from "@/lib/constants";
-import { DollarSign, TrendingUp, TrendingDown, FileWarning } from "lucide-react";
-
-const transactions = initialInvoices.slice(0, 5);
+import { DollarSign, CheckCircle, Clock, FileWarning } from "lucide-react";
 
 export default function FinanceDashboard() {
 
-  const totalRevenue = initialInvoices
-    .filter(inv => inv.status === 'Paid')
-    .reduce((sum, inv) => sum + inv.amount, 0);
-  
-  const totalExpenses = initialInvoices
-    .filter(inv => inv.status !== 'Paid') // Simplified logic for example
-    .reduce((sum, inv) => sum + inv.amount, 0) * 0.4; // Assuming expenses are 40% of non-paid invoices for demo
+  const kpiData = useMemo(() => {
+    const totalBilled = initialInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+    const totalPaid = initialInvoices.filter(inv => inv.status === 'Paid').reduce((sum, inv) => sum + inv.amount, 0);
+    const outstandingAmount = initialInvoices.filter(inv => inv.status === 'Pending' || inv.status === 'Overdue').reduce((sum, inv) => sum + inv.amount, 0);
+    const overdueInvoices = initialInvoices.filter(inv => inv.status === 'Overdue').length;
+    return { totalBilled, totalPaid, outstandingAmount, overdueInvoices };
+  }, []);
 
-  const netProfit = totalRevenue - totalExpenses;
-  
-  const overdueInvoices = initialInvoices.filter(inv => inv.status === 'Overdue').length;
-
+  const recentTransactions = initialInvoices.slice(0, 5);
 
   return (
     <div className="space-y-6">
        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                    <CardTitle className="text-sm font-medium">Total Billed</CardTitle>
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">₦{totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="text-2xl font-bold">₦{kpiData.totalBilled.toLocaleString()}</div>
                     <p className="text-xs text-muted-foreground">+20.1% from last month</p>
                 </CardContent>
             </Card>
              <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-                    <TrendingDown className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+                    <CheckCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">₦{totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="text-2xl font-bold">₦{kpiData.totalPaid.toLocaleString()}</div>
                     <p className="text-xs text-muted-foreground">+12.5% from last month</p>
                 </CardContent>
             </Card>
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-sm font-medium">Total Outstanding</CardTitle>
+                    <Clock className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">₦{netProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="text-2xl font-bold">₦{kpiData.outstandingAmount.toLocaleString()}</div>
                      <p className="text-xs text-muted-foreground">+30.2% from last month</p>
                 </CardContent>
             </Card>
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Invoices Overdue</CardTitle>
+                    <CardTitle className="text-sm font-medium">Overdue Invoices</CardTitle>
                     <FileWarning className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold">{overdueInvoices}</div>
+                    <div className="text-2xl font-bold">{kpiData.overdueInvoices}</div>
                     <p className="text-xs text-muted-foreground">Immediate attention required</p>
                 </CardContent>
             </Card>
@@ -90,7 +86,7 @@ export default function FinanceDashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions.map((t) => (
+                {recentTransactions.map((t) => (
                   <TableRow key={t.id}>
                     <TableCell className="font-medium">{t.id}</TableCell>
                     <TableCell>{t.patientName}</TableCell>

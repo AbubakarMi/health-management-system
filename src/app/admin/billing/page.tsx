@@ -115,7 +115,7 @@ export default function Page() {
     const kpiData = useMemo(() => {
         const totalBilled = invoices.reduce((sum, inv) => sum + inv.amount, 0);
         const totalPaid = invoices.filter(inv => inv.status === 'Paid').reduce((sum, inv) => sum + inv.amount, 0);
-        const outstandingAmount = invoices.filter(inv => inv.status === 'Pending').reduce((sum, inv) => sum + inv.amount, 0);
+        const outstandingAmount = invoices.filter(inv => inv.status === 'Pending' || inv.status === 'Overdue').reduce((sum, inv) => sum + inv.amount, 0);
         const overdueInvoices = invoices.filter(inv => inv.status === 'Overdue').length;
         return { totalBilled, totalPaid, outstandingAmount, overdueInvoices };
     }, [invoices]);
@@ -144,7 +144,7 @@ export default function Page() {
                     </Card>
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+                            <CardTitle className="text-sm font-medium">Total Outstanding</CardTitle>
                             <Clock className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
