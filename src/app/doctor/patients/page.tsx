@@ -14,13 +14,16 @@ import { Search, Users } from "lucide-react";
 export default function Page() {
     const [searchQuery, setSearchQuery] = useState("");
     const router = useRouter();
+    const loggedInDoctor = "Dr. Aisha Bello";
 
-    const filteredPatients = useMemo(() => {
-        return detailedPatients.filter(patient =>
-            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.id.toLowerCase().includes(searchQuery.toLowerCase())
+    const myPatients = useMemo(() => {
+        return detailedPatients
+            .filter(patient => patient.assignedDoctor === loggedInDoctor)
+            .filter(patient =>
+                patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                patient.id.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    }, [searchQuery]);
+    }, [searchQuery, loggedInDoctor]);
     
     const getBadgeVariant = (condition: string): "destructive" | "secondary" | "default" => {
         switch (condition) {
@@ -51,8 +54,8 @@ export default function Page() {
                     <div className="flex items-center gap-3">
                         <Users className="w-6 h-6" />
                         <div>
-                            <CardTitle>All Patient Records</CardTitle>
-                            <CardDescription>A comprehensive list of all patients in the system.</CardDescription>
+                            <CardTitle>My Patients</CardTitle>
+                            <CardDescription>A list of all patients assigned to you.</CardDescription>
                         </div>
                     </div>
                     <div className="relative w-full md:w-64">
@@ -77,7 +80,7 @@ export default function Page() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredPatients.map((patient) => (
+                        {myPatients.map((patient) => (
                             <TableRow key={patient.id} onClick={() => handleRowClick(patient.id)} className="cursor-pointer">
                                 <TableCell className="font-medium flex items-center gap-3">
                                     <Avatar>
@@ -97,7 +100,7 @@ export default function Page() {
                         ))}
                     </TableBody>
                 </Table>
-                {filteredPatients.length === 0 && (
+                {myPatients.length === 0 && (
                     <div className="text-center py-10 text-muted-foreground">
                         <p>No patients found for "{searchQuery}".</p>
                     </div>

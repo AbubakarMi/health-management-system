@@ -1,5 +1,4 @@
 
-
 import { 
     LayoutDashboard, 
     Users, 
@@ -22,7 +21,9 @@ import {
     Fingerprint,
     CalendarClock,
     Hotel,
-    Send
+    Send,
+    Microscope,
+    CheckCircle
 } from "lucide-react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
@@ -799,6 +800,13 @@ export const navLinks: NavLinks = {
             ]
         },
         {
+            label: "Pathology",
+            links: [
+                { href: "/admin/autopsy", label: "Case Management", icon: Microscope },
+                { href: "/admin/autopsy/completed", label: "Completed Log", icon: CheckCircle },
+            ]
+        },
+        {
             label: "Administration",
             links: [
                 { href: "/admin/billing", label: "Billing", icon: CircleDollarSign },
@@ -810,8 +818,9 @@ export const navLinks: NavLinks = {
     ],
     doctor: [
         { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
-        { href: "/doctor/patients", label: "All Patients", icon: Users },
+        { href: "/doctor/patients", label: "My Patients", icon: Users },
         { href: "/doctor/admissions", label: "Admissions", icon: BedDouble },
+        { href: "/doctor/autopsy", label: "Autopsy Cases", icon: Microscope },
         { href: "/doctor/risk-assessment", label: "Risk Assessment", icon: HeartPulse },
         { href: "/doctor/deceased", label: "Deceased Records", icon: LogOut },
     ],
@@ -1180,7 +1189,84 @@ export const bloodBankInventory: BloodUnit[] = [
     { bloodType: 'O-', quantity: 25 },
 ];
     
+export type AutopsyCase = {
+    id: string;
+    deceasedName: string;
+    dateRegistered: string;
+    assignedDoctor: string;
+    status: 'Awaiting Autopsy' | 'Report Pending' | 'Completed';
+    pathologistNotes?: string;
+    report?: string;
+};
 
+const initialAutopsyCases: AutopsyCase[] = [
+    {
+        id: 'AUT-001',
+        deceasedName: 'John Doe (External)',
+        dateRegistered: '2024-05-18',
+        assignedDoctor: 'Dr. Aisha Bello',
+        status: 'Report Pending',
+        pathologistNotes: 'Initial findings suggest myocardial infarction. Significant blockage in the left anterior descending artery noted.',
+        report: 'A post-mortem examination was performed on the body of John Doe (External). External Examination: The body is that of a well-nourished adult male. There were no signs of external injury. Internal Examination: Cardiovascular System: The heart weighed 450 grams and showed significant left ventricular hypertrophy. The left anterior descending artery showed approximately 90% stenosis. Pathological Findings: Significant coronary artery disease. Conclusion: Based on the findings, the cause of death is determined to be Acute Myocardial Infarction.'
+    }
+];
+
+class AutopsyManager {
+    private cases: AutopsyCase[];
+    private subscribers: Function[] = [];
+
+    constructor(initialCases: AutopsyCase[]) {
+        this.cases = initialCases;
+    }
+
+    getCases() {
+        return this.cases;
+    }
     
+    getCaseById(caseId: string) {
+        return this.cases.find(c => c.id === caseId);
+    }
+
+    registerCase(caseData: Omit<AutopsyCase, 'id' | 'dateRegistered' | 'status'>) {
+        const newCase: AutopsyCase = {
+            ...caseData,
+            id: `AUT-${String(this.cases.length + 1).padStart(3, '0')}`,
+            dateRegistered: new Date().toISOString().split('T')[0],
+            status: 'Awaiting Autopsy',
+        };
+        this.cases.unshift(newCase);
+        this.notify();
+    }
+
+    addReport(caseId: string, report: string, pathologistNotes: string) {
+        const caseToUpdate = this.cases.find(c => c.id === caseId);
+        if (caseToUpdate) {
+            caseToUpdate.report = report;
+            caseToUpdate.pathologistNotes = pathologistNotes;
+            caseToUpdate.status = 'Report Pending';
+            this.notify();
+        }
+    }
+    
+    finalizeReport(caseId: string) {
+        const caseToUpdate = this.cases.find(c => c.id === caseId);
+        if (caseToUpdate && caseToUpdate.status === 'Report Pending') {
+            caseToUpdate.status = 'Completed';
+            this.notify();
+        }
+    }
+    
+    subscribe(callback: (cases: AutopsyCase[]) => void) {
+        this.subscribers.push(callback);
+        return () => {
+            this.subscribers = this.subscribers.filter(sub => sub !== callback);
+        };
+    }
+
+    private notify() {
+        this.subscribers.forEach(callback => callback(this.cases));
+    }
+}
+export const autopsyManager = new AutopsyManager(initialAutopsyCases);
 
     
