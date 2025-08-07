@@ -65,7 +65,8 @@ export default function AutopsyDetailPage() {
         toast({
             title: "Case Completed",
             description: `Autopsy case for ${caseDetails?.deceasedName} has been finalized.`
-        })
+        });
+        router.push('/doctor/autopsy');
     }
 
     const handlePrintReport = () => {
