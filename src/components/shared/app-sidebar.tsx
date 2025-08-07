@@ -49,11 +49,13 @@ export function AppSidebar({ role }: AppSidebarProps) {
         <SidebarMenu>
           {links.map((item, index) => {
             if (isNavLink(item)) {
+              const isDashboardLink = item.href === `/${role}`;
+              const isActive = isDashboardLink ? pathname === item.href : pathname.startsWith(item.href);
               return (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === item.href || (item.href !== `/${role}` && pathname.startsWith(item.href))}
+                    isActive={isActive}
                     tooltip={item.label}
                   >
                     <Link href={item.href}>
@@ -68,29 +70,32 @@ export function AppSidebar({ role }: AppSidebarProps) {
               return (
                  <Collapsible key={index} className="w-full" defaultOpen={isGroupActive}>
                     <SidebarMenuItem>
-                        <CollapsibleTrigger asChild>
-                            <SidebarMenuButton className="w-full">
-                                <span>{item.label}</span>
-                                <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                            </SidebarMenuButton>
-                        </CollapsibleTrigger>
+                      <CollapsibleTrigger asChild>
+                          <SidebarMenuButton className="w-full">
+                              <span>{item.label}</span>
+                              <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                          </SidebarMenuButton>
+                      </CollapsibleTrigger>
                     </SidebarMenuItem>
                     <CollapsibleContent>
                         <div className="pl-6">
-                            {item.links.map(link => (
-                            <SidebarMenuItem key={link.href}>
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={pathname === link.href || (link.href !== `/${role}` && pathname.startsWith(link.href))}
-                                    tooltip={link.label}
-                                >
-                                    <Link href={link.href}>
-                                    <link.icon className="w-5 h-5" />
-                                    <span>{link.label}</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            ))}
+                            {item.links.map(link => {
+                              const isActive = pathname.startsWith(link.href);
+                              return (
+                                <SidebarMenuItem key={link.href}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={isActive}
+                                        tooltip={link.label}
+                                    >
+                                        <Link href={link.href}>
+                                        <link.icon className="w-5 h-5" />
+                                        <span>{link.label}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              )
+                            })}
                         </div>
                     </CollapsibleContent>
                 </Collapsible>
