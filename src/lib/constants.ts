@@ -22,7 +22,8 @@ import {
     CalendarClock,
     Hotel,
     Send,
-    Microscope
+    Microscope,
+    CheckCircle
 } from "lucide-react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
@@ -801,7 +802,8 @@ export const navLinks: NavLinks = {
         {
             label: "Pathology",
             links: [
-                { href: "/admin/autopsy", label: "Autopsy", icon: Microscope },
+                { href: "/admin/autopsy", label: "Case Management", icon: Microscope },
+                { href: "/admin/autopsy/completed", label: "Completed Log", icon: CheckCircle },
             ]
         },
         {
