@@ -45,3 +45,4 @@ firebase-debug.log
 firestore-debug.lognode_modules/
 node_modules/
 .next/
+.next/
