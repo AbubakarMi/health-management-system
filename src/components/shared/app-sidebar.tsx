@@ -9,7 +9,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-  SidebarGroup,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -19,7 +18,6 @@ import { LogOut, ChevronRight } from "lucide-react";
 import { navLinks, type Role, NavLink, NavLinkGroup } from "@/lib/constants";
 import { Badge } from "../ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
-import { cn } from "@/lib/utils";
 
 interface AppSidebarProps {
   role: Role;
@@ -68,36 +66,34 @@ export function AppSidebar({ role }: AppSidebarProps) {
             } else {
               const isGroupActive = item.links.some(link => pathname.startsWith(link.href));
               return (
-                 <SidebarGroup key={index} className="p-0">
-                    <Collapsible className="w-full" defaultOpen={isGroupActive}>
-                        <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                                <SidebarMenuButton className="w-full">
-                                    <span>{item.label}</span>
-                                    <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                 <Collapsible key={index} className="w-full" defaultOpen={isGroupActive}>
+                    <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                            <SidebarMenuButton className="w-full">
+                                <span>{item.label}</span>
+                                <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                            </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                    </SidebarMenuItem>
+                    <CollapsibleContent>
+                        <div className="pl-6">
+                            {item.links.map(link => (
+                            <SidebarMenuItem key={link.href}>
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={pathname === link.href || (link.href !== `/${role}` && pathname.startsWith(link.href))}
+                                    tooltip={link.label}
+                                >
+                                    <Link href={link.href}>
+                                    <link.icon className="w-5 h-5" />
+                                    <span>{link.label}</span>
+                                    </Link>
                                 </SidebarMenuButton>
-                            </CollapsibleTrigger>
-                        </SidebarMenuItem>
-                        <CollapsibleContent>
-                            <div className="pl-6">
-                                {item.links.map(link => (
-                                <SidebarMenuItem key={link.href}>
-                                    <SidebarMenuButton
-                                        asChild
-                                        isActive={pathname === link.href || (link.href !== `/${role}` && pathname.startsWith(link.href))}
-                                        tooltip={link.label}
-                                    >
-                                        <Link href={link.href}>
-                                        <link.icon className="w-5 h-5" />
-                                        <span>{link.label}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                                ))}
-                            </div>
-                        </CollapsibleContent>
-                    </Collapsible>
-                </SidebarGroup>
+                            </SidebarMenuItem>
+                            ))}
+                        </div>
+                    </CollapsibleContent>
+                </Collapsible>
               )
             }
           })}
