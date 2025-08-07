@@ -251,6 +251,7 @@ __turbopack_context__.s({
     "mockFinancialData": (()=>mockFinancialData),
     "mockLabVisitsData": (()=>mockLabVisitsData),
     "navLinks": (()=>navLinks),
+    "notificationManager": (()=>notificationManager),
     "patientManager": (()=>patientManager),
     "prescriptionManager": (()=>prescriptionManager),
     "roleNames": (()=>roleNames),
@@ -410,6 +411,51 @@ class MessageManager {
     }
 }
 const messageManager = new MessageManager(initialMessages);
+class NotificationManager {
+    notifications;
+    subscribers = [];
+    constructor(){
+        this.notifications = [];
+    }
+    getNotifications() {
+        return this.notifications.sort((a, b)=>new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    }
+    getUnreadCount() {
+        return this.notifications.filter((n)=>!n.read).length;
+    }
+    createNotification(message, href) {
+        const newNotification = {
+            id: `notif-${Date.now()}`,
+            message,
+            href,
+            timestamp: new Date().toISOString(),
+            read: false
+        };
+        this.notifications.unshift(newNotification);
+        this.notify();
+    }
+    markAsRead(id) {
+        const notification = this.notifications.find((n)=>n.id === id);
+        if (notification) {
+            notification.read = true;
+            this.notify();
+        }
+    }
+    markAllAsRead() {
+        this.notifications.forEach((n)=>n.read = true);
+        this.notify();
+    }
+    subscribe(callback) {
+        this.subscribers.push(callback);
+        return ()=>{
+            this.subscribers = this.subscribers.filter((sub)=>sub !== callback);
+        };
+    }
+    notify() {
+        this.subscribers.forEach((callback)=>callback(this.notifications));
+    }
+}
+const notificationManager = new NotificationManager();
 const initialPrescriptions = [
     {
         id: 'presc-001',
@@ -1017,6 +1063,7 @@ class PatientManager {
                 details: "Patient has been admitted to the hospital and is awaiting bed assignment.",
                 doctor: patient.assignedDoctor
             });
+            notificationManager.createNotification(`${patient.name} has been admitted.`, '/admin/admissions');
             this.notify();
         }
     }

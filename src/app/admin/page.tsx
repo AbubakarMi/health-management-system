@@ -1,3 +1,6 @@
+
+"use client";
+
 import { MedicationAvailabilityChart } from "@/components/charts/medication-availability-chart";
 import { LabVisitsChart } from "@/components/charts/lab-visits-chart";
 import { DoctorAdmissionsChart } from "@/components/charts/doctor-admissions-chart";
@@ -11,10 +14,10 @@ export default function AdminDashboard() {
   const kpiData = useMemo(() => {
     const totalBilled = initialInvoices.reduce((sum, inv) => sum + inv.amount, 0);
     const totalPaid = initialInvoices.filter(inv => inv.status === 'Paid').reduce((sum, inv) => sum + inv.amount, 0);
-    const outstandingAmount = initialInvoices.filter(inv => inv.status === 'Pending').reduce((sum, inv) => sum + inv.amount, 0);
+    const outstandingAmount = initialInvoices.filter(inv => inv.status === 'Pending' || inv.status === 'Overdue').reduce((sum, inv) => sum + inv.amount, 0);
     const overdueInvoices = initialInvoices.filter(inv => inv.status === 'Overdue').length;
     return { totalBilled, totalPaid, outstandingAmount, overdueInvoices };
-  }, [initialInvoices]);
+  }, []);
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -38,7 +41,7 @@ export default function AdminDashboard() {
       </Card>
       <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Outstanding</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
