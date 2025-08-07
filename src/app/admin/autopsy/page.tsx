@@ -16,7 +16,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 const newCaseSchema = z.object({
   deceasedName: z.string().min(3, "Name is required."),
@@ -28,7 +27,6 @@ export default function AutopsyPage() {
     const [cases, setCases] = useState<AutopsyCase[]>([]);
     const [isRegisterDialogOpen, setRegisterDialogOpen] = useState(false);
     const { toast } = useToast();
-    const router = useRouter();
     
     const pathologists = users.filter(u => u.role === 'doctor');
 
@@ -50,10 +48,6 @@ export default function AutopsyPage() {
         setRegisterDialogOpen(false);
         form.reset();
     };
-
-    const handleRowClick = (caseId: string) => {
-        router.push(`/admin/autopsy/${caseId}`);
-    }
     
     const getStatusVariant = (status: AutopsyCase['status']) => {
         switch (status) {
@@ -95,7 +89,7 @@ export default function AutopsyPage() {
                         </TableHeader>
                         <TableBody>
                             {cases.map((caseItem) => (
-                                <TableRow key={caseItem.id} onClick={() => handleRowClick(caseItem.id)} className="cursor-pointer">
+                                <TableRow key={caseItem.id}>
                                     <TableCell className="font-medium">{caseItem.id}</TableCell>
                                     <TableCell>{caseItem.deceasedName}</TableCell>
                                     <TableCell>{caseItem.dateRegistered}</TableCell>

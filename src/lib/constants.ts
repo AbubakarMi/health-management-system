@@ -818,6 +818,7 @@ export const navLinks: NavLinks = {
         { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
         { href: "/doctor/patients", label: "My Patients", icon: Users },
         { href: "/doctor/admissions", label: "Admissions", icon: BedDouble },
+        { href: "/doctor/autopsy", label: "Autopsy Cases", icon: Microscope },
         { href: "/doctor/risk-assessment", label: "Risk Assessment", icon: HeartPulse },
         { href: "/doctor/deceased", label: "Deceased Records", icon: LogOut },
     ],
