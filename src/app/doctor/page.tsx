@@ -7,7 +7,7 @@ import { patientManager, Patient } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { User } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { PatientStatusChart } from "@/components/charts/patient-status-chart";
 import { DoctorAdmissionsChart } from "@/components/charts/doctor-admissions-chart";
 
@@ -19,18 +19,24 @@ const appointments = [
 
 export default function DoctorDashboard() {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const loggedInDoctor = "Dr. Aisha Bello";
 
   useEffect(() => {
     const handleUpdate = () => {
         setPatients([...patientManager.getPatients()]);
     };
+    handleUpdate();
     const unsubscribe = patientManager.subscribe(handleUpdate);
     return () => unsubscribe();
   }, []);
+
+  const myPatients = useMemo(() => {
+      return patients.filter(p => p.assignedDoctor === loggedInDoctor);
+  }, [patients, loggedInDoctor]);
   
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-      <PatientStatusChart patients={patients}/>
+      <PatientStatusChart patients={myPatients}/>
       <DoctorAdmissionsChart />
       <Card className="lg:col-span-2">
         <CardHeader>

@@ -21,11 +21,12 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ role }: AppHeaderProps) {
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
+    setCurrentDateTime(new Date());
     const timer = setInterval(() => {
         setCurrentDateTime(new Date());
     }, 1000);
@@ -55,7 +56,9 @@ export function AppHeader({ role }: AppHeaderProps) {
             <h1 className="text-lg font-semibold md:text-2xl font-headline">
                 Welcome, {role}!
             </h1>
-            <p className="text-xs text-muted-foreground">{format(currentDateTime, 'eeee, MMMM dd, yyyy | hh:mm:ss a')}</p>
+            <p className="text-xs text-muted-foreground h-4">
+                {currentDateTime ? format(currentDateTime, 'eeee, MMMM dd, yyyy | hh:mm:ss a') : ''}
+            </p>
           </div>
       </div>
       <div className="flex flex-1 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
