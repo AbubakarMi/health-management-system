@@ -1,5 +1,4 @@
 
-
 import { 
     LayoutDashboard, 
     Users, 
@@ -1236,19 +1235,19 @@ class AutopsyManager {
         this.notify();
     }
 
-    updateCaseStatus(caseId: string, status: AutopsyCase['status']) {
-        const caseToUpdate = this.cases.find(c => c.id === caseId);
-        if (caseToUpdate) {
-            caseToUpdate.status = status;
-            this.notify();
-        }
-    }
-
     addReport(caseId: string, report: string, pathologistNotes: string) {
         const caseToUpdate = this.cases.find(c => c.id === caseId);
         if (caseToUpdate) {
             caseToUpdate.report = report;
             caseToUpdate.pathologistNotes = pathologistNotes;
+            caseToUpdate.status = 'Report Pending';
+            this.notify();
+        }
+    }
+    
+    finalizeReport(caseId: string) {
+        const caseToUpdate = this.cases.find(c => c.id === caseId);
+        if (caseToUpdate && caseToUpdate.status === 'Report Pending') {
             caseToUpdate.status = 'Completed';
             this.notify();
         }
@@ -1266,9 +1265,3 @@ class AutopsyManager {
     }
 }
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
-
-    
-
-    
-
-
