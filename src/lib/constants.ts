@@ -817,7 +817,7 @@ export const navLinks: NavLinks = {
     ],
     doctor: [
         { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
-        { href: "/doctor/patients", label: "All Patients", icon: Users },
+        { href: "/doctor/patients", label: "My Patients", icon: Users },
         { href: "/doctor/admissions", label: "Admissions", icon: BedDouble },
         { href: "/doctor/risk-assessment", label: "Risk Assessment", icon: HeartPulse },
         { href: "/doctor/deceased", label: "Deceased Records", icon: LogOut },
@@ -1192,7 +1192,8 @@ export type AutopsyCase = {
     deceasedName: string;
     dateRegistered: string;
     assignedDoctor: string;
-    status: 'Pending Assignment' | 'Awaiting Autopsy' | 'Report Pending' | 'Completed';
+    status: 'Awaiting Autopsy' | 'Report Pending' | 'Completed';
+    pathologistNotes?: string;
     report?: string;
 };
 
@@ -1203,6 +1204,8 @@ const initialAutopsyCases: AutopsyCase[] = [
         dateRegistered: '2024-05-18',
         assignedDoctor: 'Dr. Aisha Bello',
         status: 'Report Pending',
+        pathologistNotes: 'Initial findings suggest myocardial infarction. Significant blockage in the left anterior descending artery noted.',
+        report: 'A post-mortem examination was performed on the body of John Doe (External). External Examination: The body is that of a well-nourished adult male. There were no signs of external injury. Internal Examination: Cardiovascular System: The heart weighed 450 grams and showed significant left ventricular hypertrophy. The left anterior descending artery showed approximately 90% stenosis. Pathological Findings: Significant coronary artery disease. Conclusion: Based on the findings, the cause of death is determined to be Acute Myocardial Infarction.'
     }
 ];
 
@@ -1216,6 +1219,10 @@ class AutopsyManager {
 
     getCases() {
         return this.cases;
+    }
+    
+    getCaseById(caseId: string) {
+        return this.cases.find(c => c.id === caseId);
     }
 
     registerCase(caseData: Omit<AutopsyCase, 'id' | 'dateRegistered' | 'status'>) {
@@ -1237,10 +1244,11 @@ class AutopsyManager {
         }
     }
 
-    addReport(caseId: string, report: string) {
+    addReport(caseId: string, report: string, pathologistNotes: string) {
         const caseToUpdate = this.cases.find(c => c.id === caseId);
         if (caseToUpdate) {
             caseToUpdate.report = report;
+            caseToUpdate.pathologistNotes = pathologistNotes;
             caseToUpdate.status = 'Completed';
             this.notify();
         }
@@ -1262,4 +1270,5 @@ export const autopsyManager = new AutopsyManager(initialAutopsyCases);
     
 
     
+
 
