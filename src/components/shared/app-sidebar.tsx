@@ -68,18 +68,18 @@ export function AppSidebar({ role }: AppSidebarProps) {
               );
             } else {
               return (
-                <Collapsible key={index} className="w-full" defaultOpen={item.links.some(link => pathname.startsWith(link.href))}>
-                    <SidebarGroup className="p-0">
-                      <CollapsibleTrigger asChild>
-                          <SidebarGroupLabel className="px-2 w-full cursor-pointer group">
-                             <div className="flex justify-between items-center w-full">
+                 <SidebarGroup key={index} className="p-0">
+                    <Collapsible className="w-full" defaultOpen={item.links.some(link => pathname.startsWith(link.href))}>
+                        <CollapsibleTrigger className="w-full">
+                            <SidebarGroupLabel className="px-2 w-full cursor-pointer group">
+                                <div className="flex justify-between items-center w-full">
                                 <span>{item.label}</span>
                                 <ChevronRight className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                             </div>
-                          </SidebarGroupLabel>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                          {item.links.map(link => (
+                                </div>
+                            </SidebarGroupLabel>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                            {item.links.map(link => (
                             <SidebarMenuItem key={link.href}>
                                 <SidebarMenuButton
                                     asChild
@@ -92,10 +92,10 @@ export function AppSidebar({ role }: AppSidebarProps) {
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                          ))}
-                      </CollapsibleContent>
-                    </SidebarGroup>
-                </Collapsible>
+                            ))}
+                        </CollapsibleContent>
+                    </Collapsible>
+                </SidebarGroup>
               )
             }
           })}
