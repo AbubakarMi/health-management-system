@@ -24,7 +24,7 @@ export default function DoctorAutopsyPage() {
     }, []);
     
     const myCases = useMemo(() => {
-        return allCases.filter(c => c.assignedDoctor === loggedInDoctor);
+        return allCases.filter(c => c.assignedDoctor === loggedInDoctor && c.status !== 'Completed');
     }, [allCases, loggedInDoctor]);
 
 
@@ -48,7 +48,7 @@ export default function DoctorAutopsyPage() {
                     <Microscope className="w-6 h-6"/>
                     <div>
                         <CardTitle>My Autopsy Cases</CardTitle>
-                        <CardDescription>A list of all autopsy cases assigned to you.</CardDescription>
+                        <CardDescription>A list of pending autopsy cases assigned to you.</CardDescription>
                     </div>
                 </div>
             </CardHeader>
@@ -79,7 +79,7 @@ export default function DoctorAutopsyPage() {
                 </Table>
                 {myCases.length === 0 && (
                     <div className="text-center py-10 text-muted-foreground">
-                        <p>You have no autopsy cases assigned to you.</p>
+                        <p>You have no pending autopsy cases assigned to you.</p>
                     </div>
                 )}
             </CardContent>
