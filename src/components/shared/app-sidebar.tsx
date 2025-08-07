@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -67,32 +66,35 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 </SidebarMenuItem>
               );
             } else {
+              const isGroupActive = item.links.some(link => pathname.startsWith(link.href));
               return (
                  <SidebarGroup key={index} className="p-0">
-                    <Collapsible className="w-full" defaultOpen={item.links.some(link => pathname.startsWith(link.href))}>
-                        <CollapsibleTrigger className="w-full">
-                            <SidebarGroupLabel className="px-2 w-full cursor-pointer group">
-                                <div className="flex justify-between items-center w-full">
-                                <span>{item.label}</span>
-                                <ChevronRight className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
-                                </div>
-                            </SidebarGroupLabel>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                            {item.links.map(link => (
-                            <SidebarMenuItem key={link.href}>
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={pathname === link.href || (link.href !== `/${role}` && pathname.startsWith(link.href))}
-                                    tooltip={link.label}
-                                >
-                                    <Link href={link.href}>
-                                    <link.icon className="w-5 h-5" />
-                                    <span>{link.label}</span>
-                                    </Link>
+                    <Collapsible className="w-full" defaultOpen={isGroupActive}>
+                        <SidebarMenuItem>
+                            <CollapsibleTrigger asChild>
+                                <SidebarMenuButton className="w-full">
+                                    <span>{item.label}</span>
+                                    <ChevronRight className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
                                 </SidebarMenuButton>
-                            </SidebarMenuItem>
-                            ))}
+                            </CollapsibleTrigger>
+                        </SidebarMenuItem>
+                        <CollapsibleContent>
+                            <div className="pl-6">
+                                {item.links.map(link => (
+                                <SidebarMenuItem key={link.href}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={pathname === link.href || (link.href !== `/${role}` && pathname.startsWith(link.href))}
+                                        tooltip={link.label}
+                                    >
+                                        <Link href={link.href}>
+                                        <link.icon className="w-5 h-5" />
+                                        <span>{link.label}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                                ))}
+                            </div>
                         </CollapsibleContent>
                     </Collapsible>
                 </SidebarGroup>
