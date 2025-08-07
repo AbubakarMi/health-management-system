@@ -22,7 +22,8 @@ import {
     Fingerprint,
     CalendarClock,
     Hotel,
-    Send
+    Send,
+    Microscope
 } from "lucide-react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
@@ -799,6 +800,12 @@ export const navLinks: NavLinks = {
             ]
         },
         {
+            label: "Pathology",
+            links: [
+                { href: "/admin/autopsy", label: "Autopsy", icon: Microscope },
+            ]
+        },
+        {
             label: "Administration",
             links: [
                 { href: "/admin/billing", label: "Billing", icon: CircleDollarSign },
@@ -1180,7 +1187,80 @@ export const bloodBankInventory: BloodUnit[] = [
     { bloodType: 'O-', quantity: 25 },
 ];
     
+export type AutopsyCase = {
+    id: string;
+    deceasedName: string;
+    dateRegistered: string;
+    assignedDoctor: string;
+    status: 'Pending Assignment' | 'Awaiting Autopsy' | 'Report Pending' | 'Completed';
+    report?: string;
+};
+
+const initialAutopsyCases: AutopsyCase[] = [
+    {
+        id: 'AUT-001',
+        deceasedName: 'John Doe (External)',
+        dateRegistered: '2024-05-18',
+        assignedDoctor: 'Dr. Aisha Bello',
+        status: 'Report Pending',
+    }
+];
+
+class AutopsyManager {
+    private cases: AutopsyCase[];
+    private subscribers: Function[] = [];
+
+    constructor(initialCases: AutopsyCase[]) {
+        this.cases = initialCases;
+    }
+
+    getCases() {
+        return this.cases;
+    }
+
+    registerCase(caseData: Omit<AutopsyCase, 'id' | 'dateRegistered' | 'status'>) {
+        const newCase: AutopsyCase = {
+            ...caseData,
+            id: `AUT-${String(this.cases.length + 1).padStart(3, '0')}`,
+            dateRegistered: new Date().toISOString().split('T')[0],
+            status: 'Awaiting Autopsy',
+        };
+        this.cases.unshift(newCase);
+        this.notify();
+    }
+
+    updateCaseStatus(caseId: string, status: AutopsyCase['status']) {
+        const caseToUpdate = this.cases.find(c => c.id === caseId);
+        if (caseToUpdate) {
+            caseToUpdate.status = status;
+            this.notify();
+        }
+    }
+
+    addReport(caseId: string, report: string) {
+        const caseToUpdate = this.cases.find(c => c.id === caseId);
+        if (caseToUpdate) {
+            caseToUpdate.report = report;
+            caseToUpdate.status = 'Completed';
+            this.notify();
+        }
+    }
+    
+    subscribe(callback: (cases: AutopsyCase[]) => void) {
+        this.subscribers.push(callback);
+        return () => {
+            this.subscribers = this.subscribers.filter(sub => sub !== callback);
+        };
+    }
+
+    private notify() {
+        this.subscribers.forEach(callback => callback(this.cases));
+    }
+}
+export const autopsyManager = new AutopsyManager(initialAutopsyCases);
 
     
 
     
+
+```
