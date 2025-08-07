@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { autopsyManager, AutopsyCase } from "@/lib/constants";
-import { ArrowLeft, FileText, Download, Edit, Sparkles, Loader2, Microscope } from "lucide-react";
+import { ArrowLeft, FileText, Download, Edit, Sparkles, Loader2, Microscope, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,7 +51,7 @@ export default function AutopsyDetailPage() {
                 deceasedName: caseDetails!.deceasedName,
             });
             autopsyManager.addReport(caseId, result.formalReport, pathologistNotes);
-            toast({ title: "Report Generated", description: "The formal autopsy report has been successfully generated and saved." });
+            toast({ title: "Report Generated", description: "The formal autopsy report is now pending finalization." });
         } catch (error) {
             console.error("AI report generation failed:", error);
             toast({ variant: "destructive", title: "AI Error", description: "Could not generate the report at this time." });
@@ -59,6 +59,14 @@ export default function AutopsyDetailPage() {
             setIsGenerating(false);
         }
     };
+
+    const handleFinalizeReport = () => {
+        autopsyManager.finalizeReport(caseId);
+        toast({
+            title: "Case Completed",
+            description: `Autopsy case for ${caseDetails?.deceasedName} has been finalized.`
+        })
+    }
 
     const handlePrintReport = () => {
         if (caseDetails && caseDetails.report) {
@@ -166,6 +174,9 @@ export default function AutopsyDetailPage() {
                              <Button onClick={handleGenerateReport} disabled={isGenerating || !canEdit} className="w-full">
                                 {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
                                 {isGenerating ? "Generating..." : "AI Generate Full Report"}
+                            </Button>
+                             <Button onClick={handleFinalizeReport} disabled={caseDetails.status !== 'Report Pending'} className="w-full">
+                                <CheckCircle className="mr-2 h-4 w-4" /> Finalize and Complete Case
                             </Button>
                             <Button onClick={handlePrintReport} disabled={!caseDetails.report} variant="outline" className="w-full">
                                 <Download className="mr-2 h-4 w-4" />
