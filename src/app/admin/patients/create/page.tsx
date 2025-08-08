@@ -263,7 +263,48 @@ export default function CreatePatientPage() {
                                     />
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <FormField control={form.control} name="gender" render={({ field }) => ( <FormItem> <FormLabel>Gender</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Male">Male</SelectItem> <SelectItem value="Female">Female</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
-                                        <FormField control={form.control} name="dateOfBirth" render={({ field }) => ( <FormItem className="flex flex-col"> <FormLabel>Date of Birth</FormLabel> <Popover> <PopoverTrigger asChild> <Button variant={"outline"} className={cn( "w-full justify-start text-left font-normal", !field.value && "text-muted-foreground" )}> <CalendarIcon className="mr-2 h-4 w-4" /> {field.value ? ( format(field.value, "PPP") ) : ( <span>Pick a date</span> )} </Button> </PopoverTrigger> <PopoverContent className="w-auto p-0" align="start"> <Calendar mode="single" captionLayout="dropdown-buttons" fromYear={1920} toYear={new Date().getFullYear()} selected={field.value} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date("1900-01-01")} initialFocus /> </PopoverContent> </Popover> <FormMessage /> </FormItem> )}/>
+                                        <FormField
+                                            control={form.control}
+                                            name="dateOfBirth"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-col">
+                                                    <FormLabel>Date of Birth</FormLabel>
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <FormControl>
+                                                                <Button
+                                                                    variant={"outline"}
+                                                                    className={cn(
+                                                                        "w-full justify-start text-left font-normal",
+                                                                        !field.value && "text-muted-foreground"
+                                                                    )}
+                                                                >
+                                                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                                                    {field.value ? (
+                                                                        format(field.value, "PPP")
+                                                                    ) : (
+                                                                        <span>Pick a date</span>
+                                                                    )}
+                                                                </Button>
+                                                            </FormControl>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className="w-auto p-0" align="start">
+                                                            <Calendar
+                                                                mode="single"
+                                                                captionLayout="dropdown-buttons"
+                                                                fromYear={1920}
+                                                                toYear={new Date().getFullYear()}
+                                                                selected={field.value}
+                                                                onSelect={field.onChange}
+                                                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                                                initialFocus
+                                                            />
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                         <FormField control={form.control} name="maritalStatus" render={({ field }) => ( <FormItem> <FormLabel>Marital Status</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Single">Single</SelectItem> <SelectItem value="Married">Married</SelectItem> <SelectItem value="Divorced">Divorced</SelectItem> <SelectItem value="Widowed">Widowed</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
                                         <FormField control={form.control} name="assignedDoctor" render={({ field }) => ( <FormItem> <FormLabel>Assign Doctor</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select a doctor" /></SelectTrigger></FormControl> <SelectContent> {doctors.map((doctor) => (<SelectItem key={doctor.email} value={doctor.name}>{doctor.name}</SelectItem>))} </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
                                     </div>
