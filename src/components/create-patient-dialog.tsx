@@ -46,6 +46,8 @@ interface CreatePatientDialogProps {
 const doctors = users.filter(u => u.role === 'doctor');
 const step1Fields: (keyof FormData)[] = ['name', 'gender', 'dateOfBirth', 'maritalStatus', 'address', 'condition', 'assignedDoctor', 'clinicalSummary'];
 
+// This component is now deprecated and will be removed in a future update.
+// The functionality has been moved to a dedicated page at /admin/patients/create
 export function CreatePatientDialog({ isOpen, onClose, onPatientSaved, importedData }: CreatePatientDialogProps) {
     const [step, setStep] = useState(1);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
