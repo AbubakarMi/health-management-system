@@ -4,14 +4,29 @@
 import { CreatePatientDialog } from "@/components/create-patient-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { detailedPatients as initialPatients, Patient } from "@/lib/constants";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useMemo } from "react";
 
 
 export default function CreatePatientPage() {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const importedData = useMemo(() => {
+        const name = searchParams.get('name');
+        const dateOfBirth = searchParams.get('dateOfBirth');
+        const clinicalSummary = searchParams.get('clinicalSummary');
+        if (name && dateOfBirth) {
+            return {
+                name,
+                dateOfBirth: new Date(dateOfBirth),
+                clinicalSummary: clinicalSummary || '',
+            }
+        }
+        return null;
+    }, [searchParams]);
 
     useEffect(() => {
         // Open the dialog as soon as the component mounts
@@ -79,9 +94,8 @@ export default function CreatePatientPage() {
                 isOpen={isDialogOpen}
                 onClose={handleClose}
                 onPatientSaved={handlePatientSaved}
+                importedData={importedData}
             />
         </>
     )
 }
-
-    

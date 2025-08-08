@@ -786,6 +786,7 @@ export const navLinks: NavLinks = {
             links: [
                 { href: "/admin/patients", label: "All Patients", icon: Users },
                 { href: "/admin/identification", label: "Identification", icon: ScanFace },
+                { href: "/admin/external-records", label: "External Records", icon: Database },
                 { href: "/admin/admissions", label: "Admissions", icon: BedDouble },
                 { href: "/admin/follow-ups", label: "Follow-ups", icon: CalendarClock },
                 { href: "/admin/referrals", label: "Referrals", icon: Send },
@@ -822,7 +823,6 @@ export const navLinks: NavLinks = {
         { href: "/doctor/patients", label: "My Patients", icon: Users },
         { href: "/doctor/admissions", label: "Admissions", icon: BedDouble },
         { href: "/doctor/autopsy", label: "Autopsy Cases", icon: Microscope },
-        { href: "/doctor/external-records", label: "External Records", icon: Database },
         { href: "/doctor/risk-assessment", label: "Risk Assessment", icon: HeartPulse },
         { href: "/doctor/deceased", label: "Deceased Records", icon: LogOut },
     ],
@@ -1272,3 +1272,4 @@ class AutopsyManager {
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
 
     
+
