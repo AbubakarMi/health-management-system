@@ -9,5 +9,4 @@ import '@/ai/flows/generate-medical-note.ts';
 import '@/ai/flows/generate-death-report.ts';
 import '@/ai/flows/generate-referral-letter.ts';
 import '@/ai/flows/generate-autopsy-report.ts';
-
-```
+import '@/ai/flows/fetch-external-record.ts';
