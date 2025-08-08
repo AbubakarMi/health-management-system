@@ -23,7 +23,8 @@ import {
     Hotel,
     Send,
     Microscope,
-    CheckCircle
+    CheckCircle,
+    Database
 } from "lucide-react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
@@ -821,6 +822,7 @@ export const navLinks: NavLinks = {
         { href: "/doctor/patients", label: "My Patients", icon: Users },
         { href: "/doctor/admissions", label: "Admissions", icon: BedDouble },
         { href: "/doctor/autopsy", label: "Autopsy Cases", icon: Microscope },
+        { href: "/doctor/external-records", label: "External Records", icon: Database },
         { href: "/doctor/risk-assessment", label: "Risk Assessment", icon: HeartPulse },
         { href: "/doctor/deceased", label: "Deceased Records", icon: LogOut },
     ],
