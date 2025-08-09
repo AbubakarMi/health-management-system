@@ -22,20 +22,17 @@ export default function AdminLayout({
   const { toast } = useToast();
 
   useEffect(() => {
-    // Automatically simulate a call at random intervals
-    const callInterval = setInterval(() => {
-      // Only simulate a call if one isn't already active
-      if (!isReceivingCall) {
-        // 20% chance of a call every 30 seconds
-        const shouldSimulateCall = Math.random() < 0.2;
-        if (shouldSimulateCall) {
-          setIsReceivingCall(true);
+    const handleStorageChange = (event: StorageEvent) => {
+        if (event.key === 'emergencyCall' && event.newValue) {
+            setIsReceivingCall(true);
         }
-      }
-    }, 30000); // Check every 30 seconds
+    };
 
-    return () => clearInterval(callInterval);
-  }, [isReceivingCall]);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+        window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
 
   return (
