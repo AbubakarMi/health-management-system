@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { users } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { LogIn } from 'lucide-react';
+import { LogIn, Phone } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -31,6 +31,16 @@ export default function LoginPage() {
       });
     }
   };
+  
+  const handleEmergencyCall = () => {
+    // This uses localStorage to communicate between tabs, simulating a call
+    // to any logged-in admin.
+    localStorage.setItem('emergencyCall', Date.now().toString());
+     toast({
+      title: "Calling Emergency Line...",
+      description: "Simulating incoming call to the admin dashboard.",
+    });
+  };
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-background p-4 overflow-hidden">
@@ -46,31 +56,50 @@ export default function LoginPage() {
         <p className="text-muted-foreground mt-4 text-base md:text-lg animate-fade-in-up [animation-delay:0.2s]">Your integrated hospital management solution.</p>
       </div>
       
-      <Card className="w-full max-w-md z-10 animate-fade-in-up [animation-delay:0.4s]">
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center gap-2"><LogIn className="w-6 h-6"/> Staff Login</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your dashboard.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin}>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-              </div>
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <div className="z-10 w-full max-w-md flex flex-col gap-6">
+        <Card className="animate-fade-in-up [animation-delay:0.4s]">
+            <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><LogIn className="w-6 h-6"/> Staff Login</CardTitle>
+            <CardDescription>
+                Enter your credentials to access your dashboard.
+            </CardDescription>
+            </CardHeader>
+            <CardContent>
+            <form onSubmit={handleLogin}>
+                <div className="grid gap-4">
+                <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                <Button type="submit" className="w-full">
+                    Login
+                </Button>
+                </div>
+            </form>
+            </CardContent>
+        </Card>
+
+        <Card className="border-red-500/50 bg-destructive/10 animate-fade-in-up [animation-delay:0.6s]">
+            <CardHeader className="text-center">
+                 <CardTitle className="text-destructive">Emergency Line</CardTitle>
+                 <CardDescription className="text-destructive/80">If this is a medical emergency, please use the number below.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+                <p className="text-2xl font-bold font-mono tracking-wider text-destructive">+234 706 916 3505</p>
+            </CardContent>
+            <CardFooter>
+                 <Button variant="destructive" className="w-full" onClick={handleEmergencyCall}>
+                     <Phone className="mr-2 h-4 w-4"/>
+                    Simulate Calling this Number
+                </Button>
+            </CardFooter>
+        </Card>
+      </div>
+
       
       <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.9s]">
         <p>Powered by DevFlux 2025</p>

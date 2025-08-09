@@ -15,7 +15,7 @@ import { notificationManager, Notification } from "@/lib/constants";
 import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { CallContext } from "@/app/admin/layout";
+
 
 interface AppHeaderProps {
   role: string;
@@ -25,7 +25,6 @@ export function AppHeader({ role }: AppHeaderProps) {
   const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const callContext = useContext(CallContext);
 
 
   useEffect(() => {
