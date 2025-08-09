@@ -24,7 +24,8 @@ import {
     Send,
     Microscope,
     CheckCircle,
-    Database
+    Database,
+    Phone
 } from "lucide-react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
@@ -224,6 +225,50 @@ class NotificationManager {
 }
 
 export const notificationManager = new NotificationManager();
+
+export type Call = {
+    id: string;
+    callerId: string;
+    timestamp: string;
+    status: 'Answered' | 'Missed';
+};
+
+class CallManager {
+    private calls: Call[];
+    private subscribers: Function[] = [];
+
+    constructor() {
+        this.calls = [];
+    }
+
+    getCalls() {
+        return this.calls.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    }
+
+    logCall(callerId: string, status: Call['status']) {
+        const newCall: Call = {
+            id: `call-${Date.now()}`,
+            callerId,
+            status,
+            timestamp: new Date().toISOString(),
+        };
+        this.calls.unshift(newCall);
+        this.notify();
+    }
+
+    subscribe(callback: (calls: Call[]) => void) {
+        this.subscribers.push(callback);
+        return () => {
+            this.subscribers = this.subscribers.filter(sub => sub !== callback);
+        };
+    }
+
+    private notify() {
+        this.subscribers.forEach(callback => callback(this.calls));
+    }
+}
+
+export const callManager = new CallManager();
 
 
 export type Suggestion = {
@@ -817,6 +862,7 @@ export const navLinks: NavLinks = {
             ]
         },
         { href: "/admin/staff", label: "Staff", icon: UserCog },
+        { href: "/admin/calls", label: "Call History", icon: Phone },
     ],
     doctor: [
         { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
@@ -1272,4 +1318,5 @@ class AutopsyManager {
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
 
     
+
 
