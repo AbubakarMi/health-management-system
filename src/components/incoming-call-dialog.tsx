@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Phone, PhoneOff, Volume2, Mic, Loader2, Bot } from "lucide-react";
 import { generateVoiceResponse } from "@/ai/flows/generate-voice-response";
 import { useToast } from "@/hooks/use-toast";
-import { notificationManager } from "@/lib/constants";
+import { notificationManager, callManager } from "@/lib/constants";
 
 interface IncomingCallDialogProps {
   isOpen: boolean;
@@ -25,19 +25,21 @@ export function IncomingCallDialog({ isOpen, onClose }: IncomingCallDialogProps)
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const { toast } = useToast();
 
+    const handleMissedCall = () => {
+        notificationManager.createNotification(
+            `You missed a call from ${CALLER_ID}.`,
+            '/admin/calls'
+        );
+        callManager.logCall(CALLER_ID, 'Missed');
+        handleDecline();
+    };
+
     useEffect(() => {
         if (isOpen) {
             setCallStatus('ringing');
             setAiResponseAudio(null);
             
-            // Set a timeout to automatically decline the call
-            timeoutRef.current = setTimeout(() => {
-                handleDecline();
-                notificationManager.createNotification(
-                    `You missed a call from ${CALLER_ID}.`,
-                    '/admin/messages' // A generic link for now
-                );
-            }, TIMEOUT_DURATION);
+            timeoutRef.current = setTimeout(handleMissedCall, TIMEOUT_DURATION);
         } else {
              if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
@@ -61,6 +63,7 @@ export function IncomingCallDialog({ isOpen, onClose }: IncomingCallDialogProps)
     const handleAccept = async () => {
         clearCallTimeout();
         setCallStatus('connected');
+        callManager.logCall(CALLER_ID, 'Answered');
         setIsGeneratingResponse(true);
         try {
             const response = await generateVoiceResponse({ text: "Hello, you have reached Careflux Hospital's emergency line. An administrator will be with you shortly. Please stay on the line." });
@@ -81,6 +84,13 @@ export function IncomingCallDialog({ isOpen, onClose }: IncomingCallDialogProps)
 
     const handleDecline = () => {
         clearCallTimeout();
+        if (callStatus === 'ringing') { // Only log as missed if declined while ringing
+            callManager.logCall(CALLER_ID, 'Missed');
+            notificationManager.createNotification(
+                `You missed a call from ${CALLER_ID}.`,
+                '/admin/calls'
+            );
+        }
         setCallStatus('ended');
         onClose();
     };
