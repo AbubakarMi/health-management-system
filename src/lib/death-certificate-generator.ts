@@ -116,8 +116,11 @@ export function generateDeathCertificatePdf(patient: Patient, visit: MedicalHist
     doc.setTextColor(textColor);
     doc.setDrawColor(borderColor);
     doc.line(14, 270, 200, 270);
-    doc.text(`This certificate was issued on ${format(new Date(), 'PPP')}.`, 105, 278, { align: 'center' });
-    doc.text('Careflux Hospital - No 35 Lamido Cresent Kano State.', 105, 283, { align: 'center' });
+    doc.text(`This certificate was issued on ${format(new Date(), 'PPP')}.`, 105, 275, { align: 'center' });
+    doc.text('Careflux Hospital - No 35 Lamido Cresent Kano State.', 105, 280, { align: 'center' });
+    doc.setFont('times', 'bold');
+    doc.text('Emergency Line: +234 706 916 3505', 105, 285, { align: 'center' });
+
 
 
     // Save PDF
