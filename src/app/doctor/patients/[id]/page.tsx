@@ -23,7 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Timeline, TimelineItem, TimelineConnector, TimelineHeader, TimelineIcon, TimelineTitle, TimelineContent, TimelineTime } from '@/components/ui/timeline';
 import { ReviewSuggestionDialog } from '@/components/review-suggestion-dialog';
 import { VisitDetailsDialog } from '@/components/visit-details-dialog';
-import { generateRecommendations, GenerateRecommendationsOutput } from '@/ai/flows/generate-recommendations';
+import { generateClinicalPlan, GenerateClinicalPlanOutput } from '@/ai/flows/generate-clinical-plan';
 import { ScheduleFollowUpDialog } from '@/components/schedule-follow-up-dialog';
 import { EditSummaryDialog } from '@/components/edit-summary-dialog';
 import { RecordDeathDialog } from '@/components/record-death-dialog';
@@ -58,7 +58,7 @@ export default function PatientDetailPage() {
   const [reviewingSuggestion, setReviewingSuggestion] = useState<Prescription | null>(null);
   const [selectedVisit, setSelectedVisit] = useState<MedicalHistoryEntry | null>(null);
   const [isAISuggesting, setIsAISuggesting] = useState(false);
-  const [aiSuggestions, setAISuggestions] = useState<GenerateRecommendationsOutput | null>(null);
+  const [aiSuggestions, setAISuggestions] = useState<GenerateClinicalPlanOutput | null>(null);
   const [isFollowUpOpen, setFollowUpOpen] = useState(false);
   const [isEditSummaryOpen, setEditSummaryOpen] = useState(false);
 
@@ -121,8 +121,13 @@ export default function PatientDetailPage() {
   }, [editingPrescription, prescriptionForm]);
   
   
-  const openAddDialog = () => {
+  const openAddDialog = (suggestion?: { medicine: string, dosage: string }) => {
     setEditingPrescription(null);
+    if (suggestion) {
+        prescriptionForm.reset(suggestion);
+    } else {
+        prescriptionForm.reset({ medicine: "", dosage: "" });
+    }
     setPrescribeDialogOpen(true);
   };
   
@@ -153,6 +158,15 @@ export default function PatientDetailPage() {
         });
         toast({ title: "Prescription Added", description: `A new prescription has been added for ${patient.name}.` });
     }
+
+    // If this was an AI suggestion, remove it from the list
+    if (aiSuggestions) {
+        setAISuggestions(prev => ({
+            ...prev!,
+            prescriptionSuggestions: prev!.prescriptionSuggestions.filter(p => p.medicine !== values.medicine)
+        }));
+    }
+
     setPrescribeDialogOpen(false);
     setEditingPrescription(null);
     prescriptionForm.reset();
@@ -248,7 +262,7 @@ export default function PatientDetailPage() {
       setAISuggestions(null);
       try {
           const medicalHistorySummary = patient.medicalHistory.map(h => `${h.date}: ${h.event} - ${h.details}`).join('\n');
-          const result = await generateRecommendations({
+          const result = await generateClinicalPlan({
               medicalHistory: medicalHistorySummary,
               currentCondition: patient.condition
           });
@@ -261,15 +275,20 @@ export default function PatientDetailPage() {
       }
   }
 
-  const handleAcceptAISuggestion = (suggestion: string) => {
+  const handleAcceptLifestyleSuggestion = (suggestion: {id: string, suggestion: string}) => {
       if (!patient) return;
-      patientManager.addNoteToLatestVisit(patient.id, `AI-assisted recommendation: ${suggestion}`);
+      patientManager.addNoteToLatestVisit(patient.id, `AI-assisted recommendation: ${suggestion.suggestion}`);
+      setAISuggestions(prev => ({
+          ...prev!,
+          recommendations: prev!.recommendations.filter(r => r.id !== suggestion.id)
+      }));
       toast({ title: "Suggestion Added", description: "The AI recommendation has been added to the visit notes." });
   }
 
   const handleScheduleFollowUp = (data: { date: Date; reason: string }) => {
     if (!patient) return;
     patientManager.scheduleFollowUp(patient.id, data.date, data.reason, patient.assignedDoctor);
+     setAISuggestions(prev => ({ ...prev!, followUpSuggestion: undefined }));
     toast({
       title: "Follow-up Scheduled",
       description: `A follow-up has been scheduled for ${patient.name}.`,
@@ -473,7 +492,7 @@ export default function PatientDetailPage() {
             <CardHeader>
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                  <CardTitle className="flex items-center gap-2"><Pill className="w-5 h-5" /> Prescriptions</CardTitle>
-                 <Button size="sm" onClick={openAddDialog} disabled={patient.condition === 'Deceased'}><PlusCircle className="mr-2 h-4 w-4" /> Add</Button>
+                 <Button size="sm" onClick={() => openAddDialog()} disabled={patient.condition === 'Deceased'}><PlusCircle className="mr-2 h-4 w-4" /> Add</Button>
                </div>
             </CardHeader>
             <CardContent>
@@ -554,28 +573,72 @@ export default function PatientDetailPage() {
            <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2"><Sparkles className="w-5 h-5 text-primary" />AI Clinical Assistant</CardTitle>
-                    <CardDescription>Generate lifestyle and health recommendations based on the patient's record.</CardDescription>
+                    <CardDescription>Generate a clinical plan based on the patient's record.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Button onClick={handleGetAISuggestions} disabled={isAISuggesting || patient.condition === 'Deceased'} className="w-full">
                         {isAISuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                        {isAISuggesting ? "Analyzing..." : "Get AI Suggestions"}
+                        {isAISuggesting ? "Analyzing..." : "Generate AI Plan"}
                     </Button>
                     {aiSuggestions && (
-                        <div className="mt-4 space-y-3">
-                            {aiSuggestions.recommendations.map(rec => (
-                                <div key={rec.id} className="p-3 border rounded-md bg-muted/50 text-sm">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <Badge variant="secondary" className="mb-2">{rec.category}</Badge>
-                                            <p>{rec.suggestion}</p>
+                        <div className="mt-4 space-y-4">
+                            {/* Prescription Suggestions */}
+                            {aiSuggestions.prescriptionSuggestions && aiSuggestions.prescriptionSuggestions.length > 0 && (
+                                <div className="space-y-2">
+                                    <h4 className="font-semibold text-sm">Prescription Suggestions</h4>
+                                    {aiSuggestions.prescriptionSuggestions.map(p => (
+                                        <div key={p.id} className="p-3 border rounded-md bg-muted/50 text-sm">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <div>
+                                                    <p className="font-medium">{p.medicine}</p>
+                                                    <p className="text-muted-foreground">{p.dosage}</p>
+                                                </div>
+                                                <Button size="sm" variant="outline" onClick={() => openAddDialog({ medicine: p.medicine, dosage: p.dosage })}>
+                                                   <Edit className="mr-2 h-4 w-4" /> Edit & Accept
+                                                </Button>
+                                            </div>
                                         </div>
-                                        <Button size="sm" variant="outline" onClick={() => handleAcceptAISuggestion(rec.suggestion)}>
-                                           <Check className="mr-2 h-4 w-4" /> Accept
-                                        </Button>
+                                    ))}
+                                </div>
+                            )}
+
+                             {/* Follow-up Suggestion */}
+                            {aiSuggestions.followUpSuggestion && (
+                                <div className="space-y-2">
+                                    <h4 className="font-semibold text-sm">Follow-up Suggestion</h4>
+                                     <div className="p-3 border rounded-md bg-muted/50 text-sm">
+                                        <div className="flex justify-between items-start gap-2">
+                                            <div>
+                                                <p className="font-medium">Follow up in {aiSuggestions.followUpSuggestion.timing}</p>
+                                                <p className="text-muted-foreground">{aiSuggestions.followUpSuggestion.reason}</p>
+                                            </div>
+                                            <Button size="sm" variant="outline" onClick={() => setFollowUpOpen(true)}>
+                                                <Check className="mr-2 h-4 w-4" /> Accept
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
-                            ))}
+                            )}
+
+                            {/* Lifestyle Recommendations */}
+                            {aiSuggestions.recommendations && aiSuggestions.recommendations.length > 0 && (
+                                <div className="space-y-2">
+                                     <h4 className="font-semibold text-sm">Lifestyle Recommendations</h4>
+                                    {aiSuggestions.recommendations.map(rec => (
+                                        <div key={rec.id} className="p-3 border rounded-md bg-muted/50 text-sm">
+                                            <div className="flex justify-between items-start gap-2">
+                                                <div>
+                                                    <Badge variant="secondary" className="mb-2">{rec.category}</Badge>
+                                                    <p>{rec.suggestion}</p>
+                                                </div>
+                                                <Button size="sm" variant="outline" onClick={() => handleAcceptLifestyleSuggestion(rec)}>
+                                                   <Check className="mr-2 h-4 w-4" /> Add to Notes
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </CardContent>
@@ -704,6 +767,7 @@ export default function PatientDetailPage() {
             onClose={() => setFollowUpOpen(false)}
             patientName={patient.name}
             onSchedule={handleScheduleFollowUp}
+            suggestion={aiSuggestions?.followUpSuggestion}
         />
     )}
      {patient && (

@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { users } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
+import { LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ export default function LoginPage() {
       });
     }
   };
-
+  
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-background p-4 overflow-hidden">
        <div className="absolute inset-0 z-0">
@@ -44,32 +45,37 @@ export default function LoginPage() {
         </h1>
         <p className="text-muted-foreground mt-4 text-base md:text-lg animate-fade-in-up [animation-delay:0.2s]">Your integrated hospital management solution.</p>
       </div>
-      <Card className="w-full max-w-sm animate-fade-in-up [animation-delay:0.4s]">
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email and password below to login to your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin}>
-            <div className="grid gap-4">
-              <div className="grid gap-2 animate-fade-in-up [animation-delay:0.5s]">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-              <div className="grid gap-2 animate-fade-in-up [animation-delay:0.6s]">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-              </div>
-              <Button type="submit" className="w-full animate-fade-in-up [animation-delay:0.7s]">
-                Login
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-      <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.8s]">
+      
+      <div className="z-10 w-full max-w-md flex flex-col gap-6">
+        <Card className="animate-fade-in-up [animation-delay:0.4s]">
+            <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2"><LogIn className="w-6 h-6"/> Staff Login</CardTitle>
+            <CardDescription>
+                Enter your credentials to access your dashboard.
+            </CardDescription>
+            </CardHeader>
+            <CardContent>
+            <form onSubmit={handleLogin}>
+                <div className="grid gap-4">
+                <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                <Button type="submit" className="w-full">
+                    Login
+                </Button>
+                </div>
+            </form>
+            </CardContent>
+        </Card>
+      </div>
+
+      
+      <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.9s]">
         <p>Powered by DevFlux 2025</p>
       </footer>
     </div>

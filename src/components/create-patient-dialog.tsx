@@ -28,6 +28,7 @@ const formSchema = z.object({
   address: z.string().min(10, "Address must be at least 10 characters."),
   condition: z.enum(['Stable', 'Critical', 'Improving']),
   assignedDoctor: z.string().min(1, "Please assign a doctor."),
+  clinicalSummary: z.string().optional(),
   avatarUrl: z.string().optional(),
   fingerprintId: z.string().optional(),
 });
@@ -39,12 +40,15 @@ interface CreatePatientDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onPatientSaved: (patient: PatientSaveData) => void;
+  importedData?: { name: string; dateOfBirth: Date, clinicalSummary: string } | null;
 }
 
 const doctors = users.filter(u => u.role === 'doctor');
-const step1Fields: (keyof FormData)[] = ['name', 'gender', 'dateOfBirth', 'maritalStatus', 'address', 'condition', 'assignedDoctor'];
+const step1Fields: (keyof FormData)[] = ['name', 'gender', 'dateOfBirth', 'maritalStatus', 'address', 'condition', 'assignedDoctor', 'clinicalSummary'];
 
-export function CreatePatientDialog({ isOpen, onClose, onPatientSaved }: CreatePatientDialogProps) {
+// This component is now deprecated and will be removed in a future update.
+// The functionality has been moved to a dedicated page at /admin/patients/create
+export function CreatePatientDialog({ isOpen, onClose, onPatientSaved, importedData }: CreatePatientDialogProps) {
     const [step, setStep] = useState(1);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [fingerprintCaptured, setFingerprintCaptured] = useState(false);
@@ -62,6 +66,7 @@ export function CreatePatientDialog({ isOpen, onClose, onPatientSaved }: CreateP
             address: "",
             condition: "Stable",
             assignedDoctor: "",
+            clinicalSummary: "",
             avatarUrl: "",
             fingerprintId: "",
         },
@@ -71,12 +76,14 @@ export function CreatePatientDialog({ isOpen, onClose, onPatientSaved }: CreateP
         if (isOpen) {
             setStep(1); // Reset to first step when dialog opens
             form.reset({
-                name: "",
+                name: importedData?.name || "",
                 gender: "Male",
+                dateOfBirth: importedData?.dateOfBirth,
                 maritalStatus: "Single",
                 address: "",
                 condition: "Stable",
                 assignedDoctor: doctors.length > 0 ? doctors[0].name : "",
+                clinicalSummary: importedData?.clinicalSummary || "",
                 avatarUrl: "",
                 fingerprintId: "",
             });
@@ -84,7 +91,7 @@ export function CreatePatientDialog({ isOpen, onClose, onPatientSaved }: CreateP
             setFingerprintCaptured(false);
             if (fileInputRef.current) fileInputRef.current.value = "";
         }
-    }, [isOpen, form]);
+    }, [isOpen, form, importedData]);
 
     useEffect(() => {
         const startVideoStream = async () => {
@@ -336,6 +343,19 @@ export function CreatePatientDialog({ isOpen, onClose, onPatientSaved }: CreateP
                                                         </FormItem>
                                                     )}
                                                 />
+                                                <FormField
+                                                        control={form.control}
+                                                        name="clinicalSummary"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Clinical Summary (Imported)</FormLabel>
+                                                                <FormControl>
+                                                                    <Textarea placeholder="Imported from external record..." {...field} rows={4} />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
                                             </div>
                                         </div>
                                     )}

@@ -126,8 +126,10 @@ export function generateInvoicePdf(invoice: Invoice) {
             doc.setFontSize(9);
             doc.setTextColor(textColor);
             doc.setDrawColor(borderColor);
-            doc.line(14, footerY - 5, 200, footerY - 5);
-            doc.text('Thank you for choosing Careflux Hospital.', 105, footerY, { align: 'center' });
+            doc.line(14, footerY - 10, 200, footerY - 10);
+            doc.text('Thank you for choosing Careflux Hospital.', 105, footerY - 5, { align: 'center' });
+            doc.setFont('times', 'bold');
+            doc.text('For emergencies, please call +234 706 916 3505', 105, footerY, { align: 'center' });
         }
     });
 
