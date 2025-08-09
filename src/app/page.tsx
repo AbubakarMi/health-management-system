@@ -5,19 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { users } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { LogIn, Phone } from 'lucide-react';
-import { CallContext } from './admin/layout';
+import { LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
   const { toast } = useToast();
-  const { setIsReceivingCall } = useContext(CallContext) || {};
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,22 +29,6 @@ export default function LoginPage() {
         title: "Login Failed",
         description: "Invalid email or password. Please try again.",
       });
-    }
-  };
-
-  const handleEmergencyCall = () => {
-    if (setIsReceivingCall) {
-        toast({
-            title: "Simulating Call",
-            description: "Simulating incoming call to the admin..."
-        })
-        setIsReceivingCall(true);
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Simulation Error",
-            description: "Could not initiate the call simulation. An admin must be logged in."
-        })
     }
   };
   
@@ -88,23 +70,6 @@ export default function LoginPage() {
                 </Button>
                 </div>
             </form>
-            </CardContent>
-        </Card>
-
-         <Card className="animate-fade-in-up [animation-delay:0.6s] border-destructive bg-destructive/10 text-destructive-foreground">
-            <CardHeader className="text-center">
-                <CardTitle className="text-2xl flex items-center justify-center gap-2 text-destructive">
-                    <Phone className="w-6 h-6"/> Emergency Line
-                </CardTitle>
-                <CardDescription className="text-destructive/80">
-                    If this is a medical emergency, please call the number below immediately.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-                 <p className="text-3xl font-bold font-mono tracking-wider text-destructive">+234 706 916 3505</p>
-                 <Button variant="destructive" className="w-full mt-6" onClick={handleEmergencyCall}>
-                     Simulate Calling this Number
-                 </Button>
             </CardContent>
         </Card>
       </div>
