@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AppHeader } from "@/components/shared/header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -20,6 +20,23 @@ export default function AdminLayout({
 }) {
   const [isReceivingCall, setIsReceivingCall] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Automatically simulate a call at random intervals
+    const callInterval = setInterval(() => {
+      // Only simulate a call if one isn't already active
+      if (!isReceivingCall) {
+        // 20% chance of a call every 30 seconds
+        const shouldSimulateCall = Math.random() < 0.2;
+        if (shouldSimulateCall) {
+          setIsReceivingCall(true);
+        }
+      }
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(callInterval);
+  }, [isReceivingCall]);
+
 
   return (
     <CallContext.Provider value={{ isReceivingCall, setIsReceivingCall }}>

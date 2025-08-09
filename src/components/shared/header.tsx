@@ -41,26 +41,11 @@ export function AppHeader({ role }: AppHeaderProps) {
     handleUpdate(notificationManager.getNotifications());
     const unsubscribe = notificationManager.subscribe(handleUpdate);
 
-    const checkIncomingCall = () => {
-        const incomingCall = localStorage.getItem('incomingCall');
-        if (incomingCall === 'true') {
-            if (callContext?.setIsReceivingCall) {
-              callContext.setIsReceivingCall(true);
-            }
-            localStorage.removeItem('incomingCall');
-        }
-    };
-
-    // Check for calls when the component mounts and periodically
-    checkIncomingCall();
-    const callCheckInterval = setInterval(checkIncomingCall, 2000);
-
     return () => {
         clearInterval(timer);
-        clearInterval(callCheckInterval);
         unsubscribe();
     };
-  }, [callContext]);
+  }, []);
 
   const handleNotificationClick = (notification: Notification) => {
     notificationManager.markAsRead(notification.id);
