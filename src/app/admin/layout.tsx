@@ -6,7 +6,6 @@ import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AppHeader } from "@/components/shared/header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { IncomingCallDialog } from "@/components/incoming-call-dialog";
-import { useToast } from "@/hooks/use-toast";
 
 export const CallContext = React.createContext({
   isReceivingCall: false,
@@ -19,20 +18,26 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [isReceivingCall, setIsReceivingCall] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-        if (event.key === 'emergencyCall' && event.newValue) {
-            setIsReceivingCall(true);
-        }
+    // Automatically simulate a call at random intervals (e.g., between 30s and 90s)
+    let callTimeout: NodeJS.Timeout;
+
+    const scheduleNextCall = () => {
+        const randomInterval = Math.random() * 60000 + 30000; // 30s to 90s
+        callTimeout = setTimeout(() => {
+            // Only trigger a new call if one isn't already active
+            if (!isReceivingCall) {
+                setIsReceivingCall(true);
+            }
+            scheduleNextCall();
+        }, randomInterval);
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => {
-        window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+    scheduleNextCall();
+
+    return () => clearTimeout(callTimeout);
+  }, [isReceivingCall]); // Rerun effect if isReceivingCall changes
 
 
   return (

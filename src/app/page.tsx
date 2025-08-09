@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { users } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { LogIn, Phone } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -32,16 +32,6 @@ export default function LoginPage() {
     }
   };
   
-  const handleEmergencyCall = () => {
-    // This uses localStorage to communicate between tabs, simulating a call
-    // to any logged-in admin.
-    localStorage.setItem('emergencyCall', Date.now().toString());
-     toast({
-      title: "Calling Emergency Line...",
-      description: "Simulating incoming call to the admin dashboard.",
-    });
-  };
-
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-background p-4 overflow-hidden">
        <div className="absolute inset-0 z-0">
@@ -81,22 +71,6 @@ export default function LoginPage() {
                 </div>
             </form>
             </CardContent>
-        </Card>
-
-        <Card className="border-red-500/50 bg-destructive/10 animate-fade-in-up [animation-delay:0.6s]">
-            <CardHeader className="text-center">
-                 <CardTitle className="text-destructive">Emergency Line</CardTitle>
-                 <CardDescription className="text-destructive/80">If this is a medical emergency, please use the number below.</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-                <p className="text-2xl font-bold font-mono tracking-wider text-destructive">+234 706 916 3505</p>
-            </CardContent>
-            <CardFooter>
-                 <Button variant="destructive" className="w-full" onClick={handleEmergencyCall}>
-                     <Phone className="mr-2 h-4 w-4"/>
-                    Simulate Calling this Number
-                </Button>
-            </CardFooter>
         </Card>
       </div>
 
