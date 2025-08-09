@@ -19,27 +19,6 @@ export default function AdminLayout({
 }) {
   const [isReceivingCall, setIsReceivingCall] = useState(false);
 
-  useEffect(() => {
-    // Automatically simulate a call at random intervals (e.g., between 30s and 90s)
-    let callTimeout: NodeJS.Timeout;
-
-    const scheduleNextCall = () => {
-        const randomInterval = Math.random() * 60000 + 30000; // 30s to 90s
-        callTimeout = setTimeout(() => {
-            // Only trigger a new call if one isn't already active
-            if (!isReceivingCall) {
-                setIsReceivingCall(true);
-            }
-            scheduleNextCall();
-        }, randomInterval);
-    };
-
-    scheduleNextCall();
-
-    return () => clearTimeout(callTimeout);
-  }, [isReceivingCall]); // Rerun effect if isReceivingCall changes
-
-
   return (
     <CallContext.Provider value={{ isReceivingCall, setIsReceivingCall }}>
       <SidebarProvider>
