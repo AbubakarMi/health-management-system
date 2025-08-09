@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { notificationManager, Notification } from "@/lib/constants";
 import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { CallContext } from "@/app/admin/layout";
 
 interface AppHeaderProps {
   role: string;
@@ -24,6 +25,8 @@ export function AppHeader({ role }: AppHeaderProps) {
   const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const callContext = useContext(CallContext);
+
 
   useEffect(() => {
     setCurrentDateTime(new Date());
@@ -38,11 +41,26 @@ export function AppHeader({ role }: AppHeaderProps) {
     handleUpdate(notificationManager.getNotifications());
     const unsubscribe = notificationManager.subscribe(handleUpdate);
 
+    const checkIncomingCall = () => {
+        const incomingCall = localStorage.getItem('incomingCall');
+        if (incomingCall === 'true') {
+            if (callContext?.setIsReceivingCall) {
+              callContext.setIsReceivingCall(true);
+            }
+            localStorage.removeItem('incomingCall');
+        }
+    };
+
+    // Check for calls when the component mounts and periodically
+    checkIncomingCall();
+    const callCheckInterval = setInterval(checkIncomingCall, 2000);
+
     return () => {
         clearInterval(timer);
+        clearInterval(callCheckInterval);
         unsubscribe();
     };
-  }, []);
+  }, [callContext]);
 
   const handleNotificationClick = (notification: Notification) => {
     notificationManager.markAsRead(notification.id);
