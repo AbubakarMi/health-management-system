@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { users } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
+import { Phone } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -29,6 +30,16 @@ export default function LoginPage() {
         description: "Invalid email or password. Please try again.",
       });
     }
+  };
+
+  const handleEmergencyCall = () => {
+    // In a real app, this would use a telephony service.
+    // Here, we'll simulate it by setting a flag in localStorage for the admin page to pick up.
+    localStorage.setItem('incomingCall', 'true');
+    toast({
+      title: "Placing Emergency Call",
+      description: "You are being connected. Please log in as an admin on this or another device to see the call.",
+    });
   };
 
   return (
@@ -69,7 +80,18 @@ export default function LoginPage() {
           </form>
         </CardContent>
       </Card>
-      <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.8s]">
+      
+      <Button
+        variant="destructive"
+        size="lg"
+        className="mt-6 animate-fade-in-up [animation-delay:0.8s] z-10"
+        onClick={handleEmergencyCall}
+      >
+        <Phone className="mr-2 h-5 w-5" />
+        Emergency Call
+      </Button>
+
+      <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.9s]">
         <p>Powered by DevFlux 2025</p>
       </footer>
     </div>
