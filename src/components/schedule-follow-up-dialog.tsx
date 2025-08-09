@@ -11,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, addWeeks, addMonths } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   date: z.date({ required_error: "A follow-up date is required." }),
@@ -26,15 +27,42 @@ interface ScheduleFollowUpDialogProps {
   onClose: () => void;
   patientName: string;
   onSchedule: (data: FormData) => void;
+  suggestion?: { timing: string; reason: string };
 }
 
-export function ScheduleFollowUpDialog({ isOpen, onClose, patientName, onSchedule }: ScheduleFollowUpDialogProps) {
+export function ScheduleFollowUpDialog({ isOpen, onClose, patientName, onSchedule, suggestion }: ScheduleFollowUpDialogProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       reason: "",
     },
   });
+  
+  useEffect(() => {
+    if (isOpen) {
+        if (suggestion) {
+            let suggestedDate = new Date();
+            const timing = suggestion.timing.toLowerCase();
+            if (timing.includes("week")) {
+                const weeks = parseInt(timing) || 1;
+                suggestedDate = addWeeks(new Date(), weeks);
+            } else if (timing.includes("month")) {
+                const months = parseInt(timing) || 1;
+                suggestedDate = addMonths(new Date(), months);
+            }
+            form.reset({
+                date: suggestedDate,
+                reason: suggestion.reason
+            });
+        } else {
+             form.reset({
+                date: undefined,
+                reason: ""
+             });
+        }
+    }
+  }, [isOpen, suggestion, form]);
+
 
   function onSubmit(values: FormData) {
     onSchedule(values);

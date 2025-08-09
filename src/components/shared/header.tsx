@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
 
+
 interface AppHeaderProps {
   role: string;
 }
@@ -24,6 +25,7 @@ export function AppHeader({ role }: AppHeaderProps) {
   const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
 
   useEffect(() => {
     setCurrentDateTime(new Date());

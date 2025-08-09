@@ -2,11 +2,8 @@
 'use server';
 
 /**
- * @fileOverview An AI agent for generating patient health recommendations.
- *
- * - generateRecommendations - A function that generates lifestyle and dietary advice.
- * - GenerateRecommendationsInput - The input type for the function.
- * - GenerateRecommendationsOutput - The return type for the function.
+ * @fileOverview DEPRECATED - This flow has been replaced by generate-clinical-plan.ts
+ * This file is kept for historical purposes but is no longer used in the application.
  */
 
 import {ai} from '@/ai/genkit';
