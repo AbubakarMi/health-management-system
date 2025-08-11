@@ -7,13 +7,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { detailedPatients, Patient } from "@/lib/constants";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
+import Link from "next/link";
 
 export default function Page() {
     const [searchQuery, setSearchQuery] = useState("");
-    const router = useRouter();
     const loggedInDoctor = "Dr. Aisha Bello";
 
     const myPatients = useMemo(() => {
@@ -41,10 +40,6 @@ export default function Page() {
             case 'Improving': return 'bg-yellow-500 text-white';
             default: return '';
         }
-    }
-
-    const handleRowClick = (patientId: string) => {
-        router.push(`/doctor/patients/${patientId}`);
     }
 
     return (
@@ -81,21 +76,33 @@ export default function Page() {
                     </TableHeader>
                     <TableBody>
                         {myPatients.map((patient) => (
-                            <TableRow key={patient.id} onClick={() => handleRowClick(patient.id)} className="cursor-pointer">
-                                <TableCell className="font-medium flex items-center gap-3">
-                                    <Avatar>
-                                        <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
-                                        <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    {patient.name}
+                           <TableRow key={patient.id} className="cursor-pointer as-child">
+                                <TableCell className="font-medium">
+                                    <Link href={`/doctor/patients/${patient.id}`} className="flex items-center gap-3">
+                                        <Avatar>
+                                            <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
+                                            <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        {patient.name}
+                                    </Link>
                                 </TableCell>
-                                <TableCell>{patient.id}</TableCell>
                                 <TableCell>
-                                    <Badge variant={getBadgeVariant(patient.condition)} className={getBadgeClass(patient.condition)}>
-                                      {patient.condition}
-                                    </Badge>
+                                    <Link href={`/doctor/patients/${patient.id}`} className="block w-full h-full">
+                                        {patient.id}
+                                    </Link>
                                 </TableCell>
-                                <TableCell>{patient.lastVisit}</TableCell>
+                                <TableCell>
+                                     <Link href={`/doctor/patients/${patient.id}`} className="block w-full h-full">
+                                        <Badge variant={getBadgeVariant(patient.condition)} className={getBadgeClass(patient.condition)}>
+                                        {patient.condition}
+                                        </Badge>
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                    <Link href={`/doctor/patients/${patient.id}`} className="block w-full h-full">
+                                        {patient.lastVisit}
+                                    </Link>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

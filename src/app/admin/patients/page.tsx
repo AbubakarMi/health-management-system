@@ -45,19 +45,31 @@ export default function Page() {
                         </TableHeader>
                         <TableBody>
                             {patients.map((patient) => (
-                                <TableRow key={patient.id}>
-                                    <TableCell className="font-medium flex items-center gap-3">
-                                        <Avatar>
-                                            <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
-                                            <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        {patient.name}
+                                 <TableRow key={patient.id} className="cursor-pointer as-child">
+                                    <TableCell className="font-medium">
+                                        <Link href={`/admin/patients/${patient.id}`} className="flex items-center gap-3">
+                                            <Avatar>
+                                                <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
+                                                <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            {patient.name}
+                                        </Link>
                                     </TableCell>
-                                    <TableCell>{patient.id}</TableCell>
                                     <TableCell>
-                                        <Badge variant={patient.condition === 'Critical' ? 'destructive' : 'secondary'}>{patient.condition}</Badge>
+                                         <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                            {patient.id}
+                                        </Link>
                                     </TableCell>
-                                    <TableCell>{patient.lastVisit}</TableCell>
+                                    <TableCell>
+                                         <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                            <Badge variant={patient.condition === 'Critical' ? 'destructive' : 'secondary'}>{patient.condition}</Badge>
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                            {patient.lastVisit}
+                                        </Link>
+                                    </TableCell>
                                     <TableCell className="text-right">
                                         <Button asChild variant="ghost" size="icon">
                                             <Link href={`/admin/patients/${patient.id}`}>

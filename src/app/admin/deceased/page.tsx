@@ -9,11 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { detailedPatients, Patient } from "@/lib/constants";
 import { Input } from "@/components/ui/input";
 import { Search, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function DeceasedPage() {
     const [searchQuery, setSearchQuery] = useState("");
-    const router = useRouter();
 
     const deceasedPatients = useMemo(() => {
         return detailedPatients
@@ -27,10 +26,6 @@ export default function DeceasedPage() {
     const getDateOfDeath = (patient: Patient) => {
         const deceasedEvent = patient.medicalHistory.find(e => e.event.toLowerCase().includes('deceased'));
         return deceasedEvent ? deceasedEvent.date : 'N/A';
-    }
-
-    const handleRowClick = (patientId: string) => {
-        router.push(`/admin/patients/${patientId}`);
     }
 
     return (
@@ -67,17 +62,31 @@ export default function DeceasedPage() {
                     </TableHeader>
                     <TableBody>
                         {deceasedPatients.map((patient) => (
-                            <TableRow key={patient.id} onClick={() => handleRowClick(patient.id)} className="cursor-pointer">
-                                <TableCell className="font-medium flex items-center gap-3">
-                                    <Avatar>
-                                        <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
-                                        <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    {patient.name}
+                           <TableRow key={patient.id} className="cursor-pointer as-child">
+                                <TableCell className="font-medium">
+                                    <Link href={`/admin/patients/${patient.id}`} className="flex items-center gap-3">
+                                        <Avatar>
+                                            <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
+                                            <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        {patient.name}
+                                    </Link>
                                 </TableCell>
-                                <TableCell>{patient.id}</TableCell>
-                                <TableCell>{getDateOfDeath(patient)}</TableCell>
-                                <TableCell>{patient.assignedDoctor}</TableCell>
+                                <TableCell>
+                                     <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                        {patient.id}
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                     <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                        {getDateOfDeath(patient)}
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                     <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                        {patient.assignedDoctor}
+                                    </Link>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
