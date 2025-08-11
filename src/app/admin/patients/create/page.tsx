@@ -269,9 +269,9 @@ export default function CreatePatientPage() {
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-col">
                                                     <FormLabel>Date of Birth</FormLabel>
-                                                    <FormControl>
-                                                        <Popover>
-                                                            <PopoverTrigger asChild>
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <FormControl>
                                                                 <Button
                                                                     variant={"outline"}
                                                                     className={cn(
@@ -286,21 +286,21 @@ export default function CreatePatientPage() {
                                                                         <span>Pick a date</span>
                                                                     )}
                                                                 </Button>
-                                                            </PopoverTrigger>
-                                                            <PopoverContent className="w-auto p-0" align="start">
-                                                                <Calendar
-                                                                    mode="single"
-                                                                    captionLayout="dropdown-buttons"
-                                                                    fromYear={1920}
-                                                                    toYear={new Date().getFullYear()}
-                                                                    selected={field.value}
-                                                                    onSelect={field.onChange}
-                                                                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                                                                    initialFocus
-                                                                />
-                                                            </PopoverContent>
-                                                        </Popover>
-                                                    </FormControl>
+                                                            </FormControl>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className="w-auto p-0" align="start">
+                                                            <Calendar
+                                                                mode="single"
+                                                                captionLayout="dropdown-buttons"
+                                                                fromYear={1920}
+                                                                toYear={new Date().getFullYear()}
+                                                                selected={field.value}
+                                                                onSelect={field.onChange}
+                                                                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                                                                initialFocus
+                                                            />
+                                                        </PopoverContent>
+                                                    </Popover>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
