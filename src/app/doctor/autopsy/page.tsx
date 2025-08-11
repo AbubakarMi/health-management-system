@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { autopsyManager, AutopsyCase } from "@/lib/constants";
 import { Microscope } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function DoctorAutopsyPage() {
     const [allCases, setAllCases] = useState<AutopsyCase[]>([]);
@@ -64,14 +65,28 @@ export default function DoctorAutopsyPage() {
                     </TableHeader>
                     <TableBody>
                         {myCases.map((caseItem) => (
-                            <TableRow key={caseItem.id} onClick={() => handleRowClick(caseItem.id)} className="cursor-pointer">
-                                <TableCell className="font-medium">{caseItem.id}</TableCell>
-                                <TableCell>{caseItem.deceasedName}</TableCell>
-                                <TableCell>{caseItem.dateRegistered}</TableCell>
+                             <TableRow key={caseItem.id} className="cursor-pointer as-child">
+                                <TableCell className="font-medium">
+                                    <Link href={`/doctor/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                        {caseItem.id}
+                                    </Link>
+                                </TableCell>
                                 <TableCell>
-                                    <Badge variant={getStatusVariant(caseItem.status)} className={caseItem.status === 'Completed' ? 'bg-green-500' : ''}>
-                                        {caseItem.status}
-                                    </Badge>
+                                    <Link href={`/doctor/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                        {caseItem.deceasedName}
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                     <Link href={`/doctor/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                        {caseItem.dateRegistered}
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                     <Link href={`/doctor/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                        <Badge variant={getStatusVariant(caseItem.status)} className={caseItem.status === 'Completed' ? 'bg-green-500' : ''}>
+                                            {caseItem.status}
+                                        </Badge>
+                                    </Link>
                                 </TableCell>
                             </TableRow>
                         ))}

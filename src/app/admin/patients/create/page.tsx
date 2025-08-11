@@ -11,13 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { detailedPatients as initialPatients, Patient, users } from "@/lib/constants";
-import { cn } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, CalendarIcon, Camera, CheckCircle, Fingerprint, Upload, User as UserIcon, X, PlusCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Camera, CheckCircle, Fingerprint, Upload, User as UserIcon, X, PlusCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -26,7 +23,9 @@ import Link from "next/link";
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   gender: z.enum(['Male', 'Female']),
-  dateOfBirth: z.date({ required_error: "Date of birth is required." }),
+  dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "A valid date of birth is required.",
+  }),
   maritalStatus: z.enum(['Single', 'Married', 'Divorced', 'Widowed']),
   address: z.string().min(10, "Address must be at least 10 characters."),
   condition: z.enum(['Stable', 'Critical', 'Improving']),
@@ -72,7 +71,7 @@ export default function CreatePatientPage() {
         defaultValues: {
             name: importedData?.name || "",
             gender: "Male",
-            dateOfBirth: importedData?.dateOfBirth,
+            dateOfBirth: importedData?.dateOfBirth ? format(importedData.dateOfBirth, "yyyy-MM-dd") : "",
             maritalStatus: "Single",
             address: "",
             condition: "Stable",
@@ -87,7 +86,7 @@ export default function CreatePatientPage() {
         if (importedData) {
             form.reset({
                 name: importedData.name,
-                dateOfBirth: importedData.dateOfBirth,
+                dateOfBirth: format(importedData.dateOfBirth, "yyyy-MM-dd"),
                 clinicalSummary: importedData.clinicalSummary,
                 gender: "Male",
                 maritalStatus: "Single",
@@ -204,7 +203,7 @@ export default function CreatePatientPage() {
 
         const patientToAdd: Patient = {
             ...values,
-            dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
+            dateOfBirth: values.dateOfBirth,
             id: newId,
             lastVisit: new Date().toISOString().split('T')[0],
             bloodType: 'O+',
@@ -267,39 +266,10 @@ export default function CreatePatientPage() {
                                             control={form.control}
                                             name="dateOfBirth"
                                             render={({ field }) => (
-                                                <FormItem className="flex flex-col">
+                                                <FormItem>
                                                     <FormLabel>Date of Birth</FormLabel>
                                                     <FormControl>
-                                                        <Popover>
-                                                            <PopoverTrigger asChild>
-                                                                <Button
-                                                                    variant={"outline"}
-                                                                    className={cn(
-                                                                        "w-full justify-start text-left font-normal",
-                                                                        !field.value && "text-muted-foreground"
-                                                                    )}
-                                                                >
-                                                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                    {field.value ? (
-                                                                        format(field.value, "PPP")
-                                                                    ) : (
-                                                                        <span>Pick a date</span>
-                                                                    )}
-                                                                </Button>
-                                                            </PopoverTrigger>
-                                                            <PopoverContent className="w-auto p-0" align="start">
-                                                                <Calendar
-                                                                    mode="single"
-                                                                    captionLayout="dropdown-buttons"
-                                                                    fromYear={1920}
-                                                                    toYear={new Date().getFullYear()}
-                                                                    selected={field.value}
-                                                                    onSelect={field.onChange}
-                                                                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                                                                    initialFocus
-                                                                />
-                                                            </PopoverContent>
-                                                        </Popover>
+                                                        <Input type="date" {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -332,7 +302,7 @@ export default function CreatePatientPage() {
                                                     <div className="text-center text-muted-foreground p-2"><UserIcon className="mx-auto h-10 w-10" /><p className="text-xs mt-1">Patient Photo</p></div>
                                                 )}
                                             </div>
-                                            <div className={cn("aspect-square w-full rounded-md border bg-muted flex items-center justify-center overflow-hidden relative group/fingerprint transition-colors", fingerprintCaptured && "border-green-500 bg-green-500/10")}>
+                                            <div className="aspect-square w-full rounded-md border bg-muted flex items-center justify-center overflow-hidden relative group/fingerprint transition-colors">
                                                 {fingerprintCaptured ? (
                                                     <>
                                                         <div className="text-center text-green-600 p-2"><CheckCircle className="mx-auto h-10 w-10" /><p className="text-xs mt-1 font-semibold">Captured</p></div>
@@ -381,4 +351,5 @@ export default function CreatePatientPage() {
             </Dialog>
         </>
     );
+
 }
