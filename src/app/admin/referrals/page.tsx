@@ -7,8 +7,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { detailedPatients } from "@/lib/constants";
 import { Send } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 type Referral = {
     patientId: string;
@@ -20,7 +20,6 @@ type Referral = {
 };
 
 export default function ReferralsPage() {
-    const router = useRouter();
 
     const allReferrals = useMemo(() => {
         const referrals: Referral[] = [];
@@ -43,10 +42,6 @@ export default function ReferralsPage() {
         });
         return referrals.sort((a, b) => new Date(b.referralDate).getTime() - new Date(a.referralDate).getTime());
     }, []);
-    
-    const handleRowClick = (patientId: string) => {
-        router.push(`/admin/patients/${patientId}`);
-    }
 
     return (
         <Card>
@@ -71,17 +66,31 @@ export default function ReferralsPage() {
                     </TableHeader>
                     <TableBody>
                         {allReferrals.length > 0 ? allReferrals.map((referral) => (
-                            <TableRow key={`${referral.patientId}-${referral.referralDate}`} onClick={() => handleRowClick(referral.patientId)} className="cursor-pointer">
-                                <TableCell className="font-medium flex items-center gap-3">
-                                     <Avatar>
-                                        <AvatarImage src={referral.patientAvatar} alt={referral.patientName} data-ai-hint="person" />
-                                        <AvatarFallback>{referral.patientName.charAt(0)}</AvatarFallback>
-                                    </Avatar>
-                                    {referral.patientName}
+                           <TableRow key={`${referral.patientId}-${referral.referralDate}`} className="cursor-pointer as-child">
+                                <TableCell className="font-medium">
+                                     <Link href={`/admin/patients/${referral.patientId}`} className="flex items-center gap-3">
+                                        <Avatar>
+                                            <AvatarImage src={referral.patientAvatar} alt={referral.patientName} data-ai-hint="person" />
+                                            <AvatarFallback>{referral.patientName.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        {referral.patientName}
+                                     </Link>
                                 </TableCell>
-                                <TableCell>{referral.referredTo}</TableCell>
-                                <TableCell>{format(parseISO(referral.referralDate), 'PPP')}</TableCell>
-                                <TableCell>{referral.referringDoctor}</TableCell>
+                                <TableCell>
+                                    <Link href={`/admin/patients/${referral.patientId}`} className="block w-full h-full">
+                                        {referral.referredTo}
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                    <Link href={`/admin/patients/${referral.patientId}`} className="block w-full h-full">
+                                        {format(parseISO(referral.referralDate), 'PPP')}
+                                    </Link>
+                                </TableCell>
+                                <TableCell>
+                                    <Link href={`/admin/patients/${referral.patientId}`} className="block w-full h-full">
+                                        {referral.referringDoctor}
+                                    </Link>
+                                </TableCell>
                             </TableRow>
                         )) : (
                             <TableRow>

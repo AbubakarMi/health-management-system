@@ -16,6 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 const newCaseSchema = z.object({
   deceasedName: z.string().min(3, "Name is required."),
@@ -89,15 +90,33 @@ export default function AutopsyPage() {
                         </TableHeader>
                         <TableBody>
                             {cases.map((caseItem) => (
-                                <TableRow key={caseItem.id}>
-                                    <TableCell className="font-medium">{caseItem.id}</TableCell>
-                                    <TableCell>{caseItem.deceasedName}</TableCell>
-                                    <TableCell>{caseItem.dateRegistered}</TableCell>
-                                    <TableCell>{caseItem.assignedDoctor}</TableCell>
+                                <TableRow key={caseItem.id} className="cursor-pointer as-child">
+                                    <TableCell className="font-medium">
+                                        <Link href={`/admin/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                            {caseItem.id}
+                                        </Link>
+                                    </TableCell>
                                     <TableCell>
-                                        <Badge variant={getStatusVariant(caseItem.status)} className={caseItem.status === 'Completed' ? 'bg-green-500' : ''}>
-                                            {caseItem.status}
-                                        </Badge>
+                                         <Link href={`/admin/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                            {caseItem.deceasedName}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                         <Link href={`/admin/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                            {caseItem.dateRegistered}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                         <Link href={`/admin/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                            {caseItem.assignedDoctor}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                         <Link href={`/admin/autopsy/${caseItem.id}`} className="block w-full h-full">
+                                            <Badge variant={getStatusVariant(caseItem.status)} className={caseItem.status === 'Completed' ? 'bg-green-500' : ''}>
+                                                {caseItem.status}
+                                            </Badge>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))}
