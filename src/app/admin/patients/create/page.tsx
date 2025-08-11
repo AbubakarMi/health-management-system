@@ -271,7 +271,6 @@ export default function CreatePatientPage() {
                                                     <FormLabel>Date of Birth</FormLabel>
                                                     <Popover>
                                                         <PopoverTrigger asChild>
-                                                          <FormControl>
                                                             <Button
                                                                 variant={"outline"}
                                                                 className={cn(
@@ -286,7 +285,6 @@ export default function CreatePatientPage() {
                                                                     <span>Pick a date</span>
                                                                 )}
                                                             </Button>
-                                                          </FormControl>
                                                         </PopoverTrigger>
                                                         <PopoverContent className="w-auto p-0" align="start">
                                                             <Calendar
@@ -382,3 +380,5 @@ export default function CreatePatientPage() {
         </>
     );
 }
+
+    
