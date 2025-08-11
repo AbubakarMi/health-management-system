@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { users } from '@/lib/constants';
+import { users, roleNames } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn } from 'lucide-react';
 
@@ -22,6 +22,11 @@ export default function LoginPage() {
     const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
 
     if (user && user.password === password) {
+      // Store user info in session storage to be picked up by the dashboard
+      sessionStorage.setItem('welcomeUser', JSON.stringify({
+          name: user.name,
+          role: roleNames[user.role],
+      }));
       router.push(`/${user.role}`);
     } else {
       toast({

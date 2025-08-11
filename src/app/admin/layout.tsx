@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AppHeader } from "@/components/shared/header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { IncomingCallDialog } from "@/components/incoming-call-dialog";
+import { WelcomeDialog } from "@/components/welcome-dialog";
 
 export const CallContext = React.createContext({
   isReceivingCall: false,
@@ -18,6 +19,22 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [isReceivingCall, setIsReceivingCall] = useState(false);
+  const [welcomeUser, setWelcomeUser] = useState<{ name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    // Check for a welcome message once on mount
+    const userJson = sessionStorage.getItem('welcomeUser');
+    if (userJson) {
+      try {
+        const user = JSON.parse(userJson);
+        setWelcomeUser(user);
+        // Clear the item so it doesn't show again on refresh
+        sessionStorage.removeItem('welcomeUser');
+      } catch (e) {
+        console.error("Failed to parse welcome user from session storage", e);
+      }
+    }
+  }, []);
 
   return (
     <CallContext.Provider value={{ isReceivingCall, setIsReceivingCall }}>
@@ -40,6 +57,13 @@ export default function AdminLayout({
             isOpen={isReceivingCall}
             onClose={() => setIsReceivingCall(false)}
           />
+          {welcomeUser && (
+              <WelcomeDialog
+                  user={welcomeUser}
+                  isOpen={!!welcomeUser}
+                  onClose={() => setWelcomeUser(null)}
+              />
+          )}
       </SidebarProvider>
     </CallContext.Provider>
   );
