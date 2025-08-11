@@ -351,6 +351,5 @@ export default function CreatePatientPage() {
             </Dialog>
         </>
     );
-}
 
     
