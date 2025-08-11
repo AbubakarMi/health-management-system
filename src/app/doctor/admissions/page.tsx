@@ -80,12 +80,14 @@ export default function DoctorAdmissionsPage() {
           <TableBody>
             {myAdmittedPatients.length > 0 ? myAdmittedPatients.map((patient) => (
               <TableRow key={patient.id}>
-                <TableCell className="font-medium flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
-                    <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  {patient.name}
+                <TableCell className="font-medium">
+                    <Link href={`/doctor/patients/${patient.id}`} className="flex items-center gap-3">
+                        <Avatar>
+                            <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
+                            <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        {patient.name}
+                    </Link>
                 </TableCell>
                 <TableCell>
                     {patient.admission.roomNumber ? 
