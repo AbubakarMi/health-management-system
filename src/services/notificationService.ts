@@ -1,3 +1,4 @@
+
 'use server';
 
 import { communicationManager, detailedPatients, Communication } from '@/lib/constants';
@@ -11,8 +12,8 @@ import { communicationManager, detailedPatients, Communication } from '@/lib/con
 // 4. Uncomment the relevant code blocks below.
 
 // Example using Twilio for SMS
-// import Twilio from 'twilio';
-// const twilioClient = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+import Twilio from 'twilio';
+const twilioClient = Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 // Example using SendGrid for Email
 // import sgMail from '@sendgrid/mail';
@@ -41,20 +42,16 @@ export async function sendNotification(communication: Communication): Promise<Se
 
     try {
         if (communication.method === 'SMS' || communication.method === 'WhatsApp') {
-            // --- REAL TWILIO IMPLEMENTATION (UNCOMMENT TO USE) ---
-            /*
-            if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE_NUMBER) {
+            // --- REAL TWILIO IMPLEMENTATION ---
+            if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_MESSAGING_SERVICE_SID) {
                 throw new Error("Twilio credentials are not configured in .env file.");
             }
             await twilioClient.messages.create({
                 body: communication.message,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: patient.phone, // Ensure patient.phone is in E.164 format (e.g., +1234567890)
+                messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
+                to: patient.phone, // Ensure patient.phone is in E.164 format (e.g., +2348012345678)
             });
-            */
-            console.log(`--- SIMULATION ---`);
-            console.log(`SMS to ${patient.phone}: "${communication.message}"`);
-            console.log(`------------------`);
+
 
         } else if (communication.method === 'Email') {
             // --- REAL SENDGRID IMPLEMENTATION (UNCOMMENT TO USE) ---
