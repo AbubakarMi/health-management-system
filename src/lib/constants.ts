@@ -1,5 +1,4 @@
 
-
 import { 
     LayoutDashboard, 
     Users, 
@@ -330,6 +329,7 @@ export type Patient = {
   admission: AdmissionDetails;
   avatarUrl?: string;
   fingerprintId?: string;
+  preferredCommunicationMethod?: 'SMS' | 'Email' | 'WhatsApp';
 };
 
 
@@ -383,7 +383,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Musa Adebayo'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=MA",
-    fingerprintId: "FP_17163052321"
+    fingerprintId: "FP_17163052321",
+    preferredCommunicationMethod: 'SMS',
   },
   { 
     id: 'PF-000002-B1C',
@@ -404,7 +405,8 @@ export const detailedPatients: Patient[] = [
     prescriptions: initialPrescriptions.filter(p => p.patientName === 'Zainab Lawal'),
     labTests: initialLabTests.filter(t => t.patient === 'Zainab Lawal'),
     admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: '101', bedNumber: 'A' },
-    avatarUrl: "https://placehold.co/100x100.png?text=ZL"
+    avatarUrl: "https://placehold.co/100x100.png?text=ZL",
+    preferredCommunicationMethod: 'Email',
   },
   { 
     id: 'PM-000003-D9F',
@@ -424,7 +426,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Ibrahim Ali'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=IA",
-    fingerprintId: "FP_17163052322"
+    fingerprintId: "FP_17163052322",
+    preferredCommunicationMethod: 'WhatsApp',
   },
   { 
     id: 'PF-000004-G2H',
@@ -443,7 +446,8 @@ export const detailedPatients: Patient[] = [
     prescriptions: initialPrescriptions.filter(p => p.patientName === 'Halima Abubakar'),
     labTests: initialLabTests.filter(t => t.patient === 'Halima Abubakar'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=HA"
+    avatarUrl: "https://placehold.co/100x100.png?text=HA",
+    preferredCommunicationMethod: 'SMS',
   },
   { 
     id: 'PM-000005-K3L',
@@ -463,7 +467,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Muhammad Bello'),
     admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=MB",
-    fingerprintId: "FP_17163052323"
+    fingerprintId: "FP_17163052323",
+    preferredCommunicationMethod: 'Email',
   },
    {
     id: 'PF-000006-R2D',
@@ -482,7 +487,8 @@ export const detailedPatients: Patient[] = [
     prescriptions: [],
     labTests: initialLabTests.filter(t => t.patient === 'Samira Umar'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=SU"
+    avatarUrl: "https://placehold.co/100x100.png?text=SU",
+    preferredCommunicationMethod: 'WhatsApp',
   },
   {
     id: 'PM-000007-S1B',
@@ -502,7 +508,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Abdulkarim Sani'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=AS",
-    fingerprintId: "FP_17163052324"
+    fingerprintId: "FP_17163052324",
+    preferredCommunicationMethod: 'SMS',
   }
 ];
 

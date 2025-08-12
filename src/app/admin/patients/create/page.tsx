@@ -31,6 +31,7 @@ const patientSchema = z.object({
   maritalStatus: z.enum(["Single", "Married", "Divorced", "Widowed"]),
   address: z.string().min(5, "Address is required."),
   phone: z.string().min(10, "A valid phone number is required."),
+  preferredCommunicationMethod: z.enum(["SMS", "Email", "WhatsApp"]),
   emergencyContactName: z.string().min(3, "Emergency contact name is required."),
   emergencyContactRelationship: z.string().min(2, "Relationship is required."),
   emergencyContactPhone: z.string().min(10, "A valid phone number is required."),
@@ -45,7 +46,7 @@ const patientSchema = z.object({
 });
 
 type PatientFormData = z.infer<typeof patientSchema>;
-const step1Fields: (keyof PatientFormData)[] = ["name", "dateOfBirth", "gender", "maritalStatus", "address", "phone", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"];
+const step1Fields: (keyof PatientFormData)[] = ["name", "dateOfBirth", "gender", "maritalStatus", "address", "phone", "preferredCommunicationMethod", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"];
 const step2Fields: (keyof PatientFormData)[] = ["bloodType", "allergies", "pastMedicalHistory", "familyMedicalHistory"];
 
 export default function CreatePatientPage() {
@@ -66,6 +67,7 @@ export default function CreatePatientPage() {
             allergies: "",
             pastMedicalHistory: "",
             familyMedicalHistory: "",
+            preferredCommunicationMethod: "SMS",
         }
     });
 
@@ -120,7 +122,8 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
             medicalHistory: [],
             prescriptions: [],
             labTests: [],
-            admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null }
+            admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+            preferredCommunicationMethod: values.preferredCommunicationMethod,
         });
 
 
@@ -185,6 +188,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <FormField control={form.control} name="address" render={({ field }) => (<FormItem className="md:col-span-2"><FormLabel>Home Address</FormLabel><FormControl><Input placeholder="e.g., 123 Main Street, Abuja" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                             <FormField control={form.control} name="phone" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="e.g., 08012345678" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                             <FormField control={form.control} name="preferredCommunicationMethod" render={({ field }) => (<FormItem><FormLabel>Preferred Communication</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select a method" /></SelectTrigger></FormControl><SelectContent><SelectItem value="SMS">SMS</SelectItem><SelectItem value="Email">Email</SelectItem><SelectItem value="WhatsApp">WhatsApp</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
                                         </div>
                                     </div>
                                     <div className="space-y-4">
