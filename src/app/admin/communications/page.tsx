@@ -36,10 +36,6 @@ export default function CommunicationsPage() {
         }
     }, [communications]);
     
-    const refreshCommunications = () => {
-        setCommunications([...communicationManager.getCommunications()]);
-    }
-
     const handleSend = async (comm: Communication) => {
         setIsSending(comm.id);
         const result = await sendNotification(comm);
@@ -48,8 +44,12 @@ export default function CommunicationsPage() {
                 title: "Message Sent",
                 description: `A ${comm.type} notification has been sent to ${comm.patientName}.`
             });
-            // Manually refresh the communications list to reflect the change immediately.
-            refreshCommunications();
+            // CORRECTED: Directly update the state to force re-render
+            setCommunications(prevComms => 
+                prevComms.map(c => 
+                    c.id === comm.id ? { ...c, status: 'Sent' } : c
+                )
+            );
         } else {
             toast({
                 variant: "destructive",

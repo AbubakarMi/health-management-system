@@ -1477,16 +1477,13 @@ export const messageManager = new MessageManager(initialMessages);
 
 // Initialize a sample follow-up
 const abubakar = detailedPatients.find(p => p.id === 'PM-000008-T9C');
-if (abubakar) {
+if (abubakar && !communicationManager.getCommunications().some(c => c.patientName === abubakar.name)) {
     const followUpDate = new Date();
     followUpDate.setDate(followUpDate.getDate() + 7); // 1 week from now
     patientManager.scheduleFollowUp(abubakar.id, followUpDate, "Review initial check-up results", abubakar.assignedDoctor);
-
-    const testFollowUpDate = new Date();
-    testFollowUpDate.setDate(testFollowUpDate.getDate() + 14); // 2 weeks from now
-    patientManager.scheduleFollowUp(abubakar.id, testFollowUpDate, "Check on medication progress", abubakar.assignedDoctor);
 }
     
+
 
 
 
