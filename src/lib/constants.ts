@@ -726,9 +726,10 @@ class PatientManager {
             const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
             communicationManager.logCommunication({
                 patientName: patient.name,
+                patientContact: contact,
                 type: 'Follow-up',
                 method: patient.preferredCommunicationMethod || 'SMS',
-                message: `Reminder sent to ${contact}: Your follow-up on ${date.toISOString().split('T')[0]} regarding "${reason}". (PDF summary attached)`
+                message: `Reminder for your follow-up on ${date.toISOString().split('T')[0]} regarding "${reason}". (PDF summary attached)`
             });
             this.notify();
         }
@@ -1240,9 +1241,10 @@ class LabTestManager {
           const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
           communicationManager.logCommunication({
             patientName: patient.name,
+            patientContact: contact,
             type: 'Lab Result',
             method: patient.preferredCommunicationMethod || 'SMS',
-            message: `Message sent to ${contact}: Your lab results for "${updatedTest.test}" are ready.`
+            message: `Your lab results for "${updatedTest.test}" are ready.`
           });
           patientManager.notify();
         }
@@ -1405,10 +1407,12 @@ class AutopsyManager {
 export type Communication = {
     id: string;
     patientName: string;
+    patientContact: string;
     type: 'Lab Result' | 'Follow-up';
     method: 'SMS' | 'Email' | 'WhatsApp';
     message: string;
     timestamp: string;
+    status: 'Pending' | 'Sent';
 };
 
 class CommunicationManager {
@@ -1419,14 +1423,23 @@ class CommunicationManager {
         return this.communications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
     }
 
-    logCommunication(data: Omit<Communication, 'id' | 'timestamp'>) {
+    logCommunication(data: Omit<Communication, 'id' | 'timestamp' | 'status'>) {
         const newComm: Communication = {
             ...data,
             id: `comm-${Date.now()}`,
             timestamp: new Date().toISOString(),
+            status: 'Pending',
         };
         this.communications.unshift(newComm);
         this.notify();
+    }
+
+    markAsSent(id: string) {
+        const comm = this.communications.find(c => c.id === id);
+        if (comm) {
+            comm.status = 'Sent';
+            this.notify();
+        }
     }
 
     subscribe(callback: (communications: Communication[]) => void) {
