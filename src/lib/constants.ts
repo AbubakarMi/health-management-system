@@ -527,7 +527,7 @@ export const detailedPatients: Patient[] = [
     dateOfBirth: '1988-02-14',
     address: '1, Sultan Abubakar Way, Wuse, Abuja',
     email: 'abubakarmi131@gmail.com',
-    phone: '07042526971',
+    phone: '+2347042526971',
     maritalStatus: 'Married',
     condition: 'Stable', 
     lastVisit: '2024-05-20',
@@ -1478,4 +1478,5 @@ if (abubakar) {
     patientManager.scheduleFollowUp(abubakar.id, testFollowUpDate, "Check on medication progress", abubakar.assignedDoctor);
 }
     
+
 
