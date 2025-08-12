@@ -6,15 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { communicationManager, Communication } from "@/lib/constants";
-import { MessageSquare, Mail, Smartphone, Send, History } from "lucide-react";
+import { MessageSquare, Mail, Smartphone, Send, History, Loader2 } from "lucide-react";
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { sendNotification } from "@/services/notificationService";
 
 export default function CommunicationsPage() {
     const [communications, setCommunications] = useState<Communication[]>([]);
+    const [isSending, setIsSending] = useState<string | null>(null); // Store ID of comm being sent
     const { toast } = useToast();
 
     useEffect(() => {
@@ -33,12 +35,22 @@ export default function CommunicationsPage() {
         }
     }, [communications]);
 
-    const handleSend = (comm: Communication) => {
-        communicationManager.markAsSent(comm.id);
-        toast({
-            title: "Message Sent (Simulated)",
-            description: `A ${comm.type} notification has been logged as sent to ${comm.patientName}.`
-        })
+    const handleSend = async (comm: Communication) => {
+        setIsSending(comm.id);
+        const result = await sendNotification(comm);
+        if (result.success) {
+            toast({
+                title: "Message Sent (Simulated)",
+                description: `A ${comm.type} notification has been logged as sent to ${comm.patientName}.`
+            });
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Failed to Send",
+                description: result.message,
+            });
+        }
+        setIsSending(null);
     };
 
     const getIcon = (method: string) => {
@@ -88,7 +100,10 @@ export default function CommunicationsPage() {
                             <TableCell className="text-right">
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
-                                        <Button size="sm"><Send className="mr-2 h-4 w-4"/>Send</Button>
+                                        <Button size="sm" disabled={isSending === comm.id}>
+                                            {isSending === comm.id ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Send className="mr-2 h-4 w-4"/>}
+                                            {isSending === comm.id ? 'Sending...' : 'Send'}
+                                        </Button>
                                     </AlertDialogTrigger>
                                     <AlertDialogContent>
                                         <AlertDialogHeader>
