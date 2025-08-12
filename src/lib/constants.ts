@@ -25,7 +25,8 @@ import {
     Microscope,
     CheckCircle,
     Database,
-    Phone
+    Phone,
+    Ambulance
 } from "lucide-react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
@@ -854,6 +855,13 @@ export const navLinks: NavLinks = {
             ]
         },
         {
+            label: "Dispatch Center",
+            links: [
+                { href: "/admin/calls", label: "Call History", icon: Phone },
+                { href: "/admin/ambulance", label: "Ambulance", icon: Ambulance },
+            ]
+        },
+        {
             label: "Administration",
             links: [
                 { href: "/admin/billing", label: "Billing", icon: CircleDollarSign },
@@ -862,7 +870,6 @@ export const navLinks: NavLinks = {
             ]
         },
         { href: "/admin/staff", label: "Staff", icon: UserCog },
-        { href: "/admin/calls", label: "Call History", icon: Phone },
     ],
     doctor: [
         { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
