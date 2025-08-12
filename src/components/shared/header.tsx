@@ -74,55 +74,53 @@ export function AppHeader({ role }: AppHeaderProps) {
             />
           </div>
         </form>
-         {role === 'Admin' && (
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button variant="outline" size="icon" className="relative">
-                        <Bell className="h-[1.2rem] w-[1.2rem]" />
-                        {unreadCount > 0 && (
-                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                                {unreadCount}
-                            </span>
-                        )}
-                        <span className="sr-only">Toggle notifications</span>
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 p-0">
-                    <div className="p-3 font-semibold text-sm border-b">Notifications</div>
-                    <ScrollArea className="h-96">
-                        {notifications.length > 0 ? (
-                             notifications.map(notification => (
-                                <Link
-                                    key={notification.id}
-                                    href={notification.href}
-                                    onClick={() => handleNotificationClick(notification)}
-                                    className={cn(
-                                        "block p-3 hover:bg-muted",
-                                        !notification.read && "bg-primary/10"
-                                    )}
-                                >
-                                    <p className="text-sm">{notification.message}</p>
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {formatDistanceToNow(parseISO(notification.timestamp), { addSuffix: true })}
-                                    </p>
-                                </Link>
-                             ))
-                        ) : (
-                            <div className="p-4 text-center text-sm text-muted-foreground">
-                                You have no new notifications.
-                            </div>
-                        )}
-                    </ScrollArea>
-                     {notifications.length > 0 && (
-                        <div className="p-2 border-t">
-                            <Button variant="link" size="sm" className="w-full" onClick={() => notificationManager.markAllAsRead()}>
-                                Mark all as read
-                            </Button>
+         <Popover>
+            <PopoverTrigger asChild>
+                <Button variant="outline" size="icon" className="relative">
+                    <Bell className="h-[1.2rem] w-[1.2rem]" />
+                    {unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                            {unreadCount}
+                        </span>
+                    )}
+                    <span className="sr-only">Toggle notifications</span>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0">
+                <div className="p-3 font-semibold text-sm border-b">Notifications</div>
+                <ScrollArea className="h-96">
+                    {notifications.length > 0 ? (
+                         notifications.map(notification => (
+                            <Link
+                                key={notification.id}
+                                href={notification.href}
+                                onClick={() => handleNotificationClick(notification)}
+                                className={cn(
+                                    "block p-3 hover:bg-muted",
+                                    !notification.read && "bg-primary/10"
+                                )}
+                            >
+                                <p className="text-sm">{notification.message}</p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    {formatDistanceToNow(parseISO(notification.timestamp), { addSuffix: true })}
+                                </p>
+                            </Link>
+                         ))
+                    ) : (
+                        <div className="p-4 text-center text-sm text-muted-foreground">
+                            You have no new notifications.
                         </div>
                     )}
-                </PopoverContent>
-            </Popover>
-        )}
+                </ScrollArea>
+                 {notifications.length > 0 && (
+                    <div className="p-2 border-t">
+                        <Button variant="link" size="sm" className="w-full" onClick={() => notificationManager.markAllAsRead()}>
+                            Mark all as read
+                        </Button>
+                    </div>
+                )}
+            </PopoverContent>
+        </Popover>
         <ThemeToggle />
         <Avatar>
           <AvatarImage src="https://placehold.co/40x40.png" alt="@user" />

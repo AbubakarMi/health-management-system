@@ -1,4 +1,5 @@
 
+
 import { 
     LayoutDashboard, 
     Users, 
@@ -685,6 +686,10 @@ class PatientManager {
                 doctor,
             };
             patient.medicalHistory.unshift(followUpVisit);
+            notificationManager.createNotification(
+                `A follow-up for ${patient.name} has been scheduled.`,
+                '/admin/follow-ups'
+            );
             this.notify();
         }
     }
@@ -714,6 +719,10 @@ class PatientManager {
             if (patient.admission.isAdmitted) {
                 this.dischargePatient(patientId, true);
             }
+            notificationManager.createNotification(
+                `${patient.name} has been marked as deceased.`,
+                `/admin/deceased`
+            );
             this.notify();
         }
     }
@@ -728,6 +737,10 @@ class PatientManager {
                 details: referralLetter,
                 doctor: doctorName
             });
+            notificationManager.createNotification(
+                `${patient.name} has been referred to ${receivingEntity}.`,
+                `/admin/referrals`
+            );
             this.notify();
         }
     }
@@ -958,6 +971,10 @@ class PrescriptionManager {
     this.prescriptions.unshift(newPrescription);
     patient.prescriptions.unshift(newPrescription);
     
+    notificationManager.createNotification(
+        `New prescription for ${prescription.patientName} requires attention.`,
+        '/pharmacist/prescriptions'
+    );
     this.notify();
     patientManager.notify(); // Notify patient manager to trigger UI updates
   }
@@ -975,6 +992,10 @@ class PrescriptionManager {
         const prescription = this.prescriptions.find(p => p.id === prescriptionId);
         if (prescription) {
             prescription.suggestion = { ...suggestion, status: 'pending' };
+            notificationManager.createNotification(
+                `Pharmacist suggested an alternative for ${prescription.patientName}.`,
+                `/doctor/patients/${patientId}`
+            );
             this.notify();
             patientManager.notify();
         }
@@ -1149,6 +1170,10 @@ class LabTestManager {
         this.labTests.unshift(newTest);
         patient.labTests.unshift(newTest);
         
+        notificationManager.createNotification(
+            `A new lab test for ${patient.name} has been ordered.`,
+            '/labtech/tests'
+        );
         this.notify();
         patientManager.notify();
     }
@@ -1171,6 +1196,10 @@ class LabTestManager {
                     details: `Results: ${updatedTest.results}`,
                     doctor: 'Lab'
                 });
+                notificationManager.createNotification(
+                    `Lab results for ${patient?.name} are ready.`,
+                    `/doctor/patients/${patient?.id}`
+                );
                  patientManager.notify();
             }
             this.notify();
@@ -1290,6 +1319,10 @@ class AutopsyManager {
             status: 'Awaiting Autopsy',
         };
         this.cases.unshift(newCase);
+        notificationManager.createNotification(
+            `New autopsy case for ${newCase.deceasedName} assigned to you.`,
+            `/doctor/autopsy/${newCase.id}`
+        );
         this.notify();
     }
 
@@ -1307,6 +1340,10 @@ class AutopsyManager {
         const caseToUpdate = this.cases.find(c => c.id === caseId);
         if (caseToUpdate && caseToUpdate.status === 'Report Pending') {
             caseToUpdate.status = 'Completed';
+            notificationManager.createNotification(
+                `Autopsy case ${caseId} for ${caseToUpdate.deceasedName} has been completed.`,
+                `/admin/autopsy/completed`
+            );
             this.notify();
         }
     }
