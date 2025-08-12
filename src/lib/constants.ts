@@ -695,7 +695,7 @@ class PatientManager {
             patient.medicalHistory.unshift(followUpVisit);
             const commsMethod = patient.preferredCommunicationMethod || 'SMS';
             notificationManager.createNotification(
-                `Follow-up for ${patient.name} is due. Notify via ${commsMethod}.`,
+                `[Action Required] Send follow-up reminder to ${patient.name} via ${commsMethod} for their appointment tomorrow.`,
                 `/admin/patients/${patient.id}`
             );
             this.notify();
@@ -1163,78 +1163,81 @@ class LabTestManager {
         const patient = detailedPatients.find(p => p.name === testRequest.patient);
         if (!patient || patient.medicalHistory.length === 0) return; // Cannot add if no visits exist
 
-        // Associate with the most recent visit
-        const lastVisitId = patient.medicalHistory[0].id;
-        
-        const newTest: LabTest = {
-            ...testRequest,
-            id: `lab-${Date.now()}`,
-            collected: new Date().toISOString().split('T')[0],
-            status: 'Pending',
-            price: 0, // Price will be set by lab tech upon completion
-            invoiced: false,
-            visitId: lastVisitId,
-        };
-        this.labTests.unshift(newTest);
-        patient.labTests.unshift(newTest);
-        
-        notificationManager.createNotification(
-            `A new lab test for ${patient.name} has been ordered.`,
-            '/labtech/tests'
+    // Associate with the most recent visit
+    const lastVisitId = patient.medicalHistory[0].id;
+    
+    const newTest: LabTest = {
+      ...testRequest,
+      id: `lab-${Date.now()}`,
+      collected: new Date().toISOString().split("T")[0],
+      status: "Pending",
+      price: 0, // Price will be set by lab tech upon completion
+      invoiced: false,
+      visitId: lastVisitId,
+    };
+    this.labTests.unshift(newTest);
+    patient.labTests.unshift(newTest);
+
+    notificationManager.createNotification(
+      `A new lab test for ${patient.name} has been ordered.`,
+      "/labtech/tests"
+    );
+    this.notify();
+    patientManager.notify();
+  }
+
+  updateLabTest(testId: string, updates: Partial<Omit<LabTest, "id">>) {
+    const testIndex = this.labTests.findIndex((t) => t.id === testId);
+    if (testIndex !== -1) {
+      const originalTest = this.labTests[testIndex];
+      const updatedTest = { ...originalTest, ...updates };
+      this.labTests[testIndex] = updatedTest;
+
+      // If completed, add results to medical history
+      if (
+        updates.status === "Completed" &&
+        originalTest.status !== "Completed"
+      ) {
+        const patient = detailedPatients.find(
+          (p) => p.name === updatedTest.patient
         );
-        this.notify();
-        patientManager.notify();
-    }
-
-    updateLabTest(testId: string, updates: Partial<Omit<LabTest, 'id'>>) {
-        const testIndex = this.labTests.findIndex(t => t.id === testId);
-        if (testIndex !== -1) {
-            
-            const originalTest = this.labTests[testIndex];
-            const updatedTest = { ...originalTest, ...updates };
-            this.labTests[testIndex] = updatedTest;
-
-            // If completed, add results to medical history
-            if (updates.status === 'Completed' && originalTest.status !== 'Completed') {
-                const patient = detailedPatients.find(p => p.name === updatedTest.patient);
-                if (patient) {
-                     patient.medicalHistory.unshift({
-                        id: `visit-${Date.now()}`,
-                        date: new Date().toISOString().split('T')[0],
-                        event: `Lab Test Results: ${updatedTest.test}`,
-                        details: `Results: ${updatedTest.results}`,
-                        doctor: 'Lab'
-                    });
-                    notificationManager.createNotification(
-                        `Lab results for ${patient.name} are ready.`,
-                        `/doctor/patients/${patient.id}`
-                    );
-                     const commsMethod = patient.preferredCommunicationMethod || 'SMS';
-                    notificationManager.createNotification(
-                        `Lab results for ${patient.name} are ready. Notify patient via ${commsMethod}.`,
-                        `/admin/patients/${patient.id}`
-                    );
-                    patientManager.notify();
-                }
-            }
-            this.notify();
+        if (patient) {
+          patient.medicalHistory.unshift({
+            id: `visit-${Date.now()}`,
+            date: new Date().toISOString().split("T")[0],
+            event: `Lab Test Results: ${updatedTest.test}`,
+            details: `Results: ${updatedTest.results}`,
+            doctor: "Lab",
+          });
+          notificationManager.createNotification(
+            `Lab results for ${patient.name} are ready.`,
+            `/doctor/patients/${patient.id}`
+          );
+          const commsMethod = patient.preferredCommunicationMethod || "SMS";
+          notificationManager.createNotification(
+            `[Action Required] Send lab results to ${patient.name} via ${commsMethod}.`,
+            `/admin/patients/${patient.id}`
+          );
+          patientManager.notify();
         }
+      }
+      this.notify();
     }
+  }
 
-    subscribe(callback: (tests: LabTest[]) => void) {
-        this.subscribers.push(callback);
-        return () => {
-            this.subscribers = this.subscribers.filter(sub => sub !== callback);
-        };
-    }
+  subscribe(callback: (tests: LabTest[]) => void) {
+    this.subscribers.push(callback);
+    return () => {
+      this.subscribers = this.subscribers.filter((sub) => sub !== callback);
+    };
+  }
 
-    private notify() {
-        this.subscribers.forEach(callback => callback(this.labTests));
-    }
+  private notify() {
+    this.subscribers.forEach((callback) => callback(this.labTests));
+  }
 }
 
 export const labTestManager = new LabTestManager(initialLabTests);
-
 
 export type InvoiceItem = {
     id: string; // prescription or lab test id
@@ -1375,3 +1378,5 @@ class AutopsyManager {
     }
 }
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
+
+    
