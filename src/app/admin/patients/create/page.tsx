@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight } from "lucide-react";
+import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -37,12 +37,15 @@ const patientSchema = z.object({
   allergies: z.string().optional(),
   pastMedicalHistory: z.string().optional(),
   familyMedicalHistory: z.string().optional(),
+  // Step 3
+  appointmentType: z.enum(["New Visit", "Emergency"]),
+  department: z.enum(["General Medicine", "Cardiology", "Neurology", "Oncology", "Pediatrics"]),
 });
 
 type PatientFormData = z.infer<typeof patientSchema>;
 const step1Fields: (keyof PatientFormData)[] = ["name", "dateOfBirth", "gender", "maritalStatus", "address", "phone", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"];
 const step2Fields: (keyof PatientFormData)[] = ["bloodType", "allergies", "pastMedicalHistory", "familyMedicalHistory"];
-
+const step3Fields: (keyof PatientFormData)[] = ["appointmentType", "department"];
 
 export default function CreatePatientPage() {
     const [step, setStep] = useState(1);
@@ -51,10 +54,27 @@ export default function CreatePatientPage() {
 
     const form = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
+        defaultValues: {
+            gender: "Male",
+            maritalStatus: "Single",
+            bloodType: "O+",
+            appointmentType: "New Visit",
+            department: "General Medicine",
+            allergies: "",
+            pastMedicalHistory: "",
+            familyMedicalHistory: "",
+        }
     });
 
     const onSubmit = (values: PatientFormData) => {
         const newPatientId = `P${Date.now()}`;
+        const clinicalSummary = `
+Initial Appointment: ${values.appointmentType} to ${values.department}.
+Known Allergies: ${values.allergies || 'None specified'}.
+Past Medical History: ${values.pastMedicalHistory || 'None specified'}.
+Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
+        `.trim();
+        
         patientManager.getPatients().push({
             id: newPatientId,
             name: values.name,
@@ -62,11 +82,11 @@ export default function CreatePatientPage() {
             dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
             address: values.address,
             maritalStatus: values.maritalStatus,
-            condition: 'Stable',
+            condition: 'Stable', 
             lastVisit: format(new Date(), "yyyy-MM-dd"),
             bloodType: values.bloodType,
             assignedDoctor: 'Dr. Aisha Bello', 
-            clinicalSummary: `Known Allergies: ${values.allergies || 'None'}. Past History: ${values.pastMedicalHistory || 'None'}.`,
+            clinicalSummary,
             medicalHistory: [],
             prescriptions: [],
             labTests: [],
@@ -82,14 +102,20 @@ export default function CreatePatientPage() {
     };
 
     const handleNext = async () => {
-        const isValid = await form.trigger(step1Fields);
+        let isValid = false;
+        if (step === 1) {
+            isValid = await form.trigger(step1Fields);
+        } else if (step === 2) {
+            isValid = await form.trigger(step2Fields);
+        }
+        
         if (isValid) {
-            setStep(2);
+            setStep(s => s + 1);
         }
     }
     
     const handleBack = () => {
-        setStep(1);
+        setStep(s => s - 1);
     }
 
     return (
@@ -110,7 +136,7 @@ export default function CreatePatientPage() {
                                         <UserPlus className="w-6 h-6" />
                                         <div>
                                             <CardTitle>Core Patient Demographics (Mandatory)</CardTitle>
-                                            <CardDescription>Step 1 of 2: Enter the required information to register a new patient.</CardDescription>
+                                            <CardDescription>Step 1 of 3: Enter the required information to register a new patient.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -152,7 +178,7 @@ export default function CreatePatientPage() {
                                         <UserPlus className="w-6 h-6" />
                                         <div>
                                             <CardTitle>Medical Information (For Treatment & Safety)</CardTitle>
-                                            <CardDescription>Step 2 of 2: Provide key medical details for the patient.</CardDescription>
+                                            <CardDescription>Step 2 of 3: Provide key medical details for the patient.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -214,6 +240,66 @@ export default function CreatePatientPage() {
                                     </div>
                                     <div className="flex justify-between">
                                         <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                        <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                    </div>
+                                </CardContent>
+                             </>
+                         )}
+                         {step === 3 && (
+                              <>
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <ClipboardCheck className="w-6 h-6" />
+                                        <div>
+                                            <CardTitle>Administrative Information</CardTitle>
+                                            <CardDescription>Step 3 of 3: Final details for patient routing.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-8">
+                                     <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="appointmentType"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Appointment Type</FormLabel>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl><SelectTrigger><SelectValue placeholder="Select appointment type" /></SelectTrigger></FormControl>
+                                                            <SelectContent>
+                                                                <SelectItem value="New Visit">New Visit</SelectItem>
+                                                                <SelectItem value="Emergency">Emergency</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                             <FormField
+                                                control={form.control}
+                                                name="department"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Department/Specialty</FormLabel>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl><SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger></FormControl>
+                                                            <SelectContent>
+                                                                <SelectItem value="General Medicine">General Medicine</SelectItem>
+                                                                <SelectItem value="Cardiology">Cardiology</SelectItem>
+                                                                <SelectItem value="Neurology">Neurology</SelectItem>
+                                                                <SelectItem value="Oncology">Oncology</SelectItem>
+                                                                <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
                                         <Button type="submit">Save and Register Patient</Button>
                                     </div>
                                 </CardContent>
@@ -225,6 +311,3 @@ export default function CreatePatientPage() {
         </div>
     );
 }
-
-
-  
