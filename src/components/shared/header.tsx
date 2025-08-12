@@ -5,8 +5,7 @@
 import { useState, useEffect, useContext } from "react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Search, Bell } from "lucide-react";
+import { Bell } from "lucide-react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { ThemeToggle } from "../theme-toggle";
 import { Button } from "../ui/button";
@@ -63,17 +62,7 @@ export function AppHeader({ role }: AppHeaderProps) {
             </p>
           </div>
       </div>
-      <div className="flex flex-1 items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search patients, meds..."
-              className="pl-8 w-full sm:w-[300px] md:w-[200px] lg:w-[300px]"
-            />
-          </div>
-        </form>
+      <div className="flex flex-1 items-center justify-end gap-4 md:gap-2 lg:gap-4">
          <Popover>
             <PopoverTrigger asChild>
                 <Button variant="outline" size="icon" className="relative">

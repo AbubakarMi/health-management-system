@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -9,27 +9,50 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { detailedPatients as initialPatients, Patient } from "@/lib/constants";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlusCircle } from "lucide-react";
+import { ArrowRight, PlusCircle, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 
 export default function Page() {
-    const [patients, setPatients] = useState(initialPatients.filter(p => p.condition !== 'Deceased'));
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const patients = useMemo(() => {
+        const activePatients = initialPatients.filter(p => p.condition !== 'Deceased');
+        if (!searchQuery) {
+            return activePatients;
+        }
+        return activePatients.filter(patient =>
+            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            patient.id.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery]);
 
     return (
         <>
             <Card>
                 <CardHeader>
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                         <div>
                             <CardTitle>All Patients</CardTitle>
                             <CardDescription>A list of all active patients in the system.</CardDescription>
                         </div>
-                        <Button asChild>
-                           <Link href="/admin/patients/create">
-                                <PlusCircle className="mr-2 h-4 w-4" />
-                                Create Patient
-                           </Link>
-                        </Button>
+                         <div className="flex items-center gap-2 w-full md:w-auto">
+                            <div className="relative w-full md:w-64">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    placeholder="Search patients..."
+                                    className="pl-8"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            <Button asChild>
+                               <Link href="/admin/patients/create">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    Create Patient
+                               </Link>
+                            </Button>
+                        </div>
                     </div>
                 </CardHeader>
                 <CardContent>
