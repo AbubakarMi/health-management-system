@@ -41,17 +41,26 @@ export async function sendNotification(communication: Communication): Promise<Se
     }
 
     try {
-        if (communication.method === 'SMS' || communication.method === 'WhatsApp') {
-            // --- REAL TWILIO IMPLEMENTATION ---
+        if (communication.method === 'SMS') {
+            // --- REAL TWILIO SMS IMPLEMENTATION ---
             if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_MESSAGING_SERVICE_SID) {
-                throw new Error("Twilio credentials are not configured in .env file.");
+                throw new Error("Twilio SMS credentials are not configured in .env file.");
             }
             await twilioClient.messages.create({
                 body: communication.message,
                 messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
                 to: patient.phone, // Ensure patient.phone is in E.164 format (e.g., +2348012345678)
             });
-
+        } else if (communication.method === 'WhatsApp') {
+             // --- REAL TWILIO WHATSAPP IMPLEMENTATION ---
+            if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_WHATSAPP_FROM) {
+                throw new Error("Twilio WhatsApp credentials are not configured in .env file.");
+            }
+            await twilioClient.messages.create({
+                body: communication.message,
+                from: `whatsapp:${process.env.TWILIO_WHATSAPP_FROM}`,
+                to: `whatsapp:${patient.phone}`,
+            });
 
         } else if (communication.method === 'Email') {
             // --- REAL SENDGRID IMPLEMENTATION (UNCOMMENT TO USE) ---
