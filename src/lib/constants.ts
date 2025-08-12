@@ -1,4 +1,5 @@
 
+
 import { 
     LayoutDashboard, 
     Users, 
@@ -161,9 +162,6 @@ class MessageManager {
     }
 }
 
-export const messageManager = new MessageManager(initialMessages);
-
-
 export type Notification = {
     id: string;
     message: string;
@@ -225,8 +223,6 @@ class NotificationManager {
     }
 }
 
-export const notificationManager = new NotificationManager();
-
 export type Call = {
     id: string;
     callerId: string;
@@ -268,9 +264,6 @@ class CallManager {
         this.subscribers.forEach(callback => callback(this.calls));
     }
 }
-
-export const callManager = new CallManager();
-
 
 export type Suggestion = {
     medicine: string;
@@ -317,6 +310,8 @@ export type Patient = {
   gender: 'Male' | 'Female';
   dateOfBirth: string;
   address: string;
+  email: string;
+  phone: string;
   maritalStatus: 'Single' | 'Married' | 'Divorced' | 'Widowed';
   condition: string;
   lastVisit: string;
@@ -369,6 +364,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '1975-08-22',
     address: '15, Aminu Kano Crescent, Wuse II, Abuja',
+    email: 'musa.adebayo@example.com',
+    phone: '08012345678',
     maritalStatus: 'Married',
     condition: 'Stable', 
     lastVisit: '2024-05-10',
@@ -392,6 +389,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Female',
     dateOfBirth: '1968-04-15',
     address: '22, Adetokunbo Ademola Crescent, Wuse II, Abuja',
+    email: 'zainab.lawal@example.com',
+    phone: '08023456789',
     maritalStatus: 'Widowed',
     condition: 'Critical', 
     lastVisit: '2024-05-12',
@@ -414,6 +413,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '1990-11-02',
     address: '4, Kolda Link, Wuse, Abuja',
+    email: 'ibrahim.ali@example.com',
+    phone: '08034567890',
     maritalStatus: 'Single',
     condition: 'Improving', 
     lastVisit: '2024-05-09',
@@ -435,6 +436,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Female', 
     dateOfBirth: '1985-01-30',
     address: '10, Ladi Kwali Street, Wuse, Abuja',
+    email: 'halima.abubakar@example.com',
+    phone: '08045678901',
     maritalStatus: 'Married',
     condition: 'Stable', 
     lastVisit: '2024-05-11',
@@ -455,6 +458,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '1995-06-10',
     address: '7, Libreville Street, Wuse, Abuja',
+    email: 'muhammad.bello@example.com',
+    phone: '08056789012',
     maritalStatus: 'Single',
     condition: 'Critical', 
     lastVisit: '2024-05-12',
@@ -476,6 +481,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Female',
     dateOfBirth: '1982-03-25',
     address: '3, Agadez Street, Wuse II, Abuja',
+    email: 'samira.umar@example.com',
+    phone: '08067890123',
     maritalStatus: 'Married',
     condition: 'Stable',
     lastVisit: '2024-05-14',
@@ -496,6 +503,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '2000-07-18',
     address: '18, Dalaba Street, Wuse, Abuja',
+    email: 'abdul.sani@example.com',
+    phone: '08078901234',
     maritalStatus: 'Single',
     condition: 'Normal',
     lastVisit: '2024-05-15',
@@ -510,6 +519,29 @@ export const detailedPatients: Patient[] = [
     avatarUrl: "https://placehold.co/100x100.png?text=AS",
     fingerprintId: "FP_17163052324",
     preferredCommunicationMethod: 'SMS',
+  },
+   { 
+    id: 'PM-000008-T9C',
+    name: 'Abubakar M.I.', 
+    gender: 'Male',
+    dateOfBirth: '1988-02-14',
+    address: '1, Sultan Abubakar Way, Wuse, Abuja',
+    email: 'abubakarmi131@gmail.com',
+    phone: '07042526971',
+    maritalStatus: 'Married',
+    condition: 'Stable', 
+    lastVisit: '2024-05-20',
+    bloodType: 'O+',
+    assignedDoctor: 'Dr. Aisha Bello',
+    clinicalSummary: 'New patient for routine check-up. No significant medical history reported.',
+    medicalHistory: [
+        { id: 'visit-abubakar-1', date: '2024-05-20', event: 'New Patient Registration', details: 'Patient registered for the first time.', doctor: 'Dr. Aisha Bello' }
+    ],
+    prescriptions: [],
+    labTests: [],
+    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+    avatarUrl: "https://placehold.co/100x100.png?text=AM",
+    preferredCommunicationMethod: 'Email',
   }
 ];
 
@@ -629,9 +661,6 @@ class BedManager {
     }
 }
 
-export const bedManager = new BedManager(initialBeds);
-
-
 class PatientManager {
     private patients: Patient[];
     private subscribers: Function[] = [];
@@ -693,11 +722,13 @@ class PatientManager {
                 doctor,
             };
             patient.medicalHistory.unshift(followUpVisit);
+            
+            const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
             communicationManager.logCommunication({
                 patientName: patient.name,
                 type: 'Follow-up',
                 method: patient.preferredCommunicationMethod || 'SMS',
-                message: `Reminder: Your follow-up appointment is scheduled for ${date.toISOString().split('T')[0]}.`
+                message: `Reminder sent to ${contact}: Your follow-up on ${date.toISOString().split('T')[0]} regarding "${reason}". (PDF summary attached)`
             });
             this.notify();
         }
@@ -827,8 +858,6 @@ class PatientManager {
         this.subscribers.forEach(callback => callback(this.patients));
     }
 }
-
-export const patientManager = new PatientManager(detailedPatients);
 
 export type NavLink = { 
     href: string; 
@@ -1066,8 +1095,6 @@ class PrescriptionManager {
   }
 }
 
-export const prescriptionManager = new PrescriptionManager(initialPrescriptions);
-
 export const mockFinancialData = [
   { name: 'Jan', revenue: 120000, expenses: 75000 },
   { name: 'Feb', revenue: 150000, expenses: 85000 },
@@ -1147,7 +1174,6 @@ class MedicationManager {
         this.subscribers.forEach(callback => callback(this.medications));
     }
 }
-export const medicationManager = new MedicationManager(initialMedications);
 
 class LabTestManager {
     private labTests: LabTest[];
@@ -1211,11 +1237,12 @@ class LabTestManager {
             details: `Results: ${updatedTest.results}`,
             doctor: "Lab",
           });
+          const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
           communicationManager.logCommunication({
             patientName: patient.name,
             type: 'Lab Result',
             method: patient.preferredCommunicationMethod || 'SMS',
-            message: `Your lab results for "${updatedTest.test}" are ready. Please contact the clinic.`
+            message: `Message sent to ${contact}: Your lab results for "${updatedTest.test}" are ready.`
           });
           patientManager.notify();
         }
@@ -1235,8 +1262,6 @@ class LabTestManager {
     this.subscribers.forEach((callback) => callback(this.labTests));
   }
 }
-
-export const labTestManager = new LabTestManager(initialLabTests);
 
 export type InvoiceItem = {
     id: string; // prescription or lab test id
@@ -1376,7 +1401,6 @@ class AutopsyManager {
         this.subscribers.forEach(callback => callback(this.cases));
     }
 }
-export const autopsyManager = new AutopsyManager(initialAutopsyCases);
 
 export type Communication = {
     id: string;
@@ -1416,5 +1440,24 @@ class CommunicationManager {
         this.subscribers.forEach(callback => callback(this.communications));
     }
 }
+
+// All manager instantiations moved here to solve initialization order errors.
+export const messageManager = new MessageManager(initialMessages);
+export const notificationManager = new NotificationManager();
+export const callManager = new CallManager();
 export const communicationManager = new CommunicationManager();
+export const bedManager = new BedManager(initialBeds);
+export const patientManager = new PatientManager(detailedPatients);
+export const prescriptionManager = new PrescriptionManager(initialPrescriptions);
+export const medicationManager = new MedicationManager(initialMedications);
+export const labTestManager = new LabTestManager(initialLabTests);
+export const autopsyManager = new AutopsyManager(initialAutopsyCases);
+
+// Initialize a sample follow-up
+const abubakar = detailedPatients.find(p => p.id === 'PM-000008-T9C');
+if (abubakar) {
+    const followUpDate = new Date();
+    followUpDate.setDate(followUpDate.getDate() + 7); // 1 week from now
+    patientManager.scheduleFollowUp(abubakar.id, followUpDate, "Review initial check-up results", abubakar.assignedDoctor);
+}
     
