@@ -12,14 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight, ClipboardCheck } from "lucide-react";
+import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight, ClipboardCheck, Sparkles, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { patientManager } from "@/lib/constants";
 import { Textarea } from "@/components/ui/textarea";
+import { generateMedicalNote } from "@/ai/flows/generate-medical-note";
+import { useEffect } from "react";
 
 const patientSchema = z.object({
   // Step 1
@@ -45,12 +47,13 @@ const patientSchema = z.object({
 type PatientFormData = z.infer<typeof patientSchema>;
 const step1Fields: (keyof PatientFormData)[] = ["name", "dateOfBirth", "gender", "maritalStatus", "address", "phone", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"];
 const step2Fields: (keyof PatientFormData)[] = ["bloodType", "allergies", "pastMedicalHistory", "familyMedicalHistory"];
-const step3Fields: (keyof PatientFormData)[] = ["appointmentType", "department"];
 
 export default function CreatePatientPage() {
     const [step, setStep] = useState(1);
+    const [isGenerating, setIsGenerating] = useState<keyof PatientFormData | null>(null);
     const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const form = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
@@ -65,6 +68,33 @@ export default function CreatePatientPage() {
             familyMedicalHistory: "",
         }
     });
+
+    useEffect(() => {
+        const name = searchParams.get('name');
+        const dob = searchParams.get('dateOfBirth');
+        const summary = searchParams.get('clinicalSummary');
+        if (name) form.setValue('name', name);
+        if (dob) form.setValue('dateOfBirth', new Date(dob));
+        if (summary) form.setValue('pastMedicalHistory', summary);
+    }, [searchParams, form]);
+    
+    const handleGenerateNote = async (fieldName: keyof PatientFormData) => {
+        const briefNote = form.getValues(fieldName) as string;
+        if (!briefNote) {
+            form.setError(fieldName, { message: "Please enter a brief note first." });
+            return;
+        }
+        setIsGenerating(fieldName);
+        try {
+            const result = await generateMedicalNote({ briefNote });
+            form.setValue(fieldName, result.detailedNote, { shouldValidate: true });
+        } catch (error) {
+            console.error(`Failed to generate note for ${fieldName}:`, error);
+            toast({ variant: "destructive", title: "AI Error", description: "Could not generate the note." });
+        } finally {
+            setIsGenerating(null);
+        }
+    }
 
     const onSubmit = (values: PatientFormData) => {
         const newPatientId = `P${Date.now()}`;
@@ -211,6 +241,10 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                                 <FormItem>
                                                     <FormLabel>Known Allergies</FormLabel>
                                                     <FormControl><Textarea placeholder="e.g., Penicillin, Peanuts" {...field} /></FormControl>
+                                                    <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => handleGenerateNote('allergies')} disabled={isGenerating === 'allergies'}>
+                                                        {isGenerating === 'allergies' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                                        AI Generate
+                                                    </Button>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -222,6 +256,10 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                                 <FormItem>
                                                     <FormLabel>Past Medical History</FormLabel>
                                                     <FormControl><Textarea placeholder="e.g., Appendectomy (2015), history of asthma" {...field} /></FormControl>
+                                                    <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => handleGenerateNote('pastMedicalHistory')} disabled={isGenerating === 'pastMedicalHistory'}>
+                                                        {isGenerating === 'pastMedicalHistory' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                                        AI Generate
+                                                    </Button>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -233,6 +271,10 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                                 <FormItem>
                                                     <FormLabel>Family Medical History (If relevant)</FormLabel>
                                                     <FormControl><Textarea placeholder="e.g., Father has history of heart disease" {...field} /></FormControl>
+                                                     <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => handleGenerateNote('familyMedicalHistory')} disabled={isGenerating === 'familyMedicalHistory'}>
+                                                        {isGenerating === 'familyMedicalHistory' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                                        AI Generate
+                                                    </Button>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
