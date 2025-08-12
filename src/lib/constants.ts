@@ -693,11 +693,12 @@ class PatientManager {
                 doctor,
             };
             patient.medicalHistory.unshift(followUpVisit);
-            const commsMethod = patient.preferredCommunicationMethod || 'SMS';
-            notificationManager.createNotification(
-                `[Action Required] Send follow-up reminder to ${patient.name} via ${commsMethod} for their appointment tomorrow.`,
-                `/admin/patients/${patient.id}`
-            );
+            communicationManager.logCommunication({
+                patientName: patient.name,
+                type: 'Follow-up',
+                method: patient.preferredCommunicationMethod || 'SMS',
+                message: `Reminder: Your follow-up appointment is scheduled for ${date.toISOString().split('T')[0]}.`
+            });
             this.notify();
         }
     }
@@ -886,7 +887,8 @@ export const navLinks: NavLinks = {
             label: "Administration",
             links: [
                 { href: "/admin/billing", label: "Billing", icon: CircleDollarSign },
-                { href: "/admin/messages", label: "Messages", icon: MessageSquare },
+                { href: "/admin/messages", label: "Staff Messages", icon: MessageSquare },
+                { href: "/admin/communications", label: "Communications", icon: MessageSquare },
                 { href: "/admin/reports", label: "Reports", icon: BarChart3 },
             ]
         },
@@ -1209,15 +1211,12 @@ class LabTestManager {
             details: `Results: ${updatedTest.results}`,
             doctor: "Lab",
           });
-          notificationManager.createNotification(
-            `Lab results for ${patient.name} are ready.`,
-            `/doctor/patients/${patient.id}`
-          );
-          const commsMethod = patient.preferredCommunicationMethod || "SMS";
-          notificationManager.createNotification(
-            `[Action Required] Send lab results to ${patient.name} via ${commsMethod}.`,
-            `/admin/patients/${patient.id}`
-          );
+          communicationManager.logCommunication({
+            patientName: patient.name,
+            type: 'Lab Result',
+            method: patient.preferredCommunicationMethod || 'SMS',
+            message: `Your lab results for "${updatedTest.test}" are ready. Please contact the clinic.`
+          });
           patientManager.notify();
         }
       }
@@ -1379,4 +1378,43 @@ class AutopsyManager {
 }
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
 
+export type Communication = {
+    id: string;
+    patientName: string;
+    type: 'Lab Result' | 'Follow-up';
+    method: 'SMS' | 'Email' | 'WhatsApp';
+    message: string;
+    timestamp: string;
+};
+
+class CommunicationManager {
+    private communications: Communication[] = [];
+    private subscribers: Function[] = [];
+
+    getCommunications() {
+        return this.communications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    }
+
+    logCommunication(data: Omit<Communication, 'id' | 'timestamp'>) {
+        const newComm: Communication = {
+            ...data,
+            id: `comm-${Date.now()}`,
+            timestamp: new Date().toISOString(),
+        };
+        this.communications.unshift(newComm);
+        this.notify();
+    }
+
+    subscribe(callback: (communications: Communication[]) => void) {
+        this.subscribers.push(callback);
+        return () => {
+            this.subscribers = this.subscribers.filter(sub => sub !== callback);
+        };
+    }
+
+    private notify() {
+        this.subscribers.forEach(callback => callback(this.communications));
+    }
+}
+export const communicationManager = new CommunicationManager();
     
