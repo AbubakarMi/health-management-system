@@ -68,7 +68,7 @@ export default function Page() {
                         </TableHeader>
                         <TableBody>
                             {patients.map((patient) => (
-                                 <TableRow key={patient.id} className="cursor-pointer as-child">
+                                 <TableRow key={patient.id} className="cursor-pointer">
                                     <TableCell className="font-medium">
                                         <Link href={`/admin/patients/${patient.id}`} className="flex items-center gap-3">
                                             <Avatar>
