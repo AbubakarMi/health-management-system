@@ -1,5 +1,4 @@
 
-
 import { 
     LayoutDashboard, 
     Users, 
@@ -725,17 +724,10 @@ class PatientManager {
             patient.medicalHistory.unshift(followUpVisit);
             
             const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
-
-            const hospitalName = "Careflux Hospital";
             const appointmentDate = format(date, "PPP");
             const appointmentTime = "10:00 AM"; // Placeholder time
 
-            let message: string;
-            if (patient.preferredCommunicationMethod === 'Email') {
-                message = `Hello ${patient.name}, this is ${hospitalName} reminding you that your follow-up appointment is on ${appointmentDate} at ${appointmentTime}. Please bring any necessary documents or reports. A PDF summary of your visit is attached. See you then!`;
-            } else {
-                 message = `Hello ${patient.name}, this is ${hospitalName} reminding you that your follow-up appointment is on ${appointmentDate} at ${appointmentTime}. Please bring any necessary documents or reports. See you then!`;
-            }
+            const message = `Hello ${patient.name}, this is Careflux reminding you that your follow-up appointment is on ${appointmentDate} at ${appointmentTime}. Please be on time.`;
 
             communicationManager.logCommunication({
                 patientName: patient.name,
@@ -1238,7 +1230,8 @@ class LabTestManager {
       // If completed, add results to medical history
       if (
         updates.status === "Completed" &&
-        originalTest.status !== "Completed"
+        originalTest.status !== "Completed" &&
+        updatedTest.results
       ) {
         const patient = detailedPatients.find(
           (p) => p.name === updatedTest.patient
@@ -1252,12 +1245,15 @@ class LabTestManager {
             doctor: "Lab",
           });
           const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
+          
+          const message = `Hello ${patient.name}, your lab result for "${updatedTest.test}", conducted on ${format(new Date(updatedTest.collected), 'PPP')}, is ready. Details: ${updatedTest.results}. Please follow your doctor’s advice for further care.`;
+
           communicationManager.logCommunication({
             patientName: patient.name,
             patientContact: contact,
             type: 'Lab Result',
             method: patient.preferredCommunicationMethod || 'SMS',
-            message: `Your lab results for "${updatedTest.test}" are ready.`
+            message: message
           });
           patientManager.notify();
         }
@@ -1491,6 +1487,7 @@ if (abubakar) {
     patientManager.scheduleFollowUp(abubakar.id, testFollowUpDate, "Check on medication progress", abubakar.assignedDoctor);
 }
     
+
 
 
 
