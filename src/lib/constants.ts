@@ -693,9 +693,10 @@ class PatientManager {
                 doctor,
             };
             patient.medicalHistory.unshift(followUpVisit);
+            const commsMethod = patient.preferredCommunicationMethod || 'SMS';
             notificationManager.createNotification(
-                `A follow-up for ${patient.name} has been scheduled.`,
-                '/admin/follow-ups'
+                `Follow-up for ${patient.name} is due. Notify via ${commsMethod}.`,
+                `/admin/patients/${patient.id}`
             );
             this.notify();
         }
@@ -1196,18 +1197,25 @@ class LabTestManager {
             // If completed, add results to medical history
             if (updates.status === 'Completed' && originalTest.status !== 'Completed') {
                 const patient = detailedPatients.find(p => p.name === updatedTest.patient);
-                patient?.medicalHistory.unshift({
-                    id: `visit-${Date.now()}`,
-                    date: new Date().toISOString().split('T')[0],
-                    event: `Lab Test Results: ${updatedTest.test}`,
-                    details: `Results: ${updatedTest.results}`,
-                    doctor: 'Lab'
-                });
-                notificationManager.createNotification(
-                    `Lab results for ${patient?.name} are ready.`,
-                    `/doctor/patients/${patient?.id}`
-                );
-                 patientManager.notify();
+                if (patient) {
+                     patient.medicalHistory.unshift({
+                        id: `visit-${Date.now()}`,
+                        date: new Date().toISOString().split('T')[0],
+                        event: `Lab Test Results: ${updatedTest.test}`,
+                        details: `Results: ${updatedTest.results}`,
+                        doctor: 'Lab'
+                    });
+                    notificationManager.createNotification(
+                        `Lab results for ${patient.name} are ready.`,
+                        `/doctor/patients/${patient.id}`
+                    );
+                     const commsMethod = patient.preferredCommunicationMethod || 'SMS';
+                    notificationManager.createNotification(
+                        `Lab results for ${patient.name} are ready. Notify patient via ${commsMethod}.`,
+                        `/admin/patients/${patient.id}`
+                    );
+                    patientManager.notify();
+                }
             }
             this.notify();
         }
