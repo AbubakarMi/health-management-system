@@ -44,6 +44,8 @@ export default function CommunicationsPage() {
                 title: "Message Sent",
                 description: `A ${comm.type} notification has been sent to ${comm.patientName}.`
             });
+            // The subscription in useEffect will automatically update the state,
+            // as sendNotification calls communicationManager.markAsSent which notifies subscribers.
         } else {
             toast({
                 variant: "destructive",

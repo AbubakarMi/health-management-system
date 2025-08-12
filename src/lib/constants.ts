@@ -29,6 +29,7 @@ import {
     Phone,
     Ambulance
 } from "lucide-react";
+import { format } from "date-fns";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
 export type Role = (typeof roles)[number];
@@ -718,18 +719,30 @@ class PatientManager {
                 id: `visit-${Date.now()}`,
                 date: new Date().toISOString().split('T')[0],
                 event: "Follow-up Scheduled",
-                details: `Follow-up scheduled on ${date.toISOString().split('T')[0]}. ${reason}`,
+                details: `Follow-up scheduled on ${format(date, 'yyyy-MM-dd')}. ${reason}`,
                 doctor,
             };
             patient.medicalHistory.unshift(followUpVisit);
             
             const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
+
+            const hospitalName = "Careflux Hospital";
+            const appointmentDate = format(date, "PPP");
+            const appointmentTime = "10:00 AM"; // Placeholder time
+
+            let message: string;
+            if (patient.preferredCommunicationMethod === 'Email') {
+                message = `Hello ${patient.name}, this is ${hospitalName} reminding you that your follow-up appointment is on ${appointmentDate} at ${appointmentTime}. Please bring any necessary documents or reports. A PDF summary of your visit is attached. See you then!`;
+            } else {
+                 message = `Hello ${patient.name}, this is ${hospitalName} reminding you that your follow-up appointment is on ${appointmentDate} at ${appointmentTime}. Please bring any necessary documents or reports. See you then!`;
+            }
+
             communicationManager.logCommunication({
                 patientName: patient.name,
                 patientContact: contact,
                 type: 'Follow-up',
                 method: patient.preferredCommunicationMethod || 'SMS',
-                message: `Reminder for your follow-up on ${date.toISOString().split('T')[0]} regarding "${reason}". (PDF summary attached)`
+                message,
             });
             this.notify();
         }
@@ -1455,7 +1468,6 @@ class CommunicationManager {
 }
 
 // All manager instantiations moved here to solve initialization order errors.
-export const messageManager = new MessageManager(initialMessages);
 export const notificationManager = new NotificationManager();
 export const callManager = new CallManager();
 export const communicationManager = new CommunicationManager();
@@ -1465,6 +1477,7 @@ export const prescriptionManager = new PrescriptionManager(initialPrescriptions)
 export const medicationManager = new MedicationManager(initialMedications);
 export const labTestManager = new LabTestManager(initialLabTests);
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
+export const messageManager = new MessageManager(initialMessages);
 
 // Initialize a sample follow-up
 const abubakar = detailedPatients.find(p => p.id === 'PM-000008-T9C');
@@ -1478,5 +1491,6 @@ if (abubakar) {
     patientManager.scheduleFollowUp(abubakar.id, testFollowUpDate, "Check on medication progress", abubakar.assignedDoctor);
 }
     
+
 
 
