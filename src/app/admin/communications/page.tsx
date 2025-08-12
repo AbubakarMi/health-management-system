@@ -35,6 +35,10 @@ export default function CommunicationsPage() {
             failedCount: 0, // Placeholder for future implementation
         }
     }, [communications]);
+    
+    const refreshCommunications = () => {
+        setCommunications([...communicationManager.getCommunications()]);
+    }
 
     const handleSend = async (comm: Communication) => {
         setIsSending(comm.id);
@@ -44,8 +48,8 @@ export default function CommunicationsPage() {
                 title: "Message Sent",
                 description: `A ${comm.type} notification has been sent to ${comm.patientName}.`
             });
-            // The subscription in useEffect will automatically update the state,
-            // as sendNotification calls communicationManager.markAsSent which notifies subscribers.
+            // Manually refresh the communications list to reflect the change immediately.
+            refreshCommunications();
         } else {
             toast({
                 variant: "destructive",
