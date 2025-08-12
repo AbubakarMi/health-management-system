@@ -541,7 +541,7 @@ export const detailedPatients: Patient[] = [
     labTests: [],
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=AM",
-    preferredCommunicationMethod: 'Email',
+    preferredCommunicationMethod: 'SMS',
   }
 ];
 
@@ -1472,5 +1472,10 @@ if (abubakar) {
     const followUpDate = new Date();
     followUpDate.setDate(followUpDate.getDate() + 7); // 1 week from now
     patientManager.scheduleFollowUp(abubakar.id, followUpDate, "Review initial check-up results", abubakar.assignedDoctor);
+
+    const testFollowUpDate = new Date();
+    testFollowUpDate.setDate(testFollowUpDate.getDate() + 14); // 2 weeks from now
+    patientManager.scheduleFollowUp(abubakar.id, testFollowUpDate, "Check on medication progress", abubakar.assignedDoctor);
 }
     
+
