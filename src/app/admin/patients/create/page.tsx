@@ -5,14 +5,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight, ClipboardCheck, Sparkles, Loader2 } from "lucide-react";
+import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight, ClipboardCheck, Sparkles, Loader2, Fingerprint, ScanFace, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -22,6 +22,7 @@ import { patientManager } from "@/lib/constants";
 import { Textarea } from "@/components/ui/textarea";
 import { generateMedicalNote } from "@/ai/flows/generate-medical-note";
 import { useEffect } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 const patientSchema = z.object({
   // Step 1
@@ -43,11 +44,14 @@ const patientSchema = z.object({
   // Step 3
   appointmentType: z.enum(["New Visit", "Emergency"]),
   department: z.enum(["General Medicine", "Cardiology", "Neurology", "Oncology", "Pediatrics"]),
+  // Step 4
+  biometricId: z.string().optional(),
 });
 
 type PatientFormData = z.infer<typeof patientSchema>;
 const step1Fields: (keyof PatientFormData)[] = ["name", "dateOfBirth", "gender", "maritalStatus", "address", "phone", "preferredCommunicationMethod", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"];
 const step2Fields: (keyof PatientFormData)[] = ["bloodType", "allergies", "pastMedicalHistory", "familyMedicalHistory"];
+const step3Fields: (keyof PatientFormData)[] = ["appointmentType", "department"];
 
 export default function CreatePatientPage() {
     const [step, setStep] = useState(1);
@@ -55,6 +59,8 @@ export default function CreatePatientPage() {
     const { toast } = useToast();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [biometricCaptured, setBiometricCaptured] = useState<"fingerprint" | "face" | null>(null);
+    const [isCapturing, setIsCapturing] = useState(false);
 
     const form = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
@@ -124,12 +130,13 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
             labTests: [],
             admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
             preferredCommunicationMethod: values.preferredCommunicationMethod,
+            fingerprintId: values.biometricId,
         });
 
 
         toast({
-            title: "Patient Registered",
-            description: `${values.name} has been successfully registered.`,
+            title: "Patient Registered Successfully",
+            description: `The record for ${values.name} has been created.`,
         });
         router.push(`/admin/patients/${newPatientId}`);
     };
@@ -140,6 +147,8 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
             isValid = await form.trigger(step1Fields);
         } else if (step === 2) {
             isValid = await form.trigger(step2Fields);
+        } else if (step === 3) {
+            isValid = await form.trigger(step3Fields);
         }
         
         if (isValid) {
@@ -150,6 +159,20 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
     const handleBack = () => {
         setStep(s => s - 1);
     }
+    
+    const handleCaptureBiometric = (type: "fingerprint" | "face") => {
+        setIsCapturing(true);
+        setTimeout(() => {
+            const newId = `BIO_${Date.now()}`;
+            form.setValue('biometricId', newId);
+            setBiometricCaptured(type);
+            setIsCapturing(false);
+            toast({
+                title: "Biometric Captured",
+                description: `The patient's ${type} has been successfully registered.`
+            });
+        }, 1500);
+    };
 
     return (
         <div className="space-y-6">
@@ -168,8 +191,8 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                     <div className="flex items-center gap-3">
                                         <UserPlus className="w-6 h-6" />
                                         <div>
-                                            <CardTitle>Core Patient Demographics (Mandatory)</CardTitle>
-                                            <CardDescription>Step 1 of 3: Enter the required information to register a new patient.</CardDescription>
+                                            <CardTitle>Core Patient Demographics</CardTitle>
+                                            <CardDescription>Step 1 of 4: Enter the required information to register a new patient.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -199,20 +222,20 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                             <FormField control={form.control} name="emergencyContactPhone" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="e.g., 08087654321" {...field} /></FormControl><FormMessage /></FormItem>)} />
                                         </div>
                                     </div>
-                                    <div className="flex justify-end">
-                                        <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
-                                    </div>
                                 </CardContent>
+                                <CardFooter className="flex justify-end">
+                                    <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                </CardFooter>
                             </>
                          )}
                          {step === 2 && (
                              <>
                                 <CardHeader>
                                     <div className="flex items-center gap-3">
-                                        <UserPlus className="w-6 h-6" />
+                                        <ClipboardCheck className="w-6 h-6" />
                                         <div>
-                                            <CardTitle>Medical Information (For Treatment & Safety)</CardTitle>
-                                            <CardDescription>Step 2 of 3: Provide key medical details for the patient.</CardDescription>
+                                            <CardTitle>Medical Information</CardTitle>
+                                            <CardDescription>Step 2 of 4: Provide key medical details for treatment and safety.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -284,11 +307,11 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                             )}
                                         />
                                     </div>
-                                    <div className="flex justify-between">
-                                        <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
-                                        <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
-                                    </div>
                                 </CardContent>
+                                <CardFooter className="flex justify-between">
+                                    <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                    <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                </CardFooter>
                              </>
                          )}
                          {step === 3 && (
@@ -298,7 +321,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                         <ClipboardCheck className="w-6 h-6" />
                                         <div>
                                             <CardTitle>Administrative Information</CardTitle>
-                                            <CardDescription>Step 3 of 3: Final details for patient routing.</CardDescription>
+                                            <CardDescription>Step 3 of 4: Final details for patient routing.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -344,12 +367,69 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                             />
                                         </div>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
-                                        <Button type="submit">Save and Register Patient</Button>
+                                </CardContent>
+                                <CardFooter className="flex justify-between">
+                                    <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                    <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                </CardFooter>
+                             </>
+                         )}
+                         {step === 4 && (
+                            <>
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <Fingerprint className="w-6 h-6" />
+                                        <div>
+                                            <CardTitle>Biometric Verification</CardTitle>
+                                            <CardDescription>Step 4 of 4: Secure the patient's record with biometric data.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                                    <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured === 'fingerprint' && 'border-green-500 bg-green-500/10')}>
+                                        <Fingerprint className={cn("w-16 h-16 text-muted-foreground", biometricCaptured === 'fingerprint' && 'text-green-600')} />
+                                        <h3 className="mt-4 font-semibold">Fingerprint Scan</h3>
+                                        <p className="mt-1 text-sm text-muted-foreground">Capture the patient's fingerprint for secure identification.</p>
+                                        <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('fingerprint')} disabled={isCapturing}>
+                                            {isCapturing && biometricCaptured !== 'fingerprint' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                                            {biometricCaptured === 'fingerprint' ? <CheckCircle className="mr-2 h-4 w-4" /> : null}
+                                            {isCapturing && biometricCaptured !== 'fingerprint' ? 'Capturing...' : biometricCaptured === 'fingerprint' ? 'Captured' : 'Start Scan'}
+                                        </Button>
+                                    </div>
+                                    <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured === 'face' && 'border-green-500 bg-green-500/10')}>
+                                        <ScanFace className={cn("w-16 h-16 text-muted-foreground", biometricCaptured === 'face' && 'text-green-600')} />
+                                        <h3 className="mt-4 font-semibold">Facial Recognition</h3>
+                                        <p className="mt-1 text-sm text-muted-foreground">Capture the patient's facial data for easy check-ins.</p>
+                                        <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('face')} disabled={isCapturing}>
+                                            {isCapturing && biometricCaptured !== 'face' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                                            {biometricCaptured === 'face' ? <CheckCircle className="mr-2 h-4 w-4" /> : null}
+                                            {isCapturing && biometricCaptured !== 'face' ? 'Capturing...' : biometricCaptured === 'face' ? 'Captured' : 'Start Scan'}
+                                        </Button>
                                     </div>
                                 </CardContent>
-                             </>
+                                <CardFooter className="flex justify-between">
+                                    <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button type="button">Save and Register Patient</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Confirm Patient Registration</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                   Are you certain that all the information provided for this patient is accurate and complete? This action will create a permanent medical record.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Review Information</AlertDialogCancel>
+                                                <AlertDialogAction onClick={form.handleSubmit(onSubmit)}>
+                                                    Continue and Save
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </CardFooter>
+                            </>
                          )}
                     </form>
                 </Form>
