@@ -25,8 +25,10 @@ import {
     Microscope,
     CheckCircle,
     Database,
-    Phone
+    Phone,
+    Ambulance
 } from "lucide-react";
+import { format } from "date-fns";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
 export type Role = (typeof roles)[number];
@@ -160,9 +162,6 @@ class MessageManager {
     }
 }
 
-export const messageManager = new MessageManager(initialMessages);
-
-
 export type Notification = {
     id: string;
     message: string;
@@ -224,8 +223,6 @@ class NotificationManager {
     }
 }
 
-export const notificationManager = new NotificationManager();
-
 export type Call = {
     id: string;
     callerId: string;
@@ -267,9 +264,6 @@ class CallManager {
         this.subscribers.forEach(callback => callback(this.calls));
     }
 }
-
-export const callManager = new CallManager();
-
 
 export type Suggestion = {
     medicine: string;
@@ -316,6 +310,8 @@ export type Patient = {
   gender: 'Male' | 'Female';
   dateOfBirth: string;
   address: string;
+  email: string;
+  phone: string;
   maritalStatus: 'Single' | 'Married' | 'Divorced' | 'Widowed';
   condition: string;
   lastVisit: string;
@@ -328,6 +324,7 @@ export type Patient = {
   admission: AdmissionDetails;
   avatarUrl?: string;
   fingerprintId?: string;
+  preferredCommunicationMethod?: 'SMS' | 'Email' | 'WhatsApp';
 };
 
 
@@ -367,6 +364,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '1975-08-22',
     address: '15, Aminu Kano Crescent, Wuse II, Abuja',
+    email: 'musa.adebayo@example.com',
+    phone: '08012345678',
     maritalStatus: 'Married',
     condition: 'Stable', 
     lastVisit: '2024-05-10',
@@ -381,7 +380,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Musa Adebayo'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=MA",
-    fingerprintId: "FP_17163052321"
+    fingerprintId: "FP_17163052321",
+    preferredCommunicationMethod: 'SMS',
   },
   { 
     id: 'PF-000002-B1C',
@@ -389,6 +389,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Female',
     dateOfBirth: '1968-04-15',
     address: '22, Adetokunbo Ademola Crescent, Wuse II, Abuja',
+    email: 'zainab.lawal@example.com',
+    phone: '08023456789',
     maritalStatus: 'Widowed',
     condition: 'Critical', 
     lastVisit: '2024-05-12',
@@ -402,7 +404,8 @@ export const detailedPatients: Patient[] = [
     prescriptions: initialPrescriptions.filter(p => p.patientName === 'Zainab Lawal'),
     labTests: initialLabTests.filter(t => t.patient === 'Zainab Lawal'),
     admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: '101', bedNumber: 'A' },
-    avatarUrl: "https://placehold.co/100x100.png?text=ZL"
+    avatarUrl: "https://placehold.co/100x100.png?text=ZL",
+    preferredCommunicationMethod: 'Email',
   },
   { 
     id: 'PM-000003-D9F',
@@ -410,6 +413,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '1990-11-02',
     address: '4, Kolda Link, Wuse, Abuja',
+    email: 'ibrahim.ali@example.com',
+    phone: '08034567890',
     maritalStatus: 'Single',
     condition: 'Improving', 
     lastVisit: '2024-05-09',
@@ -422,7 +427,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Ibrahim Ali'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=IA",
-    fingerprintId: "FP_17163052322"
+    fingerprintId: "FP_17163052322",
+    preferredCommunicationMethod: 'WhatsApp',
   },
   { 
     id: 'PF-000004-G2H',
@@ -430,6 +436,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Female', 
     dateOfBirth: '1985-01-30',
     address: '10, Ladi Kwali Street, Wuse, Abuja',
+    email: 'halima.abubakar@example.com',
+    phone: '08045678901',
     maritalStatus: 'Married',
     condition: 'Stable', 
     lastVisit: '2024-05-11',
@@ -441,7 +449,8 @@ export const detailedPatients: Patient[] = [
     prescriptions: initialPrescriptions.filter(p => p.patientName === 'Halima Abubakar'),
     labTests: initialLabTests.filter(t => t.patient === 'Halima Abubakar'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=HA"
+    avatarUrl: "https://placehold.co/100x100.png?text=HA",
+    preferredCommunicationMethod: 'SMS',
   },
   { 
     id: 'PM-000005-K3L',
@@ -449,6 +458,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '1995-06-10',
     address: '7, Libreville Street, Wuse, Abuja',
+    email: 'muhammad.bello@example.com',
+    phone: '08056789012',
     maritalStatus: 'Single',
     condition: 'Critical', 
     lastVisit: '2024-05-12',
@@ -461,7 +472,8 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Muhammad Bello'),
     admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=MB",
-    fingerprintId: "FP_17163052323"
+    fingerprintId: "FP_17163052323",
+    preferredCommunicationMethod: 'Email',
   },
    {
     id: 'PF-000006-R2D',
@@ -469,6 +481,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Female',
     dateOfBirth: '1982-03-25',
     address: '3, Agadez Street, Wuse II, Abuja',
+    email: 'samira.umar@example.com',
+    phone: '08067890123',
     maritalStatus: 'Married',
     condition: 'Stable',
     lastVisit: '2024-05-14',
@@ -480,7 +494,8 @@ export const detailedPatients: Patient[] = [
     prescriptions: [],
     labTests: initialLabTests.filter(t => t.patient === 'Samira Umar'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=SU"
+    avatarUrl: "https://placehold.co/100x100.png?text=SU",
+    preferredCommunicationMethod: 'WhatsApp',
   },
   {
     id: 'PM-000007-S1B',
@@ -488,6 +503,8 @@ export const detailedPatients: Patient[] = [
     gender: 'Male',
     dateOfBirth: '2000-07-18',
     address: '18, Dalaba Street, Wuse, Abuja',
+    email: 'abdul.sani@example.com',
+    phone: '08078901234',
     maritalStatus: 'Single',
     condition: 'Normal',
     lastVisit: '2024-05-15',
@@ -500,7 +517,31 @@ export const detailedPatients: Patient[] = [
     labTests: initialLabTests.filter(t => t.patient === 'Abdulkarim Sani'),
     admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
     avatarUrl: "https://placehold.co/100x100.png?text=AS",
-    fingerprintId: "FP_17163052324"
+    fingerprintId: "FP_17163052324",
+    preferredCommunicationMethod: 'SMS',
+  },
+   { 
+    id: 'PM-000008-T9C',
+    name: 'Abubakar M.I.', 
+    gender: 'Male',
+    dateOfBirth: '1988-02-14',
+    address: '1, Sultan Abubakar Way, Wuse, Abuja',
+    email: 'abubakarmi131@gmail.com',
+    phone: '+2347042526971',
+    maritalStatus: 'Married',
+    condition: 'Stable', 
+    lastVisit: '2024-05-20',
+    bloodType: 'O+',
+    assignedDoctor: 'Dr. Aisha Bello',
+    clinicalSummary: 'New patient for routine check-up. No significant medical history reported.',
+    medicalHistory: [
+        { id: 'visit-abubakar-1', date: '2024-05-20', event: 'New Patient Registration', details: 'Patient registered for the first time.', doctor: 'Dr. Aisha Bello' }
+    ],
+    prescriptions: [],
+    labTests: [],
+    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+    avatarUrl: "https://placehold.co/100x100.png?text=AM",
+    preferredCommunicationMethod: 'SMS',
   }
 ];
 
@@ -620,9 +661,6 @@ class BedManager {
     }
 }
 
-export const bedManager = new BedManager(initialBeds);
-
-
 class PatientManager {
     private patients: Patient[];
     private subscribers: Function[] = [];
@@ -680,10 +718,24 @@ class PatientManager {
                 id: `visit-${Date.now()}`,
                 date: new Date().toISOString().split('T')[0],
                 event: "Follow-up Scheduled",
-                details: `Follow-up scheduled on ${date.toISOString().split('T')[0]}. ${reason}`,
+                details: `Follow-up scheduled on ${format(date, 'yyyy-MM-dd')}. ${reason}`,
                 doctor,
             };
             patient.medicalHistory.unshift(followUpVisit);
+            
+            const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
+            const appointmentDate = format(date, "PPP");
+            const appointmentTime = "10:00 AM"; // Placeholder time
+
+            const message = `Hello ${patient.name}, this is Careflux reminding you that your follow-up appointment is on ${appointmentDate} at ${appointmentTime}. Please be on time.`;
+
+            communicationManager.logCommunication({
+                patientName: patient.name,
+                patientContact: contact,
+                type: 'Follow-up',
+                method: patient.preferredCommunicationMethod || 'SMS',
+                message,
+            });
             this.notify();
         }
     }
@@ -713,6 +765,10 @@ class PatientManager {
             if (patient.admission.isAdmitted) {
                 this.dischargePatient(patientId, true);
             }
+            notificationManager.createNotification(
+                `${patient.name} has been marked as deceased.`,
+                `/admin/deceased`
+            );
             this.notify();
         }
     }
@@ -727,6 +783,10 @@ class PatientManager {
                 details: referralLetter,
                 doctor: doctorName
             });
+            notificationManager.createNotification(
+                `${patient.name} has been referred to ${receivingEntity}.`,
+                `/admin/referrals`
+            );
             this.notify();
         }
     }
@@ -805,8 +865,6 @@ class PatientManager {
     }
 }
 
-export const patientManager = new PatientManager(detailedPatients);
-
 export type NavLink = { 
     href: string; 
     label: string; 
@@ -854,15 +912,22 @@ export const navLinks: NavLinks = {
             ]
         },
         {
+            label: "Dispatch Center",
+            links: [
+                { href: "/admin/calls", label: "Call History", icon: Phone },
+                { href: "/admin/ambulance", label: "Ambulance", icon: Ambulance },
+            ]
+        },
+        {
             label: "Administration",
             links: [
                 { href: "/admin/billing", label: "Billing", icon: CircleDollarSign },
-                { href: "/admin/messages", label: "Messages", icon: MessageSquare },
+                { href: "/admin/messages", label: "Staff Messages", icon: MessageSquare },
+                { href: "/admin/communications", label: "Communications", icon: MessageSquare },
                 { href: "/admin/reports", label: "Reports", icon: BarChart3 },
             ]
         },
         { href: "/admin/staff", label: "Staff", icon: UserCog },
-        { href: "/admin/calls", label: "Call History", icon: Phone },
     ],
     doctor: [
         { href: "/doctor", label: "Dashboard", icon: LayoutDashboard },
@@ -951,6 +1016,10 @@ class PrescriptionManager {
     this.prescriptions.unshift(newPrescription);
     patient.prescriptions.unshift(newPrescription);
     
+    notificationManager.createNotification(
+        `New prescription for ${prescription.patientName} requires attention.`,
+        '/pharmacist/prescriptions'
+    );
     this.notify();
     patientManager.notify(); // Notify patient manager to trigger UI updates
   }
@@ -968,6 +1037,10 @@ class PrescriptionManager {
         const prescription = this.prescriptions.find(p => p.id === prescriptionId);
         if (prescription) {
             prescription.suggestion = { ...suggestion, status: 'pending' };
+            notificationManager.createNotification(
+                `Pharmacist suggested an alternative for ${prescription.patientName}.`,
+                `/doctor/patients/${patientId}`
+            );
             this.notify();
             patientManager.notify();
         }
@@ -1027,8 +1100,6 @@ class PrescriptionManager {
     this.subscribers.forEach(callback => callback(this.prescriptions));
   }
 }
-
-export const prescriptionManager = new PrescriptionManager(initialPrescriptions);
 
 export const mockFinancialData = [
   { name: 'Jan', revenue: 120000, expenses: 75000 },
@@ -1109,7 +1180,6 @@ class MedicationManager {
         this.subscribers.forEach(callback => callback(this.medications));
     }
 }
-export const medicationManager = new MedicationManager(initialMedications);
 
 class LabTestManager {
     private labTests: LabTest[];
@@ -1127,63 +1197,82 @@ class LabTestManager {
         const patient = detailedPatients.find(p => p.name === testRequest.patient);
         if (!patient || patient.medicalHistory.length === 0) return; // Cannot add if no visits exist
 
-        // Associate with the most recent visit
-        const lastVisitId = patient.medicalHistory[0].id;
-        
-        const newTest: LabTest = {
-            ...testRequest,
-            id: `lab-${Date.now()}`,
-            collected: new Date().toISOString().split('T')[0],
-            status: 'Pending',
-            price: 0, // Price will be set by lab tech upon completion
-            invoiced: false,
-            visitId: lastVisitId,
-        };
-        this.labTests.unshift(newTest);
-        patient.labTests.unshift(newTest);
-        
-        this.notify();
-        patientManager.notify();
-    }
+    // Associate with the most recent visit
+    const lastVisitId = patient.medicalHistory[0].id;
+    
+    const newTest: LabTest = {
+      ...testRequest,
+      id: `lab-${Date.now()}`,
+      collected: new Date().toISOString().split("T")[0],
+      status: "Pending",
+      price: 0, // Price will be set by lab tech upon completion
+      invoiced: false,
+      visitId: lastVisitId,
+    };
+    this.labTests.unshift(newTest);
+    patient.labTests.unshift(newTest);
 
-    updateLabTest(testId: string, updates: Partial<Omit<LabTest, 'id'>>) {
-        const testIndex = this.labTests.findIndex(t => t.id === testId);
-        if (testIndex !== -1) {
-            
-            const originalTest = this.labTests[testIndex];
-            const updatedTest = { ...originalTest, ...updates };
-            this.labTests[testIndex] = updatedTest;
+    notificationManager.createNotification(
+      `A new lab test for ${patient.name} has been ordered.`,
+      "/labtech/tests"
+    );
+    this.notify();
+    patientManager.notify();
+  }
 
-            // If completed, add results to medical history
-            if (updates.status === 'Completed' && originalTest.status !== 'Completed') {
-                const patient = detailedPatients.find(p => p.name === updatedTest.patient);
-                patient?.medicalHistory.unshift({
-                    id: `visit-${Date.now()}`,
-                    date: new Date().toISOString().split('T')[0],
-                    event: `Lab Test Results: ${updatedTest.test}`,
-                    details: `Results: ${updatedTest.results}`,
-                    doctor: 'Lab'
-                });
-                 patientManager.notify();
-            }
-            this.notify();
+  updateLabTest(testId: string, updates: Partial<Omit<LabTest, "id">>) {
+    const testIndex = this.labTests.findIndex((t) => t.id === testId);
+    if (testIndex !== -1) {
+      const originalTest = this.labTests[testIndex];
+      const updatedTest = { ...originalTest, ...updates };
+      this.labTests[testIndex] = updatedTest;
+
+      // If completed, add results to medical history
+      if (
+        updates.status === "Completed" &&
+        originalTest.status !== "Completed" &&
+        updatedTest.results
+      ) {
+        const patient = detailedPatients.find(
+          (p) => p.name === updatedTest.patient
+        );
+        if (patient) {
+          patient.medicalHistory.unshift({
+            id: `visit-${Date.now()}`,
+            date: new Date().toISOString().split("T")[0],
+            event: `Lab Test Results: ${updatedTest.test}`,
+            details: `Results: ${updatedTest.results}`,
+            doctor: "Lab",
+          });
+          const contact = patient.preferredCommunicationMethod === 'Email' ? patient.email : patient.phone;
+          
+          const message = `Hello ${patient.name}, your lab result for "${updatedTest.test}", conducted on ${format(new Date(updatedTest.collected), 'PPP')}, is ready. Details: ${updatedTest.results}. Please follow your doctor’s advice for further care.`;
+
+          communicationManager.logCommunication({
+            patientName: patient.name,
+            patientContact: contact,
+            type: 'Lab Result',
+            method: patient.preferredCommunicationMethod || 'SMS',
+            message: message
+          });
+          patientManager.notify();
         }
+      }
+      this.notify();
     }
+  }
 
-    subscribe(callback: (tests: LabTest[]) => void) {
-        this.subscribers.push(callback);
-        return () => {
-            this.subscribers = this.subscribers.filter(sub => sub !== callback);
-        };
-    }
+  subscribe(callback: (tests: LabTest[]) => void) {
+    this.subscribers.push(callback);
+    return () => {
+      this.subscribers = this.subscribers.filter((sub) => sub !== callback);
+    };
+  }
 
-    private notify() {
-        this.subscribers.forEach(callback => callback(this.labTests));
-    }
+  private notify() {
+    this.subscribers.forEach((callback) => callback(this.labTests));
+  }
 }
-
-export const labTestManager = new LabTestManager(initialLabTests);
-
 
 export type InvoiceItem = {
     id: string; // prescription or lab test id
@@ -1283,6 +1372,10 @@ class AutopsyManager {
             status: 'Awaiting Autopsy',
         };
         this.cases.unshift(newCase);
+        notificationManager.createNotification(
+            `New autopsy case for ${newCase.deceasedName} assigned to you.`,
+            `/doctor/autopsy/${newCase.id}`
+        );
         this.notify();
     }
 
@@ -1300,6 +1393,10 @@ class AutopsyManager {
         const caseToUpdate = this.cases.find(c => c.id === caseId);
         if (caseToUpdate && caseToUpdate.status === 'Report Pending') {
             caseToUpdate.status = 'Completed';
+            notificationManager.createNotification(
+                `Autopsy case ${caseId} for ${caseToUpdate.deceasedName} has been completed.`,
+                `/admin/autopsy/completed`
+            );
             this.notify();
         }
     }
@@ -1315,4 +1412,79 @@ class AutopsyManager {
         this.subscribers.forEach(callback => callback(this.cases));
     }
 }
+
+export type Communication = {
+    id: string;
+    patientName: string;
+    patientContact: string;
+    type: 'Lab Result' | 'Follow-up';
+    method: 'SMS' | 'Email' | 'WhatsApp';
+    message: string;
+    timestamp: string;
+    status: 'Pending' | 'Sent';
+};
+
+class CommunicationManager {
+    private communications: Communication[] = [];
+    private subscribers: Function[] = [];
+
+    getCommunications() {
+        return this.communications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    }
+
+    logCommunication(data: Omit<Communication, 'id' | 'timestamp' | 'status'>) {
+        const newComm: Communication = {
+            ...data,
+            id: `comm-${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            status: 'Pending',
+        };
+        this.communications.unshift(newComm);
+        this.notify();
+    }
+
+    markAsSent(id: string) {
+        const comm = this.communications.find(c => c.id === id);
+        if (comm) {
+            comm.status = 'Sent';
+            this.notify();
+        }
+    }
+
+    subscribe(callback: (communications: Communication[]) => void) {
+        this.subscribers.push(callback);
+        return () => {
+            this.subscribers = this.subscribers.filter(sub => sub !== callback);
+        };
+    }
+
+    private notify() {
+        this.subscribers.forEach(callback => callback(this.communications));
+    }
+}
+
+// All manager instantiations moved here to solve initialization order errors.
+export const notificationManager = new NotificationManager();
+export const callManager = new CallManager();
+export const communicationManager = new CommunicationManager();
+export const bedManager = new BedManager(initialBeds);
+export const patientManager = new PatientManager(detailedPatients);
+export const prescriptionManager = new PrescriptionManager(initialPrescriptions);
+export const medicationManager = new MedicationManager(initialMedications);
+export const labTestManager = new LabTestManager(initialLabTests);
 export const autopsyManager = new AutopsyManager(initialAutopsyCases);
+export const messageManager = new MessageManager(initialMessages);
+
+// Initialize a sample follow-up
+const abubakar = detailedPatients.find(p => p.id === 'PM-000008-T9C');
+if (abubakar && !communicationManager.getCommunications().some(c => c.patientName === abubakar.name)) {
+    const followUpDate = new Date();
+    followUpDate.setDate(followUpDate.getDate() + 7); // 1 week from now
+    patientManager.scheduleFollowUp(abubakar.id, followUpDate, "Review initial check-up results", abubakar.assignedDoctor);
+}
+    
+
+
+
+
+

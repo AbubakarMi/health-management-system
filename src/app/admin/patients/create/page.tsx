@@ -1,355 +1,439 @@
 
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { format } from "date-fns";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { detailedPatients as initialPatients, Patient, users } from "@/lib/constants";
-import { ArrowLeft, ArrowRight, Camera, CheckCircle, Fingerprint, Upload, User as UserIcon, X, PlusCircle } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { ArrowLeft, CalendarIcon, UserPlus, ArrowRight, ClipboardCheck, Sparkles, Loader2, Fingerprint, ScanFace, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter, useSearchParams } from "next/navigation";
+import { patientManager } from "@/lib/constants";
+import { Textarea } from "@/components/ui/textarea";
+import { generateMedicalNote } from "@/ai/flows/generate-medical-note";
+import { useEffect } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters."),
-  gender: z.enum(['Male', 'Female']),
-  dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "A valid date of birth is required.",
-  }),
-  maritalStatus: z.enum(['Single', 'Married', 'Divorced', 'Widowed']),
-  address: z.string().min(10, "Address must be at least 10 characters."),
-  condition: z.enum(['Stable', 'Critical', 'Improving']),
-  assignedDoctor: z.string().min(1, "Please assign a doctor."),
-  clinicalSummary: z.string().optional(),
-  avatarUrl: z.string().optional(),
-  fingerprintId: z.string().optional(),
+const patientSchema = z.object({
+  // Step 1
+  name: z.string().min(3, "Full name is required."),
+  dateOfBirth: z.date({ required_error: "Date of birth is required." }),
+  gender: z.enum(["Male", "Female"]),
+  maritalStatus: z.enum(["Single", "Married", "Divorced", "Widowed"]),
+  address: z.string().min(5, "Address is required."),
+  phone: z.string().min(10, "A valid phone number is required."),
+  preferredCommunicationMethod: z.enum(["SMS", "Email", "WhatsApp"]),
+  emergencyContactName: z.string().min(3, "Emergency contact name is required."),
+  emergencyContactRelationship: z.string().min(2, "Relationship is required."),
+  emergencyContactPhone: z.string().min(10, "A valid phone number is required."),
+  // Step 2
+  bloodType: z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
+  allergies: z.string().optional(),
+  pastMedicalHistory: z.string().optional(),
+  familyMedicalHistory: z.string().optional(),
+  // Step 3
+  appointmentType: z.enum(["New Visit", "Emergency"]),
+  department: z.enum(["General Medicine", "Cardiology", "Neurology", "Oncology", "Pediatrics"]),
+  // Step 4
+  biometricId: z.string().optional(),
 });
 
-type FormData = z.infer<typeof formSchema>;
-const doctors = users.filter(u => u.role === 'doctor');
-const step1Fields: (keyof FormData)[] = ['name', 'gender', 'dateOfBirth', 'maritalStatus', 'address', 'condition', 'assignedDoctor', 'clinicalSummary'];
+type PatientFormData = z.infer<typeof patientSchema>;
+const step1Fields: (keyof PatientFormData)[] = ["name", "dateOfBirth", "gender", "maritalStatus", "address", "phone", "preferredCommunicationMethod", "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone"];
+const step2Fields: (keyof PatientFormData)[] = ["bloodType", "allergies", "pastMedicalHistory", "familyMedicalHistory"];
+const step3Fields: (keyof PatientFormData)[] = ["appointmentType", "department"];
 
 export default function CreatePatientPage() {
+    const [step, setStep] = useState(1);
+    const [isGenerating, setIsGenerating] = useState<keyof PatientFormData | null>(null);
     const { toast } = useToast();
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [biometricCaptured, setBiometricCaptured] = useState<"fingerprint" | "face" | null>(null);
+    const [isCapturing, setIsCapturing] = useState(false);
 
-    const [step, setStep] = useState(1);
-    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-    const [fingerprintCaptured, setFingerprintCaptured] = useState(false);
-    const [isCameraOpen, setCameraOpen] = useState(false);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-     const importedData = useMemo(() => {
-        const name = searchParams.get('name');
-        const dateOfBirth = searchParams.get('dateOfBirth');
-        const clinicalSummary = searchParams.get('clinicalSummary');
-        if (name && dateOfBirth) {
-            return {
-                name,
-                dateOfBirth: new Date(dateOfBirth),
-                clinicalSummary: clinicalSummary || '',
-            }
-        }
-        return null;
-    }, [searchParams]);
-
-    const form = useForm<FormData>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<PatientFormData>({
+        resolver: zodResolver(patientSchema),
         defaultValues: {
-            name: importedData?.name || "",
             gender: "Male",
-            dateOfBirth: importedData?.dateOfBirth ? format(importedData.dateOfBirth, "yyyy-MM-dd") : "",
             maritalStatus: "Single",
-            address: "",
-            condition: "Stable",
-            assignedDoctor: doctors.length > 0 ? doctors[0].name : "",
-            clinicalSummary: importedData?.clinicalSummary || "",
-            avatarUrl: "",
-            fingerprintId: "",
-        },
+            bloodType: "O+",
+            appointmentType: "New Visit",
+            department: "General Medicine",
+            allergies: "",
+            pastMedicalHistory: "",
+            familyMedicalHistory: "",
+            preferredCommunicationMethod: "SMS",
+        }
     });
 
     useEffect(() => {
-        if (importedData) {
-            form.reset({
-                name: importedData.name,
-                dateOfBirth: format(importedData.dateOfBirth, "yyyy-MM-dd"),
-                clinicalSummary: importedData.clinicalSummary,
-                gender: "Male",
-                maritalStatus: "Single",
-                address: "",
-                condition: "Stable",
-                assignedDoctor: doctors.length > 0 ? doctors[0].name : "",
-            })
-        }
-    }, [importedData, form]);
-
-    useEffect(() => {
-        const startVideoStream = async () => {
-            if (isCameraOpen && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    if (videoRef.current) {
-                        videoRef.current.srcObject = stream;
-                    }
-                } catch (error) {
-                    console.error("Error accessing camera:", error);
-                    setCameraOpen(false);
-                }
-            }
-        };
-
-        const stopVideoStream = () => {
-            if (videoRef.current && videoRef.current.srcObject) {
-                const stream = videoRef.current.srcObject as MediaStream;
-                stream.getTracks().forEach(track => track.stop());
-                videoRef.current.srcObject = null;
-            }
-        };
-
-        if (isCameraOpen) {
-            startVideoStream();
-        } else {
-            stopVideoStream();
-        }
-
-        return () => stopVideoStream();
-    }, [isCameraOpen]);
+        const name = searchParams.get('name');
+        const dob = searchParams.get('dateOfBirth');
+        const summary = searchParams.get('clinicalSummary');
+        if (name) form.setValue('name', name);
+        if (dob) form.setValue('dateOfBirth', new Date(dob));
+        if (summary) form.setValue('pastMedicalHistory', summary);
+    }, [searchParams, form]);
     
-
-    const handleCapture = () => {
-        if (videoRef.current && canvasRef.current) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context?.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-            const dataUrl = canvas.toDataURL('image/png');
-            setPhotoPreview(dataUrl);
-            form.setValue('avatarUrl', dataUrl);
-            setCameraOpen(false);
+    const handleGenerateNote = async (fieldName: keyof PatientFormData) => {
+        const briefNote = form.getValues(fieldName) as string;
+        if (!briefNote) {
+            form.setError(fieldName, { message: "Please enter a brief note first." });
+            return;
         }
-    }
-    
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const dataUrl = reader.result as string;
-                setPhotoPreview(dataUrl);
-                form.setValue('avatarUrl', dataUrl);
-            }
-            reader.readAsDataURL(file);
+        setIsGenerating(fieldName);
+        try {
+            const result = await generateMedicalNote({ briefNote });
+            form.setValue(fieldName, result.detailedNote, { shouldValidate: true });
+        } catch (error) {
+            console.error(`Failed to generate note for ${fieldName}:`, error);
+            toast({ variant: "destructive", title: "AI Error", description: "Could not generate the note." });
+        } finally {
+            setIsGenerating(null);
         }
     }
 
-    const handleFingerprintCapture = () => {
-        setFingerprintCaptured(true);
-        form.setValue('fingerprintId', `FP_${Date.now()}`);
-    }
-    
-    const triggerFileUpload = () => {
-        fileInputRef.current?.click();
+    const onSubmit = (values: PatientFormData) => {
+        const newPatientId = `P${Date.now()}`;
+        const clinicalSummary = `
+Initial Appointment: ${values.appointmentType} to ${values.department}.
+Known Allergies: ${values.allergies || 'None specified'}.
+Past Medical History: ${values.pastMedicalHistory || 'None specified'}.
+Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
+        `.trim();
+        
+        patientManager.getPatients().push({
+            id: newPatientId,
+            name: values.name,
+            gender: values.gender,
+            dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
+            address: values.address,
+            maritalStatus: values.maritalStatus,
+            condition: 'Stable', 
+            lastVisit: format(new Date(), "yyyy-MM-dd"),
+            bloodType: values.bloodType,
+            assignedDoctor: 'Dr. Aisha Bello', 
+            clinicalSummary,
+            medicalHistory: [],
+            prescriptions: [],
+            labTests: [],
+            admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+            preferredCommunicationMethod: values.preferredCommunicationMethod,
+            fingerprintId: values.biometricId,
+        });
+
+
+        toast({
+            title: "Patient Registered Successfully",
+            description: `The record for ${values.name} has been created.`,
+        });
+        router.push(`/admin/patients/${newPatientId}`);
     };
 
-    const clearPhoto = () => {
-        setPhotoPreview(null);
-        form.setValue('avatarUrl', undefined);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-    }
-
-    const clearFingerprint = () => {
-        setFingerprintCaptured(false);
-        form.setValue('fingerprintId', undefined);
-    }
-
     const handleNext = async () => {
-        const isValid = await form.trigger(step1Fields);
+        let isValid = false;
+        if (step === 1) {
+            isValid = await form.trigger(step1Fields);
+        } else if (step === 2) {
+            isValid = await form.trigger(step2Fields);
+        } else if (step === 3) {
+            isValid = await form.trigger(step3Fields);
+        }
+        
         if (isValid) {
-            setStep(2);
+            setStep(s => s + 1);
         }
     }
-
-    function onSubmit(values: FormData) {
-        const suffix = Math.random().toString(36).substring(2, 5).toUpperCase();
-        let maxNumber = 0;
-        initialPatients.forEach(p => {
-            const numPart = parseInt(p.id.split('-')[1]);
-            if (numPart > maxNumber) {
-                maxNumber = numPart;
-            }
-        });
-        const newPatientNumber = maxNumber + 1;
-        const paddedNumber = String(newPatientNumber).padStart(6, '0');
-        const genderPrefix = values.gender === 'Male' ? 'PM' : 'PF';
-        const newId = `${genderPrefix}-${paddedNumber}-${suffix}`;
-
-        const patientToAdd: Patient = {
-            ...values,
-            dateOfBirth: values.dateOfBirth,
-            id: newId,
-            lastVisit: new Date().toISOString().split('T')[0],
-            bloodType: 'O+',
-            admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-            medicalHistory: [{
-                id: `visit-${Date.now()}`,
-                date: new Date().toISOString().split('T')[0],
-                event: "Patient Registration",
-                details: `Patient registered with ID ${newId} and assigned to ${values.assignedDoctor}.`,
-                doctor: "Admin"
-            }],
-            prescriptions: [],
-            labTests: []
-        };
-        
-        initialPatients.unshift(patientToAdd);
-        
-        toast({
-            title: "Patient Created",
-            description: `${values.name} has been successfully added with ID ${newId}.`
-        });
-        router.push('/admin/patients');
+    
+    const handleBack = () => {
+        setStep(s => s - 1);
     }
+    
+    const handleCaptureBiometric = (type: "fingerprint" | "face") => {
+        setIsCapturing(true);
+        setTimeout(() => {
+            const newId = `BIO_${Date.now()}`;
+            form.setValue('biometricId', newId);
+            setBiometricCaptured(type);
+            setIsCapturing(false);
+            toast({
+                title: "Biometric Captured",
+                description: `The patient's ${type} has been successfully registered.`
+            });
+        }, 1500);
+    };
 
     return (
-        <>
-            <div className="flex items-center gap-4 mb-6">
+        <div className="space-y-6">
+            <div className="flex items-center gap-4">
                 <Button variant="outline" size="icon" asChild>
                     <Link href="/admin/patients"><ArrowLeft /></Link>
                 </Button>
                 <h1 className="text-2xl font-bold">Create New Patient Record</h1>
             </div>
-
-            <Card className="max-w-4xl mx-auto">
+            <Card>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <CardHeader>
-                            <CardTitle>Step {step}: {step === 1 ? 'Patient Details' : 'Biometrics'}</CardTitle>
-                            <CardDescription>
-                                {step === 1 ? 'Fill in the personal and medical details for the new patient.' : 'Capture optional biometric data for identification.'}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {step === 1 && (
-                                <div className="space-y-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Full Name</FormLabel>
-                                                <FormControl><Input placeholder="Jane Smith" {...field} /></FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <FormField control={form.control} name="gender" render={({ field }) => ( <FormItem> <FormLabel>Gender</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Male">Male</SelectItem> <SelectItem value="Female">Female</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                         {step === 1 && (
+                            <>
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <UserPlus className="w-6 h-6" />
+                                        <div>
+                                            <CardTitle>Core Patient Demographics</CardTitle>
+                                            <CardDescription>Step 1 of 4: Enter the required information to register a new patient.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-8">
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Personal Information</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField control={form.control} name="name" render={({ field }) => (<FormItem><FormLabel>Full Name</FormLabel><FormControl><Input placeholder="e.g., John Doe" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                            <FormField control={form.control} name="dateOfBirth" render={({ field }) => (<FormItem className="flex flex-col"><FormLabel>Date of Birth</FormLabel><Popover><PopoverTrigger asChild><FormControl><Button variant={"outline"} className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}><CalendarIcon className="mr-2 h-4 w-4" />{field.value ? format(field.value, "PPP") : <span>Pick a date</span>}</Button></FormControl></PopoverTrigger><PopoverContent className="w-auto p-0"><Calendar mode="single" selected={field.value} onSelect={field.onChange} captionLayout="dropdown-buttons" fromYear={1920} toYear={new Date().getFullYear()} disabled={(date) => date > new Date()} initialFocus /></PopoverContent></Popover><FormMessage /></FormItem>)} />
+                                            <FormField control={form.control} name="gender" render={({ field }) => (<FormItem><FormLabel>Gender</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                                            <FormField control={form.control} name="maritalStatus" render={({ field }) => (<FormItem><FormLabel>Marital Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select marital status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Single">Single</SelectItem><SelectItem value="Married">Married</SelectItem><SelectItem value="Divorced">Divorced</SelectItem><SelectItem value="Widowed">Widowed</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Contact Details</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField control={form.control} name="address" render={({ field }) => (<FormItem className="md:col-span-2"><FormLabel>Home Address</FormLabel><FormControl><Input placeholder="e.g., 123 Main Street, Abuja" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                            <FormField control={form.control} name="phone" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="e.g., 08012345678" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                             <FormField control={form.control} name="preferredCommunicationMethod" render={({ field }) => (<FormItem><FormLabel>Preferred Communication</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select a method" /></SelectTrigger></FormControl><SelectContent><SelectItem value="SMS">SMS</SelectItem><SelectItem value="Email">Email</SelectItem><SelectItem value="WhatsApp">WhatsApp</SelectItem></SelectContent></Select><FormMessage /></FormItem>)} />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Emergency Contact</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <FormField control={form.control} name="emergencyContactName" render={({ field }) => (<FormItem><FormLabel>Full Name</FormLabel><FormControl><Input placeholder="e.g., Jane Doe" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                            <FormField control={form.control} name="emergencyContactRelationship" render={({ field }) => (<FormItem><FormLabel>Relationship</FormLabel><FormControl><Input placeholder="e.g., Spouse" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                            <FormField control={form.control} name="emergencyContactPhone" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input placeholder="e.g., 08087654321" {...field} /></FormControl><FormMessage /></FormItem>)} />
+                                        </div>
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="flex justify-end">
+                                    <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                </CardFooter>
+                            </>
+                         )}
+                         {step === 2 && (
+                             <>
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <ClipboardCheck className="w-6 h-6" />
+                                        <div>
+                                            <CardTitle>Medical Information</CardTitle>
+                                            <CardDescription>Step 2 of 4: Provide key medical details for treatment and safety.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-8">
+                                     <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="bloodType"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Blood Type</FormLabel>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl><SelectTrigger><SelectValue placeholder="Select blood type" /></SelectTrigger></FormControl>
+                                                            <SelectContent>
+                                                                {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(type => (
+                                                                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
                                         <FormField
                                             control={form.control}
-                                            name="dateOfBirth"
+                                            name="allergies"
                                             render={({ field }) => (
                                                 <FormItem>
-                                                    <FormLabel>Date of Birth</FormLabel>
-                                                    <FormControl>
-                                                        <Input type="date" {...field} />
-                                                    </FormControl>
+                                                    <FormLabel>Known Allergies</FormLabel>
+                                                    <FormControl><Textarea placeholder="e.g., Penicillin, Peanuts" {...field} /></FormControl>
+                                                    <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => handleGenerateNote('allergies')} disabled={isGenerating === 'allergies'}>
+                                                        {isGenerating === 'allergies' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                                        AI Generate
+                                                    </Button>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
-                                        <FormField control={form.control} name="maritalStatus" render={({ field }) => ( <FormItem> <FormLabel>Marital Status</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Single">Single</SelectItem> <SelectItem value="Married">Married</SelectItem> <SelectItem value="Divorced">Divorced</SelectItem> <SelectItem value="Widowed">Widowed</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
-                                        <FormField control={form.control} name="assignedDoctor" render={({ field }) => ( <FormItem> <FormLabel>Assign Doctor</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select a doctor" /></SelectTrigger></FormControl> <SelectContent> {doctors.map((doctor) => (<SelectItem key={doctor.email} value={doctor.name}>{doctor.name}</SelectItem>))} </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
+                                        <FormField
+                                            control={form.control}
+                                            name="pastMedicalHistory"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Past Medical History</FormLabel>
+                                                    <FormControl><Textarea placeholder="e.g., Appendectomy (2015), history of asthma" {...field} /></FormControl>
+                                                    <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => handleGenerateNote('pastMedicalHistory')} disabled={isGenerating === 'pastMedicalHistory'}>
+                                                        {isGenerating === 'pastMedicalHistory' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                                        AI Generate
+                                                    </Button>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="familyMedicalHistory"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Family Medical History (If relevant)</FormLabel>
+                                                    <FormControl><Textarea placeholder="e.g., Father has history of heart disease" {...field} /></FormControl>
+                                                     <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => handleGenerateNote('familyMedicalHistory')} disabled={isGenerating === 'familyMedicalHistory'}>
+                                                        {isGenerating === 'familyMedicalHistory' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                                        AI Generate
+                                                    </Button>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                     </div>
-                                    <div className="space-y-6">
-                                        <FormField control={form.control} name="address" render={({ field }) => ( <FormItem> <FormLabel>Address</FormLabel> <FormControl> <Textarea placeholder="123 Main St, Anytown..." {...field} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                                        <FormField control={form.control} name="condition" render={({ field }) => ( <FormItem> <FormLabel>Initial Condition</FormLabel> <Select onValueChange={field.onChange} defaultValue={field.value}> <FormControl><SelectTrigger><SelectValue placeholder="Select initial condition" /></SelectTrigger></FormControl> <SelectContent> <SelectItem value="Stable">Stable</SelectItem> <SelectItem value="Improving">Improving</SelectItem> <SelectItem value="Critical">Critical</SelectItem> </SelectContent> </Select> <FormMessage /> </FormItem> )}/>
-                                        <FormField control={form.control} name="clinicalSummary" render={({ field }) => ( <FormItem> <FormLabel>Clinical Summary (from external record if available)</FormLabel> <FormControl> <Textarea placeholder="Patient has a history of..." {...field} rows={4} /> </FormControl> <FormMessage /> </FormItem> )}/>
-                                    </div>
-                                </div>
-                            )}
-                             {step === 2 && (
-                                <div className="space-y-6 max-w-lg mx-auto">
-                                    <div className="space-y-3 flex flex-col">
-                                        <FormLabel>Patient Biometrics</FormLabel>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="aspect-square w-full rounded-md border bg-muted flex items-center justify-center overflow-hidden relative group/photo">
-                                                {photoPreview ? (
-                                                    <>
-                                                        <Image src={photoPreview} alt="Patient preview" layout="fill" objectFit="cover" />
-                                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition-opacity">
-                                                            <Button type="button" size="icon" variant="destructive" onClick={clearPhoto}><X className="h-5 w-5" /><span className="sr-only">Clear Photo</span></Button>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className="text-center text-muted-foreground p-2"><UserIcon className="mx-auto h-10 w-10" /><p className="text-xs mt-1">Patient Photo</p></div>
-                                                )}
-                                            </div>
-                                            <div className="aspect-square w-full rounded-md border bg-muted flex items-center justify-center overflow-hidden relative group/fingerprint transition-colors">
-                                                {fingerprintCaptured ? (
-                                                    <>
-                                                        <div className="text-center text-green-600 p-2"><CheckCircle className="mx-auto h-10 w-10" /><p className="text-xs mt-1 font-semibold">Captured</p></div>
-                                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/fingerprint:opacity-100 transition-opacity">
-                                                            <Button type="button" size="icon" variant="destructive" onClick={clearFingerprint}><X className="h-5 w-5" /><span className="sr-only">Clear Fingerprint</span></Button>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <div className="text-center text-muted-foreground p-2"><Fingerprint className="mx-auto h-10 w-10" /><p className="text-xs mt-1">Fingerprint</p></div>
-                                                )}
-                                            </div>
+                                </CardContent>
+                                <CardFooter className="flex justify-between">
+                                    <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                    <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                </CardFooter>
+                             </>
+                         )}
+                         {step === 3 && (
+                              <>
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <ClipboardCheck className="w-6 h-6" />
+                                        <div>
+                                            <CardTitle>Administrative Information</CardTitle>
+                                            <CardDescription>Step 3 of 4: Final details for patient routing.</CardDescription>
                                         </div>
-                                        <div className="flex gap-2">
-                                            <Button type="button" variant="outline" className="w-full" onClick={() => setCameraOpen(true)}><Camera className="mr-2 h-4 w-4"/>Take Photo</Button>
-                                            <Button type="button" variant="outline" className="w-full" onClick={triggerFileUpload}><Upload className="mr-2 h-4 w-4"/>Upload</Button>
-                                            <Button type="button" variant="outline" className="w-full" onClick={handleFingerprintCapture} disabled={fingerprintCaptured}><Fingerprint className="mr-2 h-4 w-4"/>Scan Print</Button>
-                                            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/png, image/jpeg, image/gif" />
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-8">
+                                     <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <FormField
+                                                control={form.control}
+                                                name="appointmentType"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Appointment Type</FormLabel>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl><SelectTrigger><SelectValue placeholder="Select appointment type" /></SelectTrigger></FormControl>
+                                                            <SelectContent>
+                                                                <SelectItem value="New Visit">New Visit</SelectItem>
+                                                                <SelectItem value="Emergency">Emergency</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                             <FormField
+                                                control={form.control}
+                                                name="department"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Department/Specialty</FormLabel>
+                                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl><SelectTrigger><SelectValue placeholder="Select department" /></SelectTrigger></FormControl>
+                                                            <SelectContent>
+                                                                <SelectItem value="General Medicine">General Medicine</SelectItem>
+                                                                <SelectItem value="Cardiology">Cardiology</SelectItem>
+                                                                <SelectItem value="Neurology">Neurology</SelectItem>
+                                                                <SelectItem value="Oncology">Oncology</SelectItem>
+                                                                <SelectItem value="Pediatrics">Pediatrics</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </CardContent>
-                        <CardFooter className="flex justify-between">
-                            <Button type="button" variant="ghost" onClick={() => router.push('/admin/patients')}>Cancel</Button>
-                            <div className="flex gap-2">
-                                {step === 2 && (<Button type="button" variant="outline" onClick={() => setStep(1)}><ArrowLeft className="mr-2 h-4 w-4" />Back</Button>)}
-                                {step === 1 ? (<Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4" /></Button>) : (<Button type="submit"><PlusCircle className="mr-2 h-4 w-4" />Create Patient</Button>)}
-                            </div>
-                        </CardFooter>
+                                </CardContent>
+                                <CardFooter className="flex justify-between">
+                                    <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                    <Button type="button" onClick={handleNext}>Next <ArrowRight className="ml-2 h-4 w-4"/></Button>
+                                </CardFooter>
+                             </>
+                         )}
+                         {step === 4 && (
+                            <>
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <Fingerprint className="w-6 h-6" />
+                                        <div>
+                                            <CardTitle>Biometric Verification</CardTitle>
+                                            <CardDescription>Step 4 of 4: Secure the patient's record with biometric data.</CardDescription>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                                    <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured === 'fingerprint' && 'border-green-500 bg-green-500/10')}>
+                                        <Fingerprint className={cn("w-16 h-16 text-muted-foreground", biometricCaptured === 'fingerprint' && 'text-green-600')} />
+                                        <h3 className="mt-4 font-semibold">Fingerprint Scan</h3>
+                                        <p className="mt-1 text-sm text-muted-foreground">Capture the patient's fingerprint for secure identification.</p>
+                                        <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('fingerprint')} disabled={isCapturing}>
+                                            {isCapturing && biometricCaptured !== 'fingerprint' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                                            {biometricCaptured === 'fingerprint' ? <CheckCircle className="mr-2 h-4 w-4" /> : null}
+                                            {isCapturing && biometricCaptured !== 'fingerprint' ? 'Capturing...' : biometricCaptured === 'fingerprint' ? 'Captured' : 'Start Scan'}
+                                        </Button>
+                                    </div>
+                                    <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured === 'face' && 'border-green-500 bg-green-500/10')}>
+                                        <ScanFace className={cn("w-16 h-16 text-muted-foreground", biometricCaptured === 'face' && 'text-green-600')} />
+                                        <h3 className="mt-4 font-semibold">Facial Recognition</h3>
+                                        <p className="mt-1 text-sm text-muted-foreground">Capture the patient's facial data for easy check-ins.</p>
+                                        <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('face')} disabled={isCapturing}>
+                                            {isCapturing && biometricCaptured !== 'face' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                                            {biometricCaptured === 'face' ? <CheckCircle className="mr-2 h-4 w-4" /> : null}
+                                            {isCapturing && biometricCaptured !== 'face' ? 'Capturing...' : biometricCaptured === 'face' ? 'Captured' : 'Start Scan'}
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="flex justify-between">
+                                    <Button type="button" variant="outline" onClick={handleBack}><ArrowLeft className="mr-2 h-4 w-4"/> Back</Button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button type="button">Save and Register Patient</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Confirm Patient Registration</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                   Are you certain that all the information provided for this patient is accurate and complete? This action will create a permanent medical record.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Review Information</AlertDialogCancel>
+                                                <AlertDialogAction onClick={form.handleSubmit(onSubmit)}>
+                                                    Continue and Save
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </CardFooter>
+                            </>
+                         )}
                     </form>
                 </Form>
             </Card>
-
-            <Dialog open={isCameraOpen} onOpenChange={setCameraOpen}>
-                <DialogContent>
-                    <DialogHeader><DialogTitle>Take Patient Photo</DialogTitle></DialogHeader>
-                    <div className="aspect-video w-full rounded-md bg-muted flex items-center justify-center overflow-hidden mt-2 border">
-                        <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
-                    </div>
-                    <canvas ref={canvasRef} className="hidden" />
-                    <DialogFooter>
-                        <Button type="button" variant="ghost" onClick={() => setCameraOpen(false)}>Cancel</Button>
-                        <Button type="button" onClick={handleCapture}><Camera className="mr-2 h-4 w-4" /> Capture and Save</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </>
+        </div>
     );
-
 }
