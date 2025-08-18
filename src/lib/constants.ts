@@ -324,6 +324,7 @@ export type Patient = {
   admission: AdmissionDetails;
   avatarUrl?: string;
   fingerprintId?: string;
+  faceId?: string;
   preferredCommunicationMethod?: 'SMS' | 'Email' | 'WhatsApp';
 };
 
