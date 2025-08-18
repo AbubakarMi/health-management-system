@@ -120,10 +120,10 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
             dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
             address: values.address,
             maritalStatus: values.maritalStatus,
-            condition: 'Stable', 
+            condition: 'Stable',
             lastVisit: format(new Date(), "yyyy-MM-dd"),
             bloodType: values.bloodType,
-            assignedDoctor: 'Dr. Aisha Bello', 
+            assignedDoctor: 'Dr. Aisha Bello',
             clinicalSummary,
             medicalHistory: [],
             prescriptions: [],
@@ -131,6 +131,8 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
             admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
             preferredCommunicationMethod: values.preferredCommunicationMethod,
             fingerprintId: values.biometricId,
+            email: "",
+            phone: ""
         });
 
 
