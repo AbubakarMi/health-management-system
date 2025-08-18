@@ -48,7 +48,7 @@ export default function AdminLayout({
                           {children}
                       </main>
                       <footer className="py-4 px-6 text-center text-sm text-muted-foreground">
-                          Powered by DevFlux 2025
+                          Powered by Nubenta Technology 2025
                       </footer>
                   </div>
               </SidebarInset>

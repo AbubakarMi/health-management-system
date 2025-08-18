@@ -79,10 +79,20 @@ export default function LoginPage() {
         </Card>
       </div>
 
-      
-      <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.9s]">
-        <p>Powered by DevFlux 2025</p>
-      </footer>
+     <footer className="z-10 mt-12 text-center text-sm text-muted-foreground animate-fade-in [animation-delay:0.9s]">
+  <p>
+    Powered by{" "}
+    <a
+      href="https://nubenta technology.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-primary hover:underline"
+    >
+      Nubenta Technology
+    </a>{" "}
+    2025
+  </p>
+</footer>
     </div>
   );
 }

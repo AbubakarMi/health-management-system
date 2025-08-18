@@ -252,4 +252,5 @@ export default function MessagesPage() {
                 onSendMessage={handleNewMessageSend}
             />
         </>
-    );
+        );
+    }
