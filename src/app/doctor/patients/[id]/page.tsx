@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { detailedPatients, Patient, Prescription, prescriptionManager, labTestManager, MedicalHistoryEntry, patientManager } from "@/lib/constants";
 import { Button } from '@/components/ui/button';
-import { PlusCircle, FileText, Pill, MoreHorizontal, Edit, Trash2, FlaskConical, Stethoscope, Microscope, TestTube2, BedDouble, LogOut, Lightbulb, VenetianMask, Fingerprint, History, Sparkles, Loader2, Check, CalendarPlus, NotebookText, Send } from 'lucide-react';
+import { PlusCircle, FileText, Pill, MoreHorizontal, Edit, Trash2, FlaskConical, Stethoscope, Microscope, TestTube2, BedDouble, LogOut, Lightbulb, VenetianMask, Fingerprint, History, Sparkles, Loader2, Check, CalendarPlus, NotebookText, Send, CreditCard } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +28,7 @@ import { ScheduleFollowUpDialog } from '@/components/schedule-follow-up-dialog';
 import { EditSummaryDialog } from '@/components/edit-summary-dialog';
 import { RecordDeathDialog } from '@/components/record-death-dialog';
 import { ReferPatientDialog } from '@/components/refer-patient-dialog';
+import { generatePatientCard } from '@/lib/patient-card-generator';
 
 
 const prescriptionSchema = z.object({
@@ -135,6 +136,16 @@ export default function PatientDetailPage() {
     setEditingPrescription(prescription);
     setPrescribeDialogOpen(true);
   }
+
+  const handlePrintCard = () => {
+    if (patient) {
+      generatePatientCard(patient);
+      toast({
+        title: "Patient ID Card Generated",
+        description: `ID card for ${patient.name} has been downloaded.`,
+      });
+    }
+  };
 
   const handlePrescriptionSubmit = (values: PrescriptionFormData) => {
     if (!patient) return;
@@ -383,7 +394,11 @@ export default function PatientDetailPage() {
                     <p className="text-sm text-muted-foreground pt-1">Last Visit: {patient.lastVisit}</p>
                 </div>
            </div>
-            <div className='flex gap-2'>
+            <div className='flex flex-col sm:flex-row gap-2'>
+                <Button variant="outline" onClick={handlePrintCard} size="sm" className="whitespace-nowrap">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Print ID Card
+                </Button>
                  {patient.admission.isAdmitted ? (
                      <AlertDialog>
                         <AlertDialogTrigger asChild>

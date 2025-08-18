@@ -308,7 +308,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
     };
 
     return (
-        <div className="min-h-screen bg-gray-50/50 py-4 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen py-4 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto space-y-6">
                 <div className="flex items-center gap-4">
                     <Button variant="outline" size="icon" asChild>
@@ -316,17 +316,19 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                     </Button>
                     <h1 className="text-xl sm:text-2xl font-bold">Create New Patient Record</h1>
                 </div>
-                <Card className="shadow-lg">
+                <Card className="shadow-xl border-0 bg-gradient-to-br from-white to-blue-50/30">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                          {step === 1 && (
                             <>
-                                <CardHeader>
+                                <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
                                     <div className="flex items-center gap-3">
-                                        <UserPlus className="w-6 h-6" />
+                                        <div className="p-2 bg-white/20 rounded-lg">
+                                            <UserPlus className="w-6 h-6" />
+                                        </div>
                                         <div>
-                                            <CardTitle>Core Patient Demographics</CardTitle>
-                                            <CardDescription>Step 1 of 4: Enter the required information to register a new patient.</CardDescription>
+                                            <CardTitle className="text-white text-xl">Core Patient Demographics</CardTitle>
+                                            <CardDescription className="text-blue-100">Step 1 of 4: Enter the required information to register a new patient.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -366,12 +368,14 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                          )}
                          {step === 2 && (
                              <>
-                                <CardHeader>
+                                <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
                                     <div className="flex items-center gap-3">
-                                        <ClipboardCheck className="w-6 h-6" />
+                                        <div className="p-2 bg-white/20 rounded-lg">
+                                            <ClipboardCheck className="w-6 h-6" />
+                                        </div>
                                         <div>
-                                            <CardTitle>Medical Information</CardTitle>
-                                            <CardDescription>Step 2 of 4: Provide key medical details for treatment and safety.</CardDescription>
+                                            <CardTitle className="text-white text-xl">Medical Information</CardTitle>
+                                            <CardDescription className="text-green-100">Step 2 of 4: Provide key medical details for treatment and safety.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -456,12 +460,14 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                          )}
                          {step === 3 && (
                               <>
-                                <CardHeader>
+                                <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-t-lg">
                                     <div className="flex items-center gap-3">
-                                        <ClipboardCheck className="w-6 h-6" />
+                                        <div className="p-2 bg-white/20 rounded-lg">
+                                            <ClipboardCheck className="w-6 h-6" />
+                                        </div>
                                         <div>
-                                            <CardTitle>Administrative Information</CardTitle>
-                                            <CardDescription>Step 3 of 4: Final details for patient routing.</CardDescription>
+                                            <CardTitle className="text-white text-xl">Administrative Information</CardTitle>
+                                            <CardDescription className="text-purple-100">Step 3 of 4: Final details for patient routing.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
@@ -520,40 +526,58 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                          )}
                          {step === 4 && (
                             <>
-                                <CardHeader>
+                                <CardHeader className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-t-lg">
                                     <div className="flex items-center gap-3">
-                                        <Fingerprint className="w-6 h-6" />
+                                        <div className="p-2 bg-white/20 rounded-lg">
+                                            <Fingerprint className="w-6 h-6" />
+                                        </div>
                                         <div>
-                                            <CardTitle>Biometric Verification</CardTitle>
-                                            <CardDescription>Step 4 of 4: Secure the patient's record with biometric data.</CardDescription>
+                                            <CardTitle className="text-white text-xl">Biometric Verification</CardTitle>
+                                            <CardDescription className="text-indigo-100">Step 4 of 4: Secure the patient's record with biometric data.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-6 pt-6">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                        <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured.fingerprint && 'border-green-500 bg-green-500/10')}>
-                                            <Fingerprint className={cn("w-16 h-16 text-muted-foreground", biometricCaptured.fingerprint && 'text-green-600')} />
-                                            <h3 className="mt-4 font-semibold">Fingerprint Scan</h3>
-                                            <p className="mt-1 text-sm text-muted-foreground">Capture the patient's fingerprint for secure identification.</p>
-                                            <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('fingerprint')} disabled={isCapturing || biometricCaptured.fingerprint}>
+                                        <div className={cn("p-6 border-2 rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-lg", 
+                                            biometricCaptured.fingerprint 
+                                                ? 'border-green-500 bg-gradient-to-br from-green-50 to-green-100 shadow-green-100' 
+                                                : 'border-gray-200 bg-gradient-to-br from-gray-50 to-white hover:border-indigo-300')}>
+                                            <div className={cn("p-4 rounded-full mb-4", biometricCaptured.fingerprint ? 'bg-green-500' : 'bg-indigo-500')}>
+                                                <Fingerprint className={cn("w-8 h-8", biometricCaptured.fingerprint ? 'text-white' : 'text-white')} />
+                                            </div>
+                                            <h3 className="font-semibold text-lg text-gray-800">Fingerprint Scan</h3>
+                                            <p className="mt-1 text-sm text-gray-600 mb-4">Capture the patient's fingerprint for secure identification.</p>
+                                            <Button type="button" className={cn("transition-all", biometricCaptured.fingerprint ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700')} onClick={() => handleCaptureBiometric('fingerprint')} disabled={isCapturing || biometricCaptured.fingerprint}>
                                                 {isCapturing ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
-                                                {biometricCaptured.fingerprint ? <CheckCircle className="mr-2 h-4 w-4" /> : null}
+                                                {biometricCaptured.fingerprint ? <CheckCircle className="mr-2 h-4 w-4" /> : <Fingerprint className="mr-2 h-4 w-4" />}
                                                 {isCapturing ? 'Capturing...' : biometricCaptured.fingerprint ? 'Captured' : 'Start Scan'}
                                             </Button>
                                         </div>
-                                        <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured.face && 'border-green-500 bg-green-500/10')}>
-                                            <ScanFace className={cn("w-16 h-16 text-muted-foreground", biometricCaptured.face && 'text-green-600')} />
-                                            <h3 className="mt-4 font-semibold">Facial Recognition</h3>
-                                            <p className="mt-1 text-sm text-muted-foreground">Capture the patient's facial data using live camera.</p>
-                                            <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('face')} disabled={biometricCaptured.face}>
+                                        <div className={cn("p-6 border-2 rounded-xl flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-lg", 
+                                            biometricCaptured.face 
+                                                ? 'border-green-500 bg-gradient-to-br from-green-50 to-green-100 shadow-green-100' 
+                                                : 'border-gray-200 bg-gradient-to-br from-gray-50 to-white hover:border-indigo-300')}>
+                                            <div className={cn("p-4 rounded-full mb-4", biometricCaptured.face ? 'bg-green-500' : 'bg-indigo-500')}>
+                                                <ScanFace className={cn("w-8 h-8", biometricCaptured.face ? 'text-white' : 'text-white')} />
+                                            </div>
+                                            <h3 className="font-semibold text-lg text-gray-800">Facial Recognition</h3>
+                                            <p className="mt-1 text-sm text-gray-600 mb-4">Capture the patient's facial data using live camera.</p>
+                                            <Button type="button" className={cn("transition-all", biometricCaptured.face ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700')} onClick={() => handleCaptureBiometric('face')} disabled={biometricCaptured.face}>
                                                 {biometricCaptured.face ? <CheckCircle className="mr-2 h-4 w-4" /> : <Camera className="mr-2 h-4 w-4" />}
                                                 {biometricCaptured.face ? 'Captured' : 'Open Camera'}
                                             </Button>
                                         </div>
                                     </div>
                                     {!biometricCaptured.fingerprint && !biometricCaptured.face && (
-                                        <div className="text-center text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
-                                            <span className="font-medium">⚠️ At least one biometric is required</span> - Please capture either fingerprint or face data to continue.
+                                        <div className="text-center p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+                                            <div className="flex items-center justify-center mb-2">
+                                                <div className="p-2 bg-amber-100 rounded-full">
+                                                    <span className="text-lg">⚠️</span>
+                                                </div>
+                                            </div>
+                                            <p className="font-semibold text-amber-800">At least one biometric is required</p>
+                                            <p className="text-sm text-amber-700 mt-1">Please capture either fingerprint or face data to continue.</p>
                                         </div>
                                     )}
                                 </CardContent>

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { detailedPatients, Patient, Prescription, prescriptionManager, labTestManager, MedicalHistoryEntry, patientManager } from "@/lib/constants";
 import { Button } from '@/components/ui/button';
-import { PlusCircle, FileText, Pill, MoreHorizontal, Edit, Trash2, FlaskConical, Stethoscope, Microscope, TestTube2, VenetianMask, Fingerprint, History, CalendarPlus } from 'lucide-react';
+import { PlusCircle, FileText, Pill, MoreHorizontal, Edit, Trash2, FlaskConical, Stethoscope, Microscope, TestTube2, VenetianMask, Fingerprint, History, CalendarPlus, CreditCard } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Timeline, TimelineItem, TimelineConnector, TimelineHeader, TimelineIcon, TimelineTitle, TimelineContent, TimelineTime } from '@/components/ui/timeline';
 import { VisitDetailsDialog } from '@/components/visit-details-dialog';
 import { CreateVisitDialog } from '@/components/create-visit-dialog';
+import { generatePatientCard } from '@/lib/patient-card-generator';
 
 
 const prescriptionSchema = z.object({
@@ -120,6 +121,16 @@ export default function PatientDetailPage() {
     setPrescribeDialogOpen(true);
   }
 
+  const handlePrintCard = () => {
+    if (patient) {
+      generatePatientCard(patient);
+      toast({
+        title: "Patient ID Card Generated",
+        description: `ID card for ${patient.name} has been downloaded.`,
+      });
+    }
+  };
+
   const handlePrescriptionSubmit = (values: PrescriptionFormData) => {
     if (!patient) return;
     
@@ -199,7 +210,8 @@ export default function PatientDetailPage() {
     <>
     <div className="space-y-6">
       <Card>
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 space-y-0">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 space-y-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <Avatar className="w-16 h-16 border">
               <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
               <AvatarFallback className="text-2xl">{patient.name.charAt(0)}</AvatarFallback>
@@ -216,6 +228,13 @@ export default function PatientDetailPage() {
                 </CardDescription>
                 <p className="text-sm text-muted-foreground pt-1">Last Visit: {patient.lastVisit}</p>
             </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={handlePrintCard} className="whitespace-nowrap">
+              <CreditCard className="mr-2 h-4 w-4" />
+              Print ID Card
+            </Button>
+          </div>
         </CardHeader>
       </Card>
       
