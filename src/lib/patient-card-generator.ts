@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import type { Patient } from './constants';
-import { enhancePatientPicture, imageToBase64 } from '@/ai/flows/enhance-picture';
+import { enhancePatientPicture, imageToBase64 } from '../ai/flows/enhance-picture';
 
 export async function generatePatientCard(patient: Patient) {
     const doc = new jsPDF({
@@ -309,4 +309,22 @@ function generateCardBack(doc: jsPDF, patient: Patient, emergencyColor: string, 
     doc.setFont('times', 'normal');
     doc.setTextColor('#4a5568');
     doc.text('or nearest police station. Thank you.', 42.8, yPos, { align: 'center' });
+}
+
+// Helper function for photo placeholder
+function addPhotoPlaceholder(doc: jsPDF, x: number, y: number, width: number, height: number) {
+    // Background
+    doc.setFillColor(240, 240, 240);
+    doc.rect(x, y, width, height, 'F');
+    
+    // Border
+    doc.setDrawColor('#CBD5E0');
+    doc.setLineWidth(1);
+    doc.rect(x, y, width, height);
+    
+    // Placeholder text
+    doc.setFontSize(5);
+    doc.setTextColor('#4a5568');
+    doc.text('PATIENT', x + width/2, y + height/2 - 1, { align: 'center' });
+    doc.text('PHOTO', x + width/2, y + height/2 + 2, { align: 'center' });
 }

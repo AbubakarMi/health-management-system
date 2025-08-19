@@ -72,6 +72,7 @@ export default function CreatePatientPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [createdPatient, setCreatedPatient] = useState<any>(null);
+    const [isGeneratingCard, setIsGeneratingCard] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -293,13 +294,35 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
         });
     };
 
-    const handlePrintCard = () => {
-        if (createdPatient) {
-            generatePatientCard(createdPatient);
-            toast({
-                title: "Patient Card Generated",
-                description: `ID card for ${createdPatient.name} has been downloaded.`,
-            });
+    const handlePrintCard = async () => {
+        if (createdPatient && !isGeneratingCard) {
+            setIsGeneratingCard(true);
+            try {
+                toast({
+                    title: "Generating ID Card",
+                    description: createdPatient.avatarUrl ? 
+                        "Processing patient photo with AI enhancement and generating ID card..." :
+                        "Generating professional ID card...",
+                });
+                
+                await generatePatientCard(createdPatient);
+                
+                toast({
+                    title: "ID Card Generated Successfully",
+                    description: createdPatient.avatarUrl ?
+                        `Professional ID card for ${createdPatient.name} has been downloaded with AI-enhanced photo.` :
+                        `Professional ID card for ${createdPatient.name} has been downloaded.`,
+                });
+            } catch (error) {
+                console.error('Error generating patient card:', error);
+                toast({
+                    variant: "destructive",
+                    title: "Card Generation Failed",
+                    description: "Failed to generate ID card. Please try again.",
+                });
+            } finally {
+                setIsGeneratingCard(false);
+            }
         }
     };
 
@@ -679,10 +702,20 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                         <Button
                             variant="outline"
                             onClick={handlePrintCard}
+                            disabled={isGeneratingCard}
                             className="w-full sm:w-auto"
                         >
-                            <CreditCard className="mr-2 h-4 w-4" />
-                            Print ID Card
+                            {isGeneratingCard ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Generating...
+                                </>
+                            ) : (
+                                <>
+                                    <CreditCard className="mr-2 h-4 w-4" />
+                                    {createdPatient?.avatarUrl ? 'Generate AI-Enhanced ID Card' : 'Print ID Card'}
+                                </>
+                            )}
                         </Button>
                         <Button
                             onClick={handleContinueToProfile}
