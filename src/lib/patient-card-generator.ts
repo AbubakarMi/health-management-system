@@ -1,8 +1,9 @@
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import type { Patient } from './constants';
+import { enhancePatientPicture, imageToBase64 } from '@/ai/flows/enhance-picture';
 
-export function generatePatientCard(patient: Patient) {
+export async function generatePatientCard(patient: Patient) {
     const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
@@ -19,8 +20,30 @@ export function generatePatientCard(patient: Patient) {
     // Fonts - Match existing PDF design
     doc.setFont('times', 'normal');
 
+    // Process patient picture if available
+    let patientImage: string | null = null;
+    if (patient.avatarUrl) {
+        try {
+            // Enhance picture with AI (white background)
+            const enhanced = await enhancePatientPicture({
+                imageUrl: patient.avatarUrl,
+                patientName: patient.name
+            });
+            
+            if (enhanced.success && enhanced.enhancedImageUrl) {
+                patientImage = await imageToBase64(enhanced.enhancedImageUrl);
+            } else {
+                // Fallback to original image
+                patientImage = await imageToBase64(patient.avatarUrl);
+            }
+        } catch (error) {
+            console.error('Error processing patient image:', error);
+            patientImage = null;
+        }
+    }
+
     // FRONT OF CARD
-    generateCardFront(doc, patient, primaryColor, headingColor, textColor, borderColor);
+    generateCardFront(doc, patient, primaryColor, headingColor, textColor, borderColor, patientImage);
     
     // Add new page for back
     doc.addPage();
@@ -31,7 +54,7 @@ export function generatePatientCard(patient: Patient) {
     doc.save(fileName);
 }
 
-function generateCardFront(doc: jsPDF, patient: Patient, primaryColor: string, headingColor: string, textColor: string, borderColor: string) {
+function generateCardFront(doc: jsPDF, patient: Patient, primaryColor: string, headingColor: string, textColor: string, borderColor: string, patientImage?: string | null) {
     doc.setFont('times', 'normal');
 
     // Ornate Border - Match existing PDF design
@@ -58,17 +81,36 @@ function generateCardFront(doc: jsPDF, patient: Patient, primaryColor: string, h
     doc.setTextColor('#2d3748');
     doc.text('PATIENT ID CARD', 42.8, 15, { align: 'center' });
 
-    // Patient photo placeholder (right side) - Properly positioned to avoid text overlap
-    doc.setFillColor(240, 240, 240);
-    doc.rect(58, 18, 20, 24, 'F');
-    doc.setDrawColor('#CBD5E0');
-    doc.rect(58, 18, 20, 24);
+    // Patient photo section - Enhanced with actual photo or placeholder
+    const photoX = 58;
+    const photoY = 18;
+    const photoW = 20;
+    const photoH = 24;
     
-    // Photo placeholder text - well centered
-    doc.setFontSize(5);
-    doc.setTextColor('#4a5568');
-    doc.text('PATIENT', 68, 28, { align: 'center' });
-    doc.text('PHOTO', 68, 31, { align: 'center' });
+    if (patientImage) {
+        try {
+            // Add the enhanced patient photo
+            doc.addImage(patientImage, 'JPEG', photoX, photoY, photoW, photoH);
+            
+            // Add photo border
+            doc.setDrawColor('#CBD5E0');
+            doc.setLineWidth(1);
+            doc.rect(photoX, photoY, photoW, photoH);
+            
+            // Add inner border for professional look
+            doc.setDrawColor('#89B7E5');
+            doc.setLineWidth(0.5);
+            doc.rect(photoX + 0.5, photoY + 0.5, photoW - 1, photoH - 1);
+            
+        } catch (error) {
+            console.error('Error adding patient image to PDF:', error);
+            // Fall back to placeholder
+            addPhotoPlaceholder(doc, photoX, photoY, photoW, photoH);
+        }
+    } else {
+        // Use placeholder when no image available
+        addPhotoPlaceholder(doc, photoX, photoY, photoW, photoH);
+    }
 
     // Patient details (left side) - Carefully spaced to avoid overlaps
     let yPos = 19;
