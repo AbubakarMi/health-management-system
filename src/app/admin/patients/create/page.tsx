@@ -73,6 +73,8 @@ export default function CreatePatientPage() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [createdPatient, setCreatedPatient] = useState<any>(null);
     const [isGeneratingCard, setIsGeneratingCard] = useState(false);
+    const [patientPhoto, setPatientPhoto] = useState<string | null>(null);
+    const [isPhotoCamera, setIsPhotoCamera] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -208,6 +210,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                 preferredCommunicationMethod: values.preferredCommunicationMethod,
                 fingerprintId: values.biometricId,
                 faceId: values.faceId,
+                avatarUrl: patientPhoto || undefined,
                 email: "",
                 phone: values.phone,
                 emergencyContactName: values.emergencyContactName,
@@ -254,6 +257,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
     
     const handleCaptureBiometric = (type: "fingerprint" | "face") => {
         if (type === "face") {
+            setIsPhotoCamera(false);
             setIsCameraOpen(true);
         } else {
             // Fingerprint capture simulation
@@ -271,6 +275,21 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
         }
     };
 
+    const handleCapturePatientPhoto = () => {
+        setIsPhotoCamera(true);
+        setIsCameraOpen(true);
+    };
+
+    const handleRemovePatientPhoto = () => {
+        setPatientPhoto(null);
+        setBiometricCaptured(prev => ({ ...prev, face: false }));
+        form.setValue('faceId', '');
+        toast({
+            title: "Photo Removed",
+            description: "Patient photo and face biometric data have been cleared."
+        });
+    };
+
     const handleCameraCapture = () => {
         if (!videoRef.current || !canvasRef.current) return;
 
@@ -282,16 +301,32 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
         context?.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
         const dataUrl = canvas.toDataURL('image/png');
         
-        // Generate face ID and save
-        const newFaceId = `FACE_${Date.now()}`;
-        form.setValue('faceId', newFaceId);
-        setBiometricCaptured(prev => ({ ...prev, face: true }));
-        setIsCameraOpen(false);
-        
-        toast({
-            title: "Face Biometric Captured",
-            description: "The patient's facial biometric has been successfully registered."
-        });
+        if (isPhotoCamera) {
+            // Capture photo for BOTH ID card and biometric
+            setPatientPhoto(dataUrl);
+            const newFaceId = `FACE_${Date.now()}`;
+            form.setValue('faceId', newFaceId);
+            setBiometricCaptured(prev => ({ ...prev, face: true }));
+            setIsCameraOpen(false);
+            setIsPhotoCamera(false);
+            
+            toast({
+                title: "Photo Captured Successfully",
+                description: "Photo will be used for both biometric recognition and ID card display."
+            });
+        } else {
+            // This branch is no longer used since we only use photo camera now
+            // Generate face ID for biometric
+            const newFaceId = `FACE_${Date.now()}`;
+            form.setValue('faceId', newFaceId);
+            setBiometricCaptured(prev => ({ ...prev, face: true }));
+            setIsCameraOpen(false);
+            
+            toast({
+                title: "Face Biometric Captured",
+                description: "The patient's facial biometric has been successfully registered."
+            });
+        }
     };
 
     const handlePrintCard = async () => {
@@ -550,13 +585,13 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                     <div className="flex items-center gap-3">
                                         <Fingerprint className="w-6 h-6" />
                                         <div>
-                                            <CardTitle>Biometric Verification</CardTitle>
-                                            <CardDescription>Step 4 of 4: Secure the patient's record with biometric data.</CardDescription>
+                                            <CardTitle>Biometric Verification & Photo</CardTitle>
+                                            <CardDescription>Step 4 of 4: Secure the patient's record and capture photo for ID card.</CardDescription>
                                         </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent className="space-y-6 pt-6">
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                         <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured.fingerprint && 'border-green-500 bg-green-500/10')}>
                                             <Fingerprint className={cn("w-16 h-16 text-muted-foreground", biometricCaptured.fingerprint && 'text-green-600')} />
                                             <h3 className="mt-4 font-semibold">Fingerprint Scan</h3>
@@ -567,19 +602,43 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                                 {isCapturing ? 'Capturing...' : biometricCaptured.fingerprint ? 'Captured' : 'Start Scan'}
                                             </Button>
                                         </div>
-                                        <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", biometricCaptured.face && 'border-green-500 bg-green-500/10')}>
-                                            <ScanFace className={cn("w-16 h-16 text-muted-foreground", biometricCaptured.face && 'text-green-600')} />
-                                            <h3 className="mt-4 font-semibold">Facial Recognition</h3>
-                                            <p className="mt-1 text-sm text-muted-foreground">Capture the patient's facial data using live camera.</p>
-                                            <Button type="button" variant="outline" className="mt-4" onClick={() => handleCaptureBiometric('face')} disabled={biometricCaptured.face}>
-                                                {biometricCaptured.face ? <CheckCircle className="mr-2 h-4 w-4" /> : <Camera className="mr-2 h-4 w-4" />}
-                                                {biometricCaptured.face ? 'Captured' : 'Open Camera'}
+                                        {/* Combined Photo & Face Biometric Card */}
+                                        <div className={cn("p-6 border-2 border-dashed rounded-lg flex flex-col items-center justify-center text-center", (biometricCaptured.face || patientPhoto) && 'border-green-500 bg-green-500/10')}>  
+                                            {(biometricCaptured.face || patientPhoto) ? (
+                                                <div className="relative">
+                                                    <img 
+                                                        src={patientPhoto} 
+                                                        alt="Patient Photo & Face Biometric" 
+                                                        className="w-16 h-20 object-cover rounded-lg mb-2"
+                                                    />
+                                                    <CheckCircle className="w-6 h-6 text-green-600 absolute -top-1 -right-1" />
+                                                </div>
+                                            ) : (
+                                                <div className="relative">
+                                                    <ScanFace className="w-16 h-16 text-muted-foreground" />
+                                                    <Camera className="w-6 h-6 text-muted-foreground absolute -bottom-1 -right-1" />
+                                                </div>
+                                            )}
+                                            <h3 className="mt-4 font-semibold">Face Photo & ID Card</h3>
+                                            <p className="mt-1 text-sm text-muted-foreground">Single photo for both biometric recognition and ID card display.</p>
+                                            <Button type="button" variant="outline" className="mt-4" onClick={handleCapturePatientPhoto} disabled={!!(biometricCaptured.face || patientPhoto)}>
+                                                {(biometricCaptured.face || patientPhoto) ? <CheckCircle className="mr-2 h-4 w-4" /> : <Camera className="mr-2 h-4 w-4" />}
+                                                {(biometricCaptured.face || patientPhoto) ? 'Photo Captured' : 'Take Photo'}
                                             </Button>
+                                            {(biometricCaptured.face || patientPhoto) && (
+                                                <Button type="button" variant="ghost" size="sm" className="mt-2 text-destructive" onClick={() => {
+                                                    handleRemovePatientPhoto();
+                                                    setBiometricCaptured(prev => ({ ...prev, face: false }));
+                                                }}>
+                                                    <X className="mr-1 h-3 w-3" />
+                                                    Remove
+                                                </Button>
+                                            )}
                                         </div>
                                     </div>
-                                    {!biometricCaptured.fingerprint && !biometricCaptured.face && (
+                                    {!biometricCaptured.fingerprint && !biometricCaptured.face && !patientPhoto && (
                                         <div className="text-center text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
-                                            <span className="font-medium">⚠️ At least one biometric is required</span> - Please capture either fingerprint or face data to continue.
+                                            <span className="font-medium">⚠️ At least one identification method is required</span> - Please capture fingerprint, face biometric, or patient photo to continue.
                                         </div>
                                     )}
                                 </CardContent>
@@ -591,7 +650,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                                         <AlertDialogTrigger asChild>
                                             <Button 
                                                 type="button" 
-                                                disabled={!biometricCaptured.fingerprint && !biometricCaptured.face || isSubmitting}
+                                                disabled={!biometricCaptured.fingerprint && !biometricCaptured.face && !patientPhoto || isSubmitting}
                                                 className="w-full sm:w-auto"
                                             >
                                                 {isSubmitting ? (
@@ -626,11 +685,13 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                 </Form>
             </Card>
 
-            {/* Camera Modal for Face Capture */}
+            {/* Camera Modal for Photo/Biometric Capture */}
             <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
                 <DialogContent className="max-w-2xl w-full mx-4 sm:mx-auto">
                     <DialogHeader>
-                        <DialogTitle>Capture Face Biometric</DialogTitle>
+                        <DialogTitle>
+                            {isPhotoCamera ? 'Capture Patient Photo' : 'Capture Face Biometric'}
+                        </DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                         <div className="aspect-video w-full rounded-lg bg-muted flex items-center justify-center overflow-hidden border">
@@ -652,11 +713,17 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                         </div>
                         <canvas ref={canvasRef} className="hidden" />
                         <div className="text-center text-sm text-muted-foreground">
-                            Position the patient's face within the frame and click capture when ready.
+                            {isPhotoCamera 
+                                ? "Position the patient within the frame for their ID card photo and click capture when ready."
+                                : "Position the patient's face within the frame and click capture when ready."
+                            }
                         </div>
                     </div>
                     <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
-                        <Button type="button" variant="outline" onClick={() => setIsCameraOpen(false)} className="w-full sm:w-auto">
+                        <Button type="button" variant="outline" onClick={() => {
+                            setIsCameraOpen(false);
+                            setIsPhotoCamera(false);
+                        }} className="w-full sm:w-auto">
                             <X className="mr-2 h-4 w-4" />
                             Cancel
                         </Button>
@@ -667,7 +734,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                             className="w-full sm:w-auto"
                         >
                             <Camera className="mr-2 h-4 w-4" />
-                            Capture Face
+                            {isPhotoCamera ? 'Capture Photo' : 'Capture Face'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

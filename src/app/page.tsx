@@ -56,7 +56,7 @@ export default function LoginPage() {
             <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-2"><LogIn className="w-6 h-6"/> Staff Login</CardTitle>
             <CardDescription>
-                Enter your credentials to access your dashboard.
+                Enter your credentials to access your dashboard. 
             </CardDescription>
             </CardHeader>
             <CardContent>

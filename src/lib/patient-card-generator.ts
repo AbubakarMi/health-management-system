@@ -24,17 +24,24 @@ export async function generatePatientCard(patient: Patient) {
     let patientImage: string | null = null;
     if (patient.avatarUrl) {
         try {
-            // Enhance picture with AI (white background)
-            const enhanced = await enhancePatientPicture({
-                imageUrl: patient.avatarUrl,
-                patientName: patient.name
-            });
-            
-            if (enhanced.success && enhanced.enhancedImageUrl) {
-                patientImage = await imageToBase64(enhanced.enhancedImageUrl);
+            // Check if image is already base64 (from camera capture)
+            if (patient.avatarUrl.startsWith('data:')) {
+                // Image is already base64, use directly
+                patientImage = patient.avatarUrl;
+                console.log('Using captured camera image for ID card');
             } else {
-                // Fallback to original image
-                patientImage = await imageToBase64(patient.avatarUrl);
+                // Image is a URL, enhance and convert
+                const enhanced = await enhancePatientPicture({
+                    imageUrl: patient.avatarUrl,
+                    patientName: patient.name
+                });
+                
+                if (enhanced.success && enhanced.enhancedImageUrl) {
+                    patientImage = await imageToBase64(enhanced.enhancedImageUrl);
+                } else {
+                    // Fallback to original image
+                    patientImage = await imageToBase64(patient.avatarUrl);
+                }
             }
         } catch (error) {
             console.error('Error processing patient image:', error);
@@ -89,7 +96,8 @@ function generateCardFront(doc: jsPDF, patient: Patient, primaryColor: string, h
     
     if (patientImage) {
         try {
-            // Add the enhanced patient photo
+            console.log('Adding patient image to ID card PDF');
+            // Add the patient photo
             doc.addImage(patientImage, 'JPEG', photoX, photoY, photoW, photoH);
             
             // Add photo border
@@ -102,12 +110,14 @@ function generateCardFront(doc: jsPDF, patient: Patient, primaryColor: string, h
             doc.setLineWidth(0.5);
             doc.rect(photoX + 0.5, photoY + 0.5, photoW - 1, photoH - 1);
             
+            console.log('Patient photo successfully added to ID card');
         } catch (error) {
             console.error('Error adding patient image to PDF:', error);
             // Fall back to placeholder
             addPhotoPlaceholder(doc, photoX, photoY, photoW, photoH);
         }
     } else {
+        console.log('No patient image available, using placeholder');
         // Use placeholder when no image available
         addPhotoPlaceholder(doc, photoX, photoY, photoW, photoH);
     }
