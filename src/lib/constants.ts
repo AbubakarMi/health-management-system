@@ -324,7 +324,11 @@ export type Patient = {
   admission: AdmissionDetails;
   avatarUrl?: string;
   fingerprintId?: string;
+  faceId?: string;
   preferredCommunicationMethod?: 'SMS' | 'Email' | 'WhatsApp';
+  emergencyContactName?: string;
+  emergencyContactRelationship?: string;
+  emergencyContactPhone?: string;
 };
 
 
@@ -1466,6 +1470,28 @@ class CommunicationManager {
 // All manager instantiations moved here to solve initialization order errors.
 export const notificationManager = new NotificationManager();
 export const callManager = new CallManager();
+
+// Generate unique patient ID in format PM-000001-A4E (male) or PF-000002-B1C (female)
+export function generatePatientId(gender: 'Male' | 'Female'): string {
+    const prefix = gender === 'Male' ? 'PM' : 'PF';
+    const existingPatients = patientManager.getPatients();
+    
+    // Count existing patients of same gender
+    const sameGenderCount = existingPatients.filter(p => 
+        p.id.startsWith(prefix)
+    ).length;
+    
+    const sequenceNumber = (sameGenderCount + 1).toString().padStart(6, '0');
+    
+    // Generate random 3-character suffix (A-Z, 0-9)
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let suffix = '';
+    for (let i = 0; i < 3; i++) {
+        suffix += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    return `${prefix}-${sequenceNumber}-${suffix}`;
+}
 export const communicationManager = new CommunicationManager();
 export const bedManager = new BedManager(initialBeds);
 export const patientManager = new PatientManager(detailedPatients);
