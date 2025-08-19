@@ -208,7 +208,10 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                 fingerprintId: values.biometricId,
                 faceId: values.faceId,
                 email: "",
-                phone: values.phone
+                phone: values.phone,
+                emergencyContactName: values.emergencyContactName,
+                emergencyContactRelationship: values.emergencyContactRelationship,
+                emergencyContactPhone: values.emergencyContactPhone
             };
             
             patientManager.getPatients().push(newPatient);
