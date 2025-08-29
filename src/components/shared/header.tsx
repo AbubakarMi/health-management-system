@@ -50,14 +50,19 @@ export function AppHeader({ role }: AppHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6">
+    <header className="sticky top-0 z-10 flex h-20 items-center gap-4 border-b bg-background/80 backdrop-blur-md px-4 md:px-6 animate-fade-in">
       <div className="flex items-center gap-4">
           <SidebarTrigger className="md:hidden" />
-          <div className="flex flex-col">
-            <h1 className="text-lg font-semibold md:text-2xl font-headline">
-                Welcome, {role}!
-            </h1>
-            <p className="text-xs text-muted-foreground h-4">
+          <div className="flex flex-col space-y-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-lg font-semibold md:text-2xl font-headline nubenta-gradient-text animate-glow">
+                  Welcome, {role}!
+              </h1>
+              <div className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-white rounded-full animate-pulse-slow">
+                Powered by Nubenta
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground h-4 font-medium">
                 {currentDateTime ? format(currentDateTime, 'eeee, MMMM dd, yyyy | hh:mm:ss a') : ''}
             </p>
           </div>
@@ -65,10 +70,10 @@ export function AppHeader({ role }: AppHeaderProps) {
       <div className="flex flex-1 items-center justify-end gap-4 md:gap-2 lg:gap-4">
          <Popover>
             <PopoverTrigger asChild>
-                <Button variant="outline" size="icon" className="relative">
-                    <Bell className="h-[1.2rem] w-[1.2rem]" />
+                <Button variant="outline" size="icon" className="relative hover:bg-primary/10 transition-all duration-200 hover:scale-105">
+                    <Bell className="h-[1.2rem] w-[1.2rem] transition-colors" />
                     {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-xs text-white font-semibold animate-pulse">
                             {unreadCount}
                         </span>
                     )}

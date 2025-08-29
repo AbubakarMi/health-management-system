@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'Careflux',
-  description: 'A Hospital Management System by Firebase Studio',
+  title: 'Careflux - Powered by Nubenta Technology',
+  description: 'A World-Class Hospital Management System - Powered by Nubenta Technology',
 };
 
 export default function RootLayout({
