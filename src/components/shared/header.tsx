@@ -5,12 +5,13 @@
 import { useState, useEffect, useContext } from "react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Bell } from "lucide-react";
+import { Bell, Search, Command } from "lucide-react";
 import { SidebarTrigger } from "../ui/sidebar";
 import { ThemeToggle } from "../theme-toggle";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { notificationManager, Notification } from "@/lib/constants";
+import { GlobalSearch, useGlobalSearch } from "@/components/advanced/global-search";
 import Link from "next/link";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function AppHeader({ role }: AppHeaderProps) {
   const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const globalSearch = useGlobalSearch();
 
 
   useEffect(() => {
@@ -68,6 +70,31 @@ export function AppHeader({ role }: AppHeaderProps) {
           </div>
       </div>
       <div className="flex flex-1 items-center justify-end gap-4 md:gap-2 lg:gap-4">
+         <Button 
+           variant="outline" 
+           size="sm" 
+           onClick={globalSearch.open}
+           className="hidden md:flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground bg-background/50 border border-border/50 hover:bg-accent hover:text-accent-foreground transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+         >
+           <Search className="h-4 w-4" />
+           <span>Search...</span>
+           <div className="ml-2 flex gap-1">
+             <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+               <span className="text-xs">⌘</span>K
+             </kbd>
+           </div>
+         </Button>
+         
+         <Button 
+           variant="outline" 
+           size="icon" 
+           onClick={globalSearch.open}
+           className="md:hidden hover:bg-primary/10 transition-all duration-200 hover:scale-105"
+         >
+           <Search className="h-4 w-4" />
+           <span className="sr-only">Global search</span>
+         </Button>
+         
          <Popover>
             <PopoverTrigger asChild>
                 <Button variant="outline" size="icon" className="relative hover:bg-primary/10 transition-all duration-200 hover:scale-105">
@@ -121,6 +148,11 @@ export function AppHeader({ role }: AppHeaderProps) {
           <AvatarFallback>{role.charAt(0).toUpperCase()}</AvatarFallback>
         </Avatar>
       </div>
+      
+      <GlobalSearch 
+        isOpen={globalSearch.isOpen} 
+        onClose={globalSearch.close} 
+      />
     </header>
   );
 }

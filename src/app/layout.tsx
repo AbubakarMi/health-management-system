@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from '@/components/theme-provider';
+import { ShortcutsProvider } from '@/components/advanced/keyboard-shortcuts';
 
 export const metadata: Metadata = {
   title: 'Careflux - Powered by Nubenta Technology',
@@ -28,8 +29,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
         >
-            <div className="flex-grow">{children}</div>
-            <Toaster />
+            <ShortcutsProvider>
+                <div className="flex-grow">{children}</div>
+                <Toaster />
+            </ShortcutsProvider>
         </ThemeProvider>
       </body>
     </html>

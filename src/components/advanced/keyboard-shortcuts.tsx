@@ -90,7 +90,9 @@ class ShortcutsManager {
 
   addListener(listener: (shortcut: ShortcutAction) => void) {
     this.listeners.add(listener);
-    return () => this.listeners.delete(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
   }
 
   init() {

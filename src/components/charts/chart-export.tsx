@@ -60,11 +60,12 @@ class ChartExporter {
   static exportToPNG(chartElement: HTMLElement, filename: string) {
     // Implementation for PNG export using html2canvas
     import('html2canvas').then(html2canvas => {
-      html2canvas(chartElement, {
+      const html2canvasDefault = html2canvas.default || html2canvas;
+      html2canvasDefault(chartElement, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true
-      }).then(canvas => {
+      }).then((canvas: HTMLCanvasElement) => {
         const link = document.createElement('a');
         link.download = `${filename}.png`;
         link.href = canvas.toDataURL();

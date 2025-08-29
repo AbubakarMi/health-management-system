@@ -79,7 +79,7 @@ class AISearch {
         relevance,
         tags,
         icon: User,
-        priority: patient.condition === 'Critical' ? 'high' : 'medium'
+        priority: patient.condition === 'Critical' ? 'high' as const : 'medium' as const
       };
     }).filter(result => result.relevance > 0.2);
   }
@@ -109,7 +109,7 @@ class AISearch {
         relevance,
         tags,
         icon: Pill,
-        priority: prescription.status === 'Unavailable' ? 'high' : 'medium'
+        priority: prescription.status === 'Unavailable' ? 'high' as const : 'medium' as const
       };
     }).filter(result => result.relevance > 0.2);
   }
@@ -139,7 +139,7 @@ class AISearch {
         relevance,
         tags,
         icon: TestTube,
-        priority: test.status === 'Pending' ? 'high' : 'medium'
+        priority: test.status === 'Pending' ? 'high' as const : 'medium' as const
       };
     }).filter(result => result.relevance > 0.2);
   }
