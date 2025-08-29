@@ -5,91 +5,105 @@
 
 @layer base {
   :root {
-    --background: 208 100% 97%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 220 65% 98%;
+    --foreground: 220 13% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 13% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 13% 9%;
 
-    --primary: 210 60% 73%;
-    --primary-rgb: 158, 197, 224;
-    --primary-foreground: 210 40% 10%;
+    --primary: 180 100% 50%;
+    --primary-rgb: 0, 255, 255;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220 8.9% 46.1%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 259 27% 71%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 162 100% 50%;
+    --accent-foreground: 0 0% 9%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 180 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --chart-1: 210 60% 73%;
-    --chart-2: 259 27% 71%;
-    --chart-3: 160 60% 75%;
-    --chart-4: 340 82% 70%;
-    --chart-5: 45 90% 65%;
+    --chart-1: 180 100% 50%;
+    --chart-2: 162 100% 50%;
+    --chart-3: 195 100% 50%;
+    --chart-4: 285 100% 65%;
+    --chart-5: 45 100% 60%;
+
+    /* Custom Nubenta Brand Colors - Vibrant Teal/Cyan */
+    --nubenta-primary: 180 100% 50%;
+    --nubenta-secondary: 162 100% 50%;
+    --nubenta-accent: 195 100% 50%;
+    --nubenta-gradient-from: 162 100% 50%;
+    --nubenta-gradient-to: 195 100% 50%;
   }
 
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    --background: 224 71% 4%;
+    --foreground: 220 65% 98%;
 
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
+    --card: 224 71% 4%;
+    --card-foreground: 220 65% 98%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 220 65% 98%;
 
-    --primary: 210 60% 73%;
-    --primary-rgb: 158, 197, 224;
-    --primary-foreground: 210 40% 9.8%;
+    --primary: 180 100% 50%;
+    --primary-rgb: 0, 255, 255;
+    --primary-foreground: 0 0% 9%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 220 65% 98%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 162 100% 50%;
+    --accent-foreground: 0 0% 9%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 220 65% 98%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 210 60% 73%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 180 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --chart-1: 210 60% 73%;
-    --chart-2: 259 27% 71%;
-    --chart-3: 160 60% 75%;
-    --chart-4: 340 82% 70%;
-    --chart-5: 45 90% 65%;
+    --chart-1: 180 100% 50%;
+    --chart-2: 162 100% 50%;
+    --chart-3: 195 100% 50%;
+    --chart-4: 285 100% 65%;
+    --chart-5: 45 100% 60%;
 
     /* Custom Sidebar Dark Colors */
-    --sidebar-background: 222 47% 9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 60% 73%;
-    --sidebar-primary-foreground: 210 40% 9.8%;
-    --sidebar-accent: 217 33% 15%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 210 60% 73%;
+    --sidebar-background: 224 71% 4%;
+    --sidebar-foreground: 220 65% 98%;
+    --sidebar-primary: 180 100% 50%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 215 27.9% 16.9%;
+    --sidebar-accent-foreground: 220 65% 98%;
+    --sidebar-border: 215 27.9% 16.9%;
+    --sidebar-ring: 180 100% 50%;
+
+    /* Custom Nubenta Brand Colors for Dark Mode - Vibrant Teal/Cyan */
+    --nubenta-primary: 180 100% 50%;
+    --nubenta-secondary: 162 100% 50%;
+    --nubenta-accent: 195 100% 50%;
+    --nubenta-gradient-from: 162 100% 50%;
+    --nubenta-gradient-to: 195 100% 50%;
   }
 }
 
@@ -98,6 +112,50 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .nubenta-gradient {
+    @apply bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500;
+  }
+  
+  .nubenta-gradient-text {
+    @apply bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent;
+  }
+
+  .glass-morphism {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px -10px hsl(var(--primary));
+  }
+  to {
+    box-shadow: 0 0 20px -5px hsl(var(--primary)), 0 0 40px -10px hsl(var(--primary));
   }
 }

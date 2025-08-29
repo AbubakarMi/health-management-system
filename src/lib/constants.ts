@@ -26,7 +26,8 @@ import {
     CheckCircle,
     Database,
     Phone,
-    Ambulance
+    Ambulance,
+    TrendingUp
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -929,6 +930,7 @@ export const navLinks: NavLinks = {
                 { href: "/admin/messages", label: "Staff Messages", icon: MessageSquare },
                 { href: "/admin/communications", label: "Communications", icon: MessageSquare },
                 { href: "/admin/reports", label: "Reports", icon: BarChart3 },
+                { href: "/admin/analytics", label: "Advanced Analytics", icon: TrendingUp },
             ]
         },
         { href: "/admin/staff", label: "Staff", icon: UserCog },
