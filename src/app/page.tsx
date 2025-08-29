@@ -9,7 +9,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { users, roleNames } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { LogIn } from 'lucide-react';
+import { authManager } from '@/lib/auth';
+import { LogIn, Shield, AlertTriangle } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,20 +20,30 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-
-    if (user && user.password === password) {
-      // Store user info in session storage to be picked up by the dashboard
+    
+    const authenticatedUser = authManager.login(email, password);
+    
+    if (authenticatedUser) {
+      // Store user info in session storage for backward compatibility
       sessionStorage.setItem('welcomeUser', JSON.stringify({
-          name: user.name,
-          role: roleNames[user.role],
+          name: authenticatedUser.name,
+          role: roleNames[authenticatedUser.role],
       }));
-      router.push(`/${user.role}`);
+      
+      toast({
+        title: "🎉 Login Successful!",
+        description: `Welcome back, ${authenticatedUser.name}! Redirecting to your secure dashboard...`,
+      });
+      
+      // Redirect with security check
+      setTimeout(() => {
+        router.push(`/${authenticatedUser.role}`);
+      }, 1000);
     } else {
       toast({
         variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
+        title: "🔒 Access Denied",
+        description: "Invalid credentials. Please verify your email and password.",
       });
     }
   };
@@ -75,12 +86,12 @@ export default function LoginPage() {
             <CardHeader className="text-center pb-2">
             <CardTitle className="text-2xl flex items-center justify-center gap-2 font-headline">
               <div className="p-2 bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 rounded-lg">
-                <LogIn className="w-5 h-5 text-white"/>
+                <Shield className="w-5 h-5 text-white"/>
               </div>
-              Staff Login
+              Secure Access Portal
             </CardTitle>
             <CardDescription className="text-base">
-                Enter your credentials to access your personalized dashboard
+                Role-based authentication with enterprise-grade security
             </CardDescription>
             </CardHeader>
             <CardContent className="pt-2">
