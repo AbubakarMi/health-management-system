@@ -59,13 +59,13 @@ export default function LoginPage() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900 to-cyan-900 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         {/* Primary floating orbs */}
-        <div className="absolute top-[-5%] left-[-5%] w-72 h-72 bg-gradient-to-r from-cyan-400/30 via-blue-500/30 to-purple-600/30 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute top-[20%] right-[-10%] w-96 h-96 bg-gradient-to-l from-teal-400/25 via-cyan-500/25 to-blue-600/25 rounded-full blur-3xl animate-float [animation-delay:2s]"></div>
-        <div className="absolute bottom-[-10%] left-[10%] w-80 h-80 bg-gradient-to-r from-blue-600/20 via-indigo-500/20 to-purple-600/20 rounded-full blur-3xl animate-float [animation-delay:4s]"></div>
+        <div className="absolute top-[-5%] left-[-5%] w-72 h-72 bg-gradient-to-r from-teal-400/30 via-cyan-500/30 to-emerald-400/25 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-[20%] right-[-10%] w-96 h-96 bg-gradient-to-l from-cyan-400/25 via-teal-500/25 to-emerald-500/25 rounded-full blur-3xl animate-float [animation-delay:2s]"></div>
+        <div className="absolute bottom-[-10%] left-[10%] w-80 h-80 bg-gradient-to-r from-emerald-400/20 via-teal-500/20 to-cyan-500/20 rounded-full blur-3xl animate-float [animation-delay:4s]"></div>
         
         {/* Medical icons floating */}
         <div className="absolute top-[15%] left-[15%] animate-float [animation-delay:1s]">
@@ -97,7 +97,7 @@ export default function LoginPage() {
               </div>
               
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
                   Careflux
                 </span>
                 <span className="block text-xl md:text-2xl lg:text-3xl text-white/80 font-normal mt-2">
@@ -153,10 +153,10 @@ export default function LoginPage() {
             <div className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="relative p-8 pb-6">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500"></div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-500"></div>
                 
                 <div className="text-center space-y-4">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl shadow-lg animate-glow">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-2xl shadow-lg animate-glow">
                     <Shield className="w-8 h-8 text-white" />
                   </div>
                   
@@ -223,7 +223,7 @@ export default function LoginPage() {
                   <Button 
                     type="submit" 
                     disabled={isLoading}
-                    className="w-full h-12 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none rounded-xl border-0"
+                    className="w-full h-12 bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-600 hover:from-teal-400 hover:via-cyan-400 hover:to-emerald-500 text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none rounded-xl border-0"
                   >
                     {isLoading ? (
                       <div className="flex items-center gap-3">

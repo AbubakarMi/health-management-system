@@ -1,4 +1,5 @@
 
+
 import { 
     LayoutDashboard, 
     Users, 
@@ -30,6 +31,7 @@ import {
     TrendingUp
 } from "lucide-react";
 import { format } from "date-fns";
+import { ReactNode } from "react";
 
 export const roles = ["admin", "doctor", "pharmacist", "finance", "labtech"] as const;
 export type Role = (typeof roles)[number];
@@ -275,6 +277,8 @@ export type Suggestion = {
 };
 
 export type Prescription = {
+  dateIssued: string | number | Date;
+  doctorName: ReactNode;
   id: string;
   patientName: string;
   medicine: string;
@@ -336,13 +340,33 @@ export type Patient = {
 
 
 const initialPrescriptions: Prescription[] = [
-    { id: 'presc-001', visitId: 'visit-musa-1', patientName: 'Musa Adebayo', medicine: 'Lisinopril', dosage: '10mg', doctor: 'Dr. Aisha Bello', status: 'Pending', price: 25.50, invoiced: false },
-    { id: 'presc-002', visitId: 'visit-zainab-2', patientName: 'Zainab Lawal', medicine: 'Metformin', dosage: '500mg', doctor: 'Dr. Aisha Bello', status: 'Filled', price: 30.00, invoiced: true },
-    { id: 'presc-003', visitId: 'visit-ibrahim-1', patientName: 'Ibrahim Ali', medicine: 'Amoxicillin', dosage: '250mg', doctor: 'Dr. Aisha Bello', status: 'Pending', price: 15.75, invoiced: false },
-    { id: 'presc-004', visitId: 'visit-halima-1', patientName: 'Halima Abubakar', medicine: 'Ibuprofen', dosage: '200mg', doctor: 'Dr. Aisha Bello', status: 'Unavailable', price: 10.00, invoiced: true },
+    {
+        id: 'presc-001', visitId: 'visit-musa-1', patientName: 'Musa Adebayo', medicine: 'Lisinopril', dosage: '10mg', doctor: 'Dr. Aisha Bello', status: 'Pending', price: 25.50, invoiced: false,
+        dateIssued: "",
+        doctorName: undefined
+    },
+    {
+        id: 'presc-002', visitId: 'visit-zainab-2', patientName: 'Zainab Lawal', medicine: 'Metformin', dosage: '500mg', doctor: 'Dr. Aisha Bello', status: 'Filled', price: 30.00, invoiced: true,
+        dateIssued: "",
+        doctorName: undefined
+    },
+    {
+        id: 'presc-003', visitId: 'visit-ibrahim-1', patientName: 'Ibrahim Ali', medicine: 'Amoxicillin', dosage: '250mg', doctor: 'Dr. Aisha Bello', status: 'Pending', price: 15.75, invoiced: false,
+        dateIssued: "",
+        doctorName: undefined
+    },
+    {
+        id: 'presc-004', visitId: 'visit-halima-1', patientName: 'Halima Abubakar', medicine: 'Ibuprofen', dosage: '200mg', doctor: 'Dr. Aisha Bello', status: 'Unavailable', price: 10.00, invoiced: true,
+        dateIssued: "",
+        doctorName: undefined
+    },
 ];
 
 export type LabTest = {
+    dateOrdered: string | number | Date;
+    doctorName: ReactNode;
+    patientName: ReactNode;
+    testType: ReactNode;
     id: string;
     patient: string;
     test: string;
@@ -356,200 +380,252 @@ export type LabTest = {
 }
 
 const initialLabTests: LabTest[] = [
-    { id: 'lab-001', visitId: 'visit-bello-1', patient: 'Muhammad Bello', test: 'Complete Blood Count', instructions: 'Standard CBC panel.', collected: '2024-05-12 09:00', status: 'Pending', price: 75.00, invoiced: false },
-    { id: 'lab-002', visitId: 'visit-samira-1', patient: 'Samira Umar', test: 'Lipid Panel', instructions: 'Fasting required for 12 hours prior.', collected: '2024-05-12 09:30', status: 'Completed', results: 'Total Cholesterol: 210 mg/dL, HDL: 55 mg/dL, LDL: 130 mg/dL', price: 120.00, invoiced: true },
-    { id: 'lab-003', visitId: 'visit-sani-1', patient: 'Abdulkarim Sani', test: 'Basic Metabolic Panel', instructions: 'Standard BMP.', collected: '2024-05-12 10:00', status: 'Processing', price: 95.00, invoiced: false },
-    { id: 'lab-004', patient: 'Amina Salisu', test: 'Urinalysis', instructions: 'Clean catch midstream sample.', collected: '2024-05-12 10:15', status: 'Pending', price: 45.00, invoiced: false },
-    { id: 'lab-005', visitId: 'visit-musa-1', patient: 'Musa Adebayo', test: 'Thyroid Panel', instructions: 'TSH and T4 test.', collected: '2024-05-13 08:30', status: 'Pending', price: 110.00, invoiced: false },
-    { id: 'lab-006', visitId: 'visit-zainab-1', patient: 'Zainab Lawal', test: 'Cardiac Enzymes', instructions: 'Troponin I test.', collected: '2024-05-13 08:45', status: 'Processing', price: 250.00, invoiced: false },
+    {
+        id: 'lab-001', visitId: 'visit-bello-1', patient: 'Muhammad Bello', test: 'Complete Blood Count', instructions: 'Standard CBC panel.', collected: '2024-05-12 09:00', status: 'Pending', price: 75.00, invoiced: false,
+        dateOrdered: "",
+        doctorName: undefined,
+        patientName: undefined,
+        testType: undefined
+    },
+    {
+        id: 'lab-002', visitId: 'visit-samira-1', patient: 'Samira Umar', test: 'Lipid Panel', instructions: 'Fasting required for 12 hours prior.', collected: '2024-05-12 09:30', status: 'Completed', results: 'Total Cholesterol: 210 mg/dL, HDL: 55 mg/dL, LDL: 130 mg/dL', price: 120.00, invoiced: true,
+        dateOrdered: "",
+        doctorName: undefined,
+        patientName: undefined,
+        testType: undefined
+    },
+    {
+        id: 'lab-003', visitId: 'visit-sani-1', patient: 'Abdulkarim Sani', test: 'Basic Metabolic Panel', instructions: 'Standard BMP.', collected: '2024-05-12 10:00', status: 'Processing', price: 95.00, invoiced: false,
+        dateOrdered: "",
+        doctorName: undefined,
+        patientName: undefined,
+        testType: undefined
+    },
+    {
+        id: 'lab-004', patient: 'Amina Salisu', test: 'Urinalysis', instructions: 'Clean catch midstream sample.', collected: '2024-05-12 10:15', status: 'Pending', price: 45.00, invoiced: false,
+        dateOrdered: "",
+        doctorName: undefined,
+        patientName: undefined,
+        testType: undefined
+    },
+    {
+        id: 'lab-005', visitId: 'visit-musa-1', patient: 'Musa Adebayo', test: 'Thyroid Panel', instructions: 'TSH and T4 test.', collected: '2024-05-13 08:30', status: 'Pending', price: 110.00, invoiced: false,
+        dateOrdered: "",
+        doctorName: undefined,
+        patientName: undefined,
+        testType: undefined
+    },
+    {
+        id: 'lab-006', visitId: 'visit-zainab-1', patient: 'Zainab Lawal', test: 'Cardiac Enzymes', instructions: 'Troponin I test.', collected: '2024-05-13 08:45', status: 'Processing', price: 250.00, invoiced: false,
+        dateOrdered: "",
+        doctorName: undefined,
+        patientName: undefined,
+        testType: undefined
+    },
 ];
 
 export const detailedPatients: Patient[] = [
-  { 
-    id: 'PM-000001-A4E',
-    name: 'Musa Adebayo', 
-    gender: 'Male',
-    dateOfBirth: '1975-08-22',
-    address: '15, Aminu Kano Crescent, Wuse II, Abuja',
-    email: 'musa.adebayo@example.com',
-    phone: '08012345678',
-    maritalStatus: 'Married',
-    condition: 'Stable', 
-    lastVisit: '2024-05-10',
-    bloodType: 'O+',
-    assignedDoctor: 'Dr. Aisha Bello',
-    clinicalSummary: 'Patient has a long-standing history of hypertension, managed with Lisinopril. Regular monitoring of blood pressure is advised. No known allergies.',
-    medicalHistory: [
-        { id: 'visit-musa-2', date: '2024-05-10', event: 'Follow-up Consultation', details: 'Routine check-up, vitals are normal. Continue with current medication.', doctor: 'Dr. Aisha Bello' },
-        { id: 'visit-musa-1', date: '2024-03-15', event: 'Initial Diagnosis', details: 'Diagnosed with Hypertension. Prescribed Lisinopril and ordered a Thyroid Panel to check for underlying issues.', doctor: 'Dr. Aisha Bello' }
-    ],
-    prescriptions: initialPrescriptions.filter(p => p.patientName === 'Musa Adebayo'),
-    labTests: initialLabTests.filter(t => t.patient === 'Musa Adebayo'),
-    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=MA",
-    fingerprintId: "FP_17163052321",
-    preferredCommunicationMethod: 'SMS',
-  },
-  { 
-    id: 'PF-000002-B1C',
-    name: 'Zainab Lawal', 
-    gender: 'Female',
-    dateOfBirth: '1968-04-15',
-    address: '22, Adetokunbo Ademola Crescent, Wuse II, Abuja',
-    email: 'zainab.lawal@example.com',
-    phone: '08023456789',
-    maritalStatus: 'Widowed',
-    condition: 'Critical', 
-    lastVisit: '2024-05-12',
-    bloodType: 'A-',
-    assignedDoctor: 'Dr. Aisha Bello',
-    clinicalSummary: 'Patient manages Type 2 Diabetes with Metformin. Admitted for acute cardiac symptoms. High-risk for cardiovascular events.',
-    medicalHistory: [
-        { id: 'visit-zainab-1', date: '2024-05-12', event: 'Emergency Admission', details: 'Admitted for severe chest pain. Cardiac enzyme test ordered.', doctor: 'Dr. Aisha Bello' },
-        { id: 'visit-zainab-2', date: '2023-11-20', event: 'Diagnosis', details: 'Diagnosed with Type 2 Diabetes. Prescribed Metformin.', doctor: 'Dr. Aisha Bello' }
-    ],
-    prescriptions: initialPrescriptions.filter(p => p.patientName === 'Zainab Lawal'),
-    labTests: initialLabTests.filter(t => t.patient === 'Zainab Lawal'),
-    admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: '101', bedNumber: 'A' },
-    avatarUrl: "https://placehold.co/100x100.png?text=ZL",
-    preferredCommunicationMethod: 'Email',
-  },
-  { 
-    id: 'PM-000003-D9F',
-    name: 'Ibrahim Ali', 
-    gender: 'Male',
-    dateOfBirth: '1990-11-02',
-    address: '4, Kolda Link, Wuse, Abuja',
-    email: 'ibrahim.ali@example.com',
-    phone: '08034567890',
-    maritalStatus: 'Single',
-    condition: 'Improving', 
-    lastVisit: '2024-05-09',
-    bloodType: 'B+',
-    assignedDoctor: 'Dr. Aisha Bello',
-    medicalHistory: [
-        { id: 'visit-ibrahim-1', date: '2024-05-09', event: 'Follow-up', details: 'Follow-up for bacterial infection. Responding well to antibiotics. Prescribed Amoxicillin.', doctor: 'Dr. Aisha Bello' },
-    ],
-    prescriptions: initialPrescriptions.filter(p => p.patientName === 'Ibrahim Ali'),
-    labTests: initialLabTests.filter(t => t.patient === 'Ibrahim Ali'),
-    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=IA",
-    fingerprintId: "FP_17163052322",
-    preferredCommunicationMethod: 'WhatsApp',
-  },
-  { 
-    id: 'PF-000004-G2H',
-    name: 'Halima Abubakar',
-    gender: 'Female', 
-    dateOfBirth: '1985-01-30',
-    address: '10, Ladi Kwali Street, Wuse, Abuja',
-    email: 'halima.abubakar@example.com',
-    phone: '08045678901',
-    maritalStatus: 'Married',
-    condition: 'Stable', 
-    lastVisit: '2024-05-11',
-    bloodType: 'AB+',
-    assignedDoctor: 'Dr. Aisha Bello',
-     medicalHistory: [
-        { id: 'visit-halima-1', date: '2024-05-11', event: 'Check-up', details: 'Complaining of seasonal allergies. Prescribed Ibuprofen for symptomatic relief.', doctor: 'Dr. Aisha Bello' },
-    ],
-    prescriptions: initialPrescriptions.filter(p => p.patientName === 'Halima Abubakar'),
-    labTests: initialLabTests.filter(t => t.patient === 'Halima Abubakar'),
-    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=HA",
-    preferredCommunicationMethod: 'SMS',
-  },
-  { 
-    id: 'PM-000005-K3L',
-    name: 'Muhammad Bello', 
-    gender: 'Male',
-    dateOfBirth: '1995-06-10',
-    address: '7, Libreville Street, Wuse, Abuja',
-    email: 'muhammad.bello@example.com',
-    phone: '08056789012',
-    maritalStatus: 'Single',
-    condition: 'Critical', 
-    lastVisit: '2024-05-12',
-    bloodType: 'O-',
-    assignedDoctor: 'Dr. Aisha Bello',
-     medicalHistory: [
-        { id: 'visit-bello-1', date: '2024-05-12', event: 'Admission', details: 'Admitted for observation after a minor accident. Ordered a CBC.', doctor: 'Dr. Aisha Bello' },
-    ],
-    prescriptions: [],
-    labTests: initialLabTests.filter(t => t.patient === 'Muhammad Bello'),
-    admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=MB",
-    fingerprintId: "FP_17163052323",
-    preferredCommunicationMethod: 'Email',
-  },
-   {
-    id: 'PF-000006-R2D',
-    name: 'Samira Umar',
-    gender: 'Female',
-    dateOfBirth: '1982-03-25',
-    address: '3, Agadez Street, Wuse II, Abuja',
-    email: 'samira.umar@example.com',
-    phone: '08067890123',
-    maritalStatus: 'Married',
-    condition: 'Stable',
-    lastVisit: '2024-05-14',
-    bloodType: 'B-',
-    assignedDoctor: 'Dr. Aisha Bello',
-    medicalHistory: [
-      { id: 'visit-samira-1', date: '2024-05-14', event: 'New Consultation', details: 'Initial consultation for persistent headaches. Ordered a lipid panel to rule out underlying conditions.', doctor: 'Dr. Aisha Bello' }
-    ],
-    prescriptions: [],
-    labTests: initialLabTests.filter(t => t.patient === 'Samira Umar'),
-    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=SU",
-    preferredCommunicationMethod: 'WhatsApp',
+  {
+      id: 'PM-000001-A4E',
+      name: 'Musa Adebayo',
+      gender: 'Male',
+      dateOfBirth: '1975-08-22',
+      address: '15, Aminu Kano Crescent, Wuse II, Abuja',
+      email: 'musa.adebayo@example.com',
+      phone: '08012345678',
+      maritalStatus: 'Married',
+      condition: 'Stable',
+      lastVisit: '2024-05-10',
+      bloodType: 'O+',
+      assignedDoctor: 'Dr. Aisha Bello',
+      clinicalSummary: 'Patient has a long-standing history of hypertension, managed with Lisinopril. Regular monitoring of blood pressure is advised. No known allergies.',
+      medicalHistory: [
+          { id: 'visit-musa-2', date: '2024-05-10', event: 'Follow-up Consultation', details: 'Routine check-up, vitals are normal. Continue with current medication.', doctor: 'Dr. Aisha Bello' },
+          { id: 'visit-musa-1', date: '2024-03-15', event: 'Initial Diagnosis', details: 'Diagnosed with Hypertension. Prescribed Lisinopril and ordered a Thyroid Panel to check for underlying issues.', doctor: 'Dr. Aisha Bello' }
+      ],
+      prescriptions: initialPrescriptions.filter(p => p.patientName === 'Musa Adebayo'),
+      labTests: initialLabTests.filter(t => t.patient === 'Musa Adebayo'),
+      admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+      avatarUrl: "https://placehold.co/100x100.png?text=MA",
+      fingerprintId: "FP_17163052321",
+      preferredCommunicationMethod: 'SMS',
+      firstName: undefined,
+      lastName: undefined
   },
   {
-    id: 'PM-000007-S1B',
-    name: 'Abdulkarim Sani',
-    gender: 'Male',
-    dateOfBirth: '2000-07-18',
-    address: '18, Dalaba Street, Wuse, Abuja',
-    email: 'abdul.sani@example.com',
-    phone: '08078901234',
-    maritalStatus: 'Single',
-    condition: 'Normal',
-    lastVisit: '2024-05-15',
-    bloodType: 'A+',
-    assignedDoctor: 'Dr. Aisha Bello',
-    medicalHistory: [
-      { id: 'visit-sani-1', date: '2024-05-15', event: 'Routine Checkup', details: 'Annual physical, all vitals normal. Ordered a BMP as part of routine screening.', doctor: 'Dr. Aisha Bello' }
-    ],
-    prescriptions: [],
-    labTests: initialLabTests.filter(t => t.patient === 'Abdulkarim Sani'),
-    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=AS",
-    fingerprintId: "FP_17163052324",
-    preferredCommunicationMethod: 'SMS',
+      id: 'PF-000002-B1C',
+      name: 'Zainab Lawal',
+      gender: 'Female',
+      dateOfBirth: '1968-04-15',
+      address: '22, Adetokunbo Ademola Crescent, Wuse II, Abuja',
+      email: 'zainab.lawal@example.com',
+      phone: '08023456789',
+      maritalStatus: 'Widowed',
+      condition: 'Critical',
+      lastVisit: '2024-05-12',
+      bloodType: 'A-',
+      assignedDoctor: 'Dr. Aisha Bello',
+      clinicalSummary: 'Patient manages Type 2 Diabetes with Metformin. Admitted for acute cardiac symptoms. High-risk for cardiovascular events.',
+      medicalHistory: [
+          { id: 'visit-zainab-1', date: '2024-05-12', event: 'Emergency Admission', details: 'Admitted for severe chest pain. Cardiac enzyme test ordered.', doctor: 'Dr. Aisha Bello' },
+          { id: 'visit-zainab-2', date: '2023-11-20', event: 'Diagnosis', details: 'Diagnosed with Type 2 Diabetes. Prescribed Metformin.', doctor: 'Dr. Aisha Bello' }
+      ],
+      prescriptions: initialPrescriptions.filter(p => p.patientName === 'Zainab Lawal'),
+      labTests: initialLabTests.filter(t => t.patient === 'Zainab Lawal'),
+      admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: '101', bedNumber: 'A' },
+      avatarUrl: "https://placehold.co/100x100.png?text=ZL",
+      preferredCommunicationMethod: 'Email',
+      firstName: undefined,
+      lastName: undefined
   },
-   { 
-    id: 'PM-000008-T9C',
-    name: 'Abubakar M.I.', 
-    gender: 'Male',
-    dateOfBirth: '1988-02-14',
-    address: '1, Sultan Abubakar Way, Wuse, Abuja',
-    email: 'abubakarmi131@gmail.com',
-    phone: '+2347042526971',
-    maritalStatus: 'Married',
-    condition: 'Stable', 
-    lastVisit: '2024-05-20',
-    bloodType: 'O+',
-    assignedDoctor: 'Dr. Aisha Bello',
-    clinicalSummary: 'New patient for routine check-up. No significant medical history reported.',
-    medicalHistory: [
-        { id: 'visit-abubakar-1', date: '2024-05-20', event: 'New Patient Registration', details: 'Patient registered for the first time.', doctor: 'Dr. Aisha Bello' }
-    ],
-    prescriptions: [],
-    labTests: [],
-    admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
-    avatarUrl: "https://placehold.co/100x100.png?text=AM",
-    preferredCommunicationMethod: 'SMS',
-  }
+  {
+      id: 'PM-000003-D9F',
+      name: 'Ibrahim Ali',
+      gender: 'Male',
+      dateOfBirth: '1990-11-02',
+      address: '4, Kolda Link, Wuse, Abuja',
+      email: 'ibrahim.ali@example.com',
+      phone: '08034567890',
+      maritalStatus: 'Single',
+      condition: 'Improving',
+      lastVisit: '2024-05-09',
+      bloodType: 'B+',
+      assignedDoctor: 'Dr. Aisha Bello',
+      medicalHistory: [
+          { id: 'visit-ibrahim-1', date: '2024-05-09', event: 'Follow-up', details: 'Follow-up for bacterial infection. Responding well to antibiotics. Prescribed Amoxicillin.', doctor: 'Dr. Aisha Bello' },
+      ],
+      prescriptions: initialPrescriptions.filter(p => p.patientName === 'Ibrahim Ali'),
+      labTests: initialLabTests.filter(t => t.patient === 'Ibrahim Ali'),
+      admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+      avatarUrl: "https://placehold.co/100x100.png?text=IA",
+      fingerprintId: "FP_17163052322",
+      preferredCommunicationMethod: 'WhatsApp',
+      firstName: undefined,
+      lastName: undefined
+  },
+  {
+      id: 'PF-000004-G2H',
+      name: 'Halima Abubakar',
+      gender: 'Female',
+      dateOfBirth: '1985-01-30',
+      address: '10, Ladi Kwali Street, Wuse, Abuja',
+      email: 'halima.abubakar@example.com',
+      phone: '08045678901',
+      maritalStatus: 'Married',
+      condition: 'Stable',
+      lastVisit: '2024-05-11',
+      bloodType: 'AB+',
+      assignedDoctor: 'Dr. Aisha Bello',
+      medicalHistory: [
+          { id: 'visit-halima-1', date: '2024-05-11', event: 'Check-up', details: 'Complaining of seasonal allergies. Prescribed Ibuprofen for symptomatic relief.', doctor: 'Dr. Aisha Bello' },
+      ],
+      prescriptions: initialPrescriptions.filter(p => p.patientName === 'Halima Abubakar'),
+      labTests: initialLabTests.filter(t => t.patient === 'Halima Abubakar'),
+      admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+      avatarUrl: "https://placehold.co/100x100.png?text=HA",
+      preferredCommunicationMethod: 'SMS',
+      firstName: undefined,
+      lastName: undefined
+  },
+  {
+      id: 'PM-000005-K3L',
+      name: 'Muhammad Bello',
+      gender: 'Male',
+      dateOfBirth: '1995-06-10',
+      address: '7, Libreville Street, Wuse, Abuja',
+      email: 'muhammad.bello@example.com',
+      phone: '08056789012',
+      maritalStatus: 'Single',
+      condition: 'Critical',
+      lastVisit: '2024-05-12',
+      bloodType: 'O-',
+      assignedDoctor: 'Dr. Aisha Bello',
+      medicalHistory: [
+          { id: 'visit-bello-1', date: '2024-05-12', event: 'Admission', details: 'Admitted for observation after a minor accident. Ordered a CBC.', doctor: 'Dr. Aisha Bello' },
+      ],
+      prescriptions: [],
+      labTests: initialLabTests.filter(t => t.patient === 'Muhammad Bello'),
+      admission: { isAdmitted: true, admissionDate: '2024-05-12', dischargeDate: null, roomNumber: null, bedNumber: null },
+      avatarUrl: "https://placehold.co/100x100.png?text=MB",
+      fingerprintId: "FP_17163052323",
+      preferredCommunicationMethod: 'Email',
+      firstName: undefined,
+      lastName: undefined
+  },
+   {
+       id: 'PF-000006-R2D',
+       name: 'Samira Umar',
+       gender: 'Female',
+       dateOfBirth: '1982-03-25',
+       address: '3, Agadez Street, Wuse II, Abuja',
+       email: 'samira.umar@example.com',
+       phone: '08067890123',
+       maritalStatus: 'Married',
+       condition: 'Stable',
+       lastVisit: '2024-05-14',
+       bloodType: 'B-',
+       assignedDoctor: 'Dr. Aisha Bello',
+       medicalHistory: [
+           { id: 'visit-samira-1', date: '2024-05-14', event: 'New Consultation', details: 'Initial consultation for persistent headaches. Ordered a lipid panel to rule out underlying conditions.', doctor: 'Dr. Aisha Bello' }
+       ],
+       prescriptions: [],
+       labTests: initialLabTests.filter(t => t.patient === 'Samira Umar'),
+       admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+       avatarUrl: "https://placehold.co/100x100.png?text=SU",
+       preferredCommunicationMethod: 'WhatsApp',
+       firstName: undefined,
+       lastName: undefined
+   },
+  {
+      id: 'PM-000007-S1B',
+      name: 'Abdulkarim Sani',
+      gender: 'Male',
+      dateOfBirth: '2000-07-18',
+      address: '18, Dalaba Street, Wuse, Abuja',
+      email: 'abdul.sani@example.com',
+      phone: '08078901234',
+      maritalStatus: 'Single',
+      condition: 'Normal',
+      lastVisit: '2024-05-15',
+      bloodType: 'A+',
+      assignedDoctor: 'Dr. Aisha Bello',
+      medicalHistory: [
+          { id: 'visit-sani-1', date: '2024-05-15', event: 'Routine Checkup', details: 'Annual physical, all vitals normal. Ordered a BMP as part of routine screening.', doctor: 'Dr. Aisha Bello' }
+      ],
+      prescriptions: [],
+      labTests: initialLabTests.filter(t => t.patient === 'Abdulkarim Sani'),
+      admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+      avatarUrl: "https://placehold.co/100x100.png?text=AS",
+      fingerprintId: "FP_17163052324",
+      preferredCommunicationMethod: 'SMS',
+      firstName: undefined,
+      lastName: undefined
+  },
+   {
+       id: 'PM-000008-T9C',
+       name: 'Abubakar M.I.',
+       gender: 'Male',
+       dateOfBirth: '1988-02-14',
+       address: '1, Sultan Abubakar Way, Wuse, Abuja',
+       email: 'abubakarmi131@gmail.com',
+       phone: '+2347042526971',
+       maritalStatus: 'Married',
+       condition: 'Stable',
+       lastVisit: '2024-05-20',
+       bloodType: 'O+',
+       assignedDoctor: 'Dr. Aisha Bello',
+       clinicalSummary: 'New patient for routine check-up. No significant medical history reported.',
+       medicalHistory: [
+           { id: 'visit-abubakar-1', date: '2024-05-20', event: 'New Patient Registration', details: 'Patient registered for the first time.', doctor: 'Dr. Aisha Bello' }
+       ],
+       prescriptions: [],
+       labTests: [],
+       admission: { isAdmitted: false, admissionDate: null, dischargeDate: null, roomNumber: null, bedNumber: null },
+       avatarUrl: "https://placehold.co/100x100.png?text=AM",
+       preferredCommunicationMethod: 'SMS',
+       firstName: undefined,
+       lastName: undefined
+   }
 ];
 
 export type Bed = {
@@ -1290,6 +1366,7 @@ export type InvoiceItem = {
 }
 
 export type Invoice = {
+    invoiceNumber: ReactNode;
     id: string;
     patientName: string;
     amount: number;
@@ -1300,22 +1377,35 @@ export type Invoice = {
 }
 
 export const initialInvoices: Invoice[] = [
-    { 
-        id: 'INV-001', 
-        patientName: 'Musa Adebayo', 
-        amount: 250.00, 
-        dueDate: '2024-05-20', 
+    {
+        id: 'INV-001',
+        patientName: 'Musa Adebayo',
+        amount: 250.00,
+        dueDate: '2024-05-20',
         status: 'Paid',
         doctorName: 'Dr. Aisha Bello',
         items: [
             { id: 'presc-001', name: 'Lisinopril', type: 'Prescription', price: 25.50 },
             { id: 'lab-005', name: 'Thyroid Panel', type: 'Lab Test', price: 110.00 }
-        ]
+        ],
+        invoiceNumber: undefined
     },
-    { id: 'INV-002', patientName: 'Zainab Lawal', amount: 150.75, dueDate: '2024-06-01', status: 'Pending', doctorName: 'Dr. Aisha Bello', items: [] },
-    { id: 'INV-003', patientName: 'Ibrahim Ali', amount: 45.50, dueDate: '2024-04-30', status: 'Paid', doctorName: 'Dr. Aisha Bello', items: [] },
-    { id: 'INV-004', patientName: 'Halima Abubakar', amount: 800.00, dueDate: '2024-05-01', status: 'Overdue', doctorName: 'Dr. Aisha Bello', items: [] },
-    { id: 'INV-005', patientName: 'Muhammad Bello', amount: 320.00, dueDate: '2024-06-15', status: 'Pending', doctorName: 'Dr. Aisha Bello', items: [] },
+    {
+        id: 'INV-002', patientName: 'Zainab Lawal', amount: 150.75, dueDate: '2024-06-01', status: 'Pending', doctorName: 'Dr. Aisha Bello', items: [],
+        invoiceNumber: undefined
+    },
+    {
+        id: 'INV-003', patientName: 'Ibrahim Ali', amount: 45.50, dueDate: '2024-04-30', status: 'Paid', doctorName: 'Dr. Aisha Bello', items: [],
+        invoiceNumber: undefined
+    },
+    {
+        id: 'INV-004', patientName: 'Halima Abubakar', amount: 800.00, dueDate: '2024-05-01', status: 'Overdue', doctorName: 'Dr. Aisha Bello', items: [],
+        invoiceNumber: undefined
+    },
+    {
+        id: 'INV-005', patientName: 'Muhammad Bello', amount: 320.00, dueDate: '2024-06-15', status: 'Pending', doctorName: 'Dr. Aisha Bello', items: [],
+        invoiceNumber: undefined
+    },
 ];
 
 export type BloodUnit = {
