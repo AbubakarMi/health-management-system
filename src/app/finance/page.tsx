@@ -8,13 +8,38 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { initialInvoices } from "@/lib/constants";
-import { CheckCircle, Clock, FileWarning, Plus, FileText, Calculator, TrendingUp, TrendingDown, BarChart3, CreditCard, DollarSign, Star, Zap, Users, AlertTriangle } from "lucide-react";
+import { CheckCircle, Clock, FileWarning, Plus, FileText, Calculator, TrendingUp, TrendingDown, BarChart3, CreditCard, DollarSign, Star, Zap, Users, AlertTriangle, Calendar, Building, Phone, Mail, Percent } from "lucide-react";
 import { NairaIcon } from "@/components/ui/naira-icon";
 import { useRouter } from "next/navigation";
 
 export default function FinanceDashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [createInvoiceModal, setCreateInvoiceModal] = useState(false);
+  const [processPaymentModal, setProcessPaymentModal] = useState(false);
+  const [invoiceForm, setInvoiceForm] = useState({
+    patientName: '',
+    patientEmail: '',
+    patientPhone: '',
+    serviceDescription: '',
+    amount: '',
+    dueDate: '',
+    department: '',
+    doctorName: ''
+  });
+  const [paymentForm, setPaymentForm] = useState({
+    invoiceId: '',
+    patientName: '',
+    amount: '',
+    paymentMethod: '',
+    referenceNumber: '',
+    notes: ''
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -306,42 +331,251 @@ export default function FinanceDashboard() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               
               {/* Create Invoice Card */}
-              <div 
-                onClick={() => router.push('/finance/invoices')}
-                className="group relative cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <Plus className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Create Invoice</h3>
-                      <p className="text-xs text-white/80">Generate new invoices</p>
+              <Dialog open={createInvoiceModal} onOpenChange={setCreateInvoiceModal}>
+                <DialogTrigger asChild>
+                  <div className="group relative cursor-pointer">
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                    <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
+                      <div className="text-center space-y-3">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                          <Plus className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="text-lg font-bold text-white">Create Invoice</h3>
+                          <p className="text-xs text-white/80">Generate new invoices</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Plus className="w-5 h-5 text-emerald-500" />
+                      Create New Invoice
+                    </DialogTitle>
+                    <DialogDescription>
+                      Generate a new invoice for patient services
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="patient-name">Patient Name</Label>
+                        <Input
+                          id="patient-name"
+                          value={invoiceForm.patientName}
+                          onChange={(e) => setInvoiceForm({...invoiceForm, patientName: e.target.value})}
+                          placeholder="Enter patient name"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="patient-email">Email</Label>
+                        <Input
+                          id="patient-email"
+                          type="email"
+                          value={invoiceForm.patientEmail}
+                          onChange={(e) => setInvoiceForm({...invoiceForm, patientEmail: e.target.value})}
+                          placeholder="patient@email.com"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="patient-phone">Phone Number</Label>
+                        <Input
+                          id="patient-phone"
+                          value={invoiceForm.patientPhone}
+                          onChange={(e) => setInvoiceForm({...invoiceForm, patientPhone: e.target.value})}
+                          placeholder="Phone number"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="department">Department</Label>
+                        <Select value={invoiceForm.department} onValueChange={(value) => setInvoiceForm({...invoiceForm, department: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select department" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="emergency">Emergency</SelectItem>
+                            <SelectItem value="surgery">Surgery</SelectItem>
+                            <SelectItem value="cardiology">Cardiology</SelectItem>
+                            <SelectItem value="pediatrics">Pediatrics</SelectItem>
+                            <SelectItem value="laboratory">Laboratory</SelectItem>
+                            <SelectItem value="pharmacy">Pharmacy</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="service-description">Service Description</Label>
+                      <Textarea
+                        id="service-description"
+                        value={invoiceForm.serviceDescription}
+                        onChange={(e) => setInvoiceForm({...invoiceForm, serviceDescription: e.target.value})}
+                        placeholder="Describe the services provided..."
+                        rows={3}
+                      />
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="amount">Amount (₦)</Label>
+                        <Input
+                          id="amount"
+                          type="number"
+                          value={invoiceForm.amount}
+                          onChange={(e) => setInvoiceForm({...invoiceForm, amount: e.target.value})}
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="due-date">Due Date</Label>
+                        <Input
+                          id="due-date"
+                          type="date"
+                          value={invoiceForm.dueDate}
+                          onChange={(e) => setInvoiceForm({...invoiceForm, dueDate: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-3 pt-4">
+                      <Button variant="outline" onClick={() => setCreateInvoiceModal(false)}>
+                        Cancel
+                      </Button>
+                      <Button className="bg-emerald-600 hover:bg-emerald-700">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Create Invoice
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
               {/* Payment Processing Card */}
-              <div 
-                onClick={() => router.push('/finance/payments')}
-                className="group relative cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <CreditCard className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Process Payment</h3>
-                      <p className="text-xs text-white/80">Handle transactions</p>
+              <Dialog open={processPaymentModal} onOpenChange={setProcessPaymentModal}>
+                <DialogTrigger asChild>
+                  <div className="group relative cursor-pointer">
+                    <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                    <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
+                      <div className="text-center space-y-3">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                          <CreditCard className="w-6 h-6 text-white" />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="text-lg font-bold text-white">Process Payment</h3>
+                          <p className="text-xs text-white/80">Handle transactions</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-xl">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-teal-500" />
+                      Quick Payment Processing
+                    </DialogTitle>
+                    <DialogDescription>
+                      Process payment for existing invoice
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="invoice-select">Select Invoice</Label>
+                      <Select value={paymentForm.invoiceId} onValueChange={(value) => {
+                        const invoice = initialInvoices.find(inv => inv.id === value);
+                        if (invoice) {
+                          setPaymentForm({
+                            ...paymentForm,
+                            invoiceId: value,
+                            patientName: invoice.patientName,
+                            amount: invoice.amount.toString()
+                          });
+                        }
+                      }}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select invoice to pay" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {initialInvoices.filter(inv => inv.status !== 'Paid').map(invoice => (
+                            <SelectItem key={invoice.id} value={invoice.id}>
+                              {invoice.id} - {invoice.patientName} (₦{invoice.amount.toLocaleString()})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {paymentForm.invoiceId && (
+                      <>
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label>Patient Name</Label>
+                            <div className="p-2 bg-muted rounded text-sm">{paymentForm.patientName}</div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Amount</Label>
+                            <div className="p-2 bg-muted rounded text-sm font-semibold">₦{parseInt(paymentForm.amount).toLocaleString()}</div>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="payment-method">Payment Method</Label>
+                          <Select value={paymentForm.paymentMethod} onValueChange={(value) => setPaymentForm({...paymentForm, paymentMethod: value})}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select payment method" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="cash">Cash</SelectItem>
+                              <SelectItem value="card">Credit/Debit Card</SelectItem>
+                              <SelectItem value="transfer">Bank Transfer</SelectItem>
+                              <SelectItem value="mobile">Mobile Money</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="reference-number">Reference Number</Label>
+                          <Input
+                            id="reference-number"
+                            value={paymentForm.referenceNumber}
+                            onChange={(e) => setPaymentForm({...paymentForm, referenceNumber: e.target.value})}
+                            placeholder="Transaction reference (optional)"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="payment-notes">Notes</Label>
+                          <Textarea
+                            id="payment-notes"
+                            value={paymentForm.notes}
+                            onChange={(e) => setPaymentForm({...paymentForm, notes: e.target.value})}
+                            placeholder="Additional payment notes..."
+                            rows={3}
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div className="flex justify-between gap-3 pt-4">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => router.push('/finance/payments')}
+                        className="flex-1"
+                      >
+                        <Building className="w-4 h-4 mr-2" />
+                        Full Payment Center
+                      </Button>
+                      <Button 
+                        onClick={() => setProcessPaymentModal(false)} 
+                        variant="outline"
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        className="bg-teal-600 hover:bg-teal-700" 
+                        disabled={!paymentForm.invoiceId || !paymentForm.paymentMethod}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Process
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
               {/* Financial Reports Card */}
               <div 

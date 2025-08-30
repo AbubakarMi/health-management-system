@@ -25,11 +25,17 @@ import {
   Plus,
   ArrowRight,
   Star,
-  Brain
+  Brain,
+  Save
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { PatientStatusChart } from "@/components/charts/patient-status-chart";
 import { DoctorAdmissionsChart } from "@/components/charts/doctor-admissions-chart";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const appointments = [
     { patient: 'Muhammad Bello', patientId: 'PM-000005-K3L', time: '10:00 AM', reason: 'Follow-up', avatar: 'M', urgency: 'normal', condition: 'Stable' },
@@ -42,6 +48,25 @@ export default function DoctorDashboard() {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const loggedInDoctor = "Dr. Aisha Bello";
+  
+  // Modal states for Quick Actions
+  const [newPatientModal, setNewPatientModal] = useState(false);
+  const [prescriptionModal, setPrescriptionModal] = useState(false);
+  const [notesModal, setNotesModal] = useState(false);
+  const [labOrderModal, setLabOrderModal] = useState(false);
+  
+  const [patientForm, setPatientForm] = useState({
+    name: '', age: '', gender: '', symptoms: '', diagnosis: '', treatment: ''
+  });
+  const [prescriptionForm, setPrescriptionForm] = useState({
+    patientName: '', medication: '', dosage: '', frequency: '', duration: '', instructions: ''
+  });
+  const [notesForm, setNotesForm] = useState({
+    patientName: '', noteType: '', content: '', followUp: ''
+  });
+  const [labOrderForm, setLabOrderForm] = useState({
+    patientName: '', testType: '', urgency: '', notes: '', department: ''
+  });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
