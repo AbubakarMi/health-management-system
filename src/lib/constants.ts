@@ -306,6 +306,8 @@ export type AdmissionDetails = {
 };
 
 export type Patient = {
+  firstName: ReactNode;
+  lastName: ReactNode;
   id: string;
   name: string;
   gender: 'Male' | 'Female';
