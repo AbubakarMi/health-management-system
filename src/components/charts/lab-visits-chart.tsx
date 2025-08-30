@@ -4,6 +4,7 @@
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { mockLabVisitsData } from "@/lib/constants"
+import { Sparkles } from "lucide-react";
 import { ChartContainer, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
 
 const chartConfig = {

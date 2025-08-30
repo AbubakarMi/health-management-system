@@ -51,7 +51,7 @@ export default function PharmacistDashboard() {
   const pharmacyMetrics = useMemo(() => {
     const totalPrescriptions = prescriptions.length;
     const pendingPrescriptions = prescriptions.filter(p => p.status === 'Pending').length;
-    const completedPrescriptions = prescriptions.filter(p => p.status === 'Dispensed').length;
+    const completedPrescriptions = prescriptions.filter(p => p.status === 'Filled').length;
     const unavailablePrescriptions = prescriptions.filter(p => p.status === 'Unavailable').length;
     
     // Mock additional metrics
@@ -318,56 +318,142 @@ export default function PharmacistDashboard() {
       </div>
 
       {/* Quick Actions Section */}
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-yellow-500" />
-            Quick Pharmacy Actions
-          </CardTitle>
-          <CardDescription>
-            Common pharmacy tasks and shortcuts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <Button 
-              className="h-16 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <Plus className="w-5 h-5" />
-                <span className="text-sm font-medium">Add Inventory</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="text-sm font-medium">Dispense Drugs</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <FileText className="w-5 h-5" />
-                <span className="text-sm font-medium">Stock Report</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <BarChart3 className="w-5 h-5" />
-                <span className="text-sm font-medium">Analytics</span>
-              </div>
-            </Button>
+      <div className="relative">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-cyan-500/5 rounded-3xl blur-3xl"></div>
+        
+        <Card className="relative border-0 shadow-2xl bg-gradient-to-br from-slate-900/90 via-emerald-900/90 to-teal-900/90 backdrop-blur-xl overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-4 left-4 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-teal-500/20 rounded-full blur-2xl animate-float"></div>
+            <div className="absolute bottom-4 right-4 w-24 h-24 bg-gradient-to-r from-teal-400/20 to-cyan-500/20 rounded-full blur-2xl animate-float [animation-delay:2s]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.1)_1px,_transparent_0)] bg-[size:30px_30px] opacity-20"></div>
           </div>
-        </CardContent>
-      </Card>
+          
+          {/* Header */}
+          <CardHeader className="relative text-center pb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl shadow-lg animate-glow mb-4">
+              <Pill className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-3xl font-bold text-white mb-2">
+              Quick Pharmacy Actions
+            </CardTitle>
+            <CardDescription className="text-white/70 text-lg">
+              Essential pharmacy tools for efficient medication management
+            </CardDescription>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
+          </CardHeader>
+          
+          <CardContent className="relative pb-8">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              
+              {/* Add Inventory Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse"></div>
+                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <Plus className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Add Inventory</h3>
+                      <p className="text-sm text-white/80">Stock new medications</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Package className="w-3 h-3" />
+                        <span>Inventory Management</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:1s]"></div>
+                </div>
+              </div>
+
+              {/* Dispense Drugs Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:0.5s]"></div>
+                <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <ShoppingCart className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Dispense Drugs</h3>
+                      <p className="text-sm text-white/80">Process prescriptions</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Pill className="w-3 h-3" />
+                        <span>Medication Dispensing</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:0.5s]"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:1.5s]"></div>
+                </div>
+              </div>
+
+              {/* Stock Report Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:1s]"></div>
+                <div className="relative bg-gradient-to-br from-blue-500/90 to-purple-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <FileText className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Stock Report</h3>
+                      <p className="text-sm text-white/80">Inventory analytics</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Clipboard className="w-3 h-3" />
+                        <span>Reporting</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:1s]"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:2s]"></div>
+                </div>
+              </div>
+
+              {/* Analytics Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:1.5s]"></div>
+                <div className="relative bg-gradient-to-br from-orange-500/90 to-red-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <BarChart3 className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Analytics</h3>
+                      <p className="text-sm text-white/80">Performance insights</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <TrendingUp className="w-3 h-3" />
+                        <span>Data Analysis</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:1.5s]"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:2.5s]"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bottom decoration */}
+            <div className="flex items-center justify-center mt-8 pt-6 border-t border-white/10">
+              <div className="flex items-center gap-2 text-white/60">
+                <Pill className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm">Streamlined pharmacy operations</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -316,57 +316,143 @@ export default function DoctorDashboard() {
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-yellow-500" />
-            Quick Clinical Actions
-          </CardTitle>
-          <CardDescription>
-            Common medical tasks and shortcuts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-            <Button 
-              className="h-16 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <Plus className="w-5 h-5" />
-                <span className="text-sm font-medium">New Patient</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <Pill className="w-5 h-5" />
-                <span className="text-sm font-medium">Prescriptions</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <FileText className="w-5 h-5" />
-                <span className="text-sm font-medium">Medical Notes</span>
-              </div>
-            </Button>
-            <Button 
-              variant="outline"
-              className="h-16 border-2 hover:bg-accent/50 transition-all duration-300"
-            >
-              <div className="flex flex-col items-center gap-1">
-                <Activity className="w-5 h-5" />
-                <span className="text-sm font-medium">Lab Orders</span>
-              </div>
-            </Button>
+      {/* Quick Actions Section */}
+      <div className="relative">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-3xl blur-3xl"></div>
+        
+        <Card className="relative border-0 shadow-2xl bg-gradient-to-br from-slate-900/90 via-blue-900/90 to-indigo-900/90 backdrop-blur-xl overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-4 left-4 w-32 h-32 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-full blur-2xl animate-float"></div>
+            <div className="absolute bottom-4 right-4 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-pink-500/20 rounded-full blur-2xl animate-float [animation-delay:2s]"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.1)_1px,_transparent_0)] bg-[size:30px_30px] opacity-20"></div>
           </div>
-        </CardContent>
-      </Card>
+          
+          {/* Header */}
+          <CardHeader className="relative text-center pb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-2xl shadow-lg animate-glow mb-4">
+              <Star className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-3xl font-bold text-white mb-2">
+              Quick Clinical Actions
+            </CardTitle>
+            <CardDescription className="text-white/70 text-lg">
+              Essential medical tools at your fingertips
+            </CardDescription>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500"></div>
+          </CardHeader>
+          
+          <CardContent className="relative pb-8">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              
+              {/* New Patient Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse"></div>
+                <div className="relative bg-gradient-to-br from-blue-500/90 to-cyan-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <Plus className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">New Patient</h3>
+                      <p className="text-sm text-white/80">Register new patient records</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Users className="w-3 h-3" />
+                        <span>Patient Registration</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:1s]"></div>
+                </div>
+              </div>
+
+              {/* Prescriptions Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:0.5s]"></div>
+                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <Pill className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Prescriptions</h3>
+                      <p className="text-sm text-white/80">Manage medications</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Heart className="w-3 h-3" />
+                        <span>Medical Care</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:0.5s]"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:1.5s]"></div>
+                </div>
+              </div>
+
+              {/* Medical Notes Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:1s]"></div>
+                <div className="relative bg-gradient-to-br from-purple-500/90 to-pink-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <FileText className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Medical Notes</h3>
+                      <p className="text-sm text-white/80">Clinical documentation</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Brain className="w-3 h-3" />
+                        <span>Documentation</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:1s]"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:2s]"></div>
+                </div>
+              </div>
+
+              {/* Lab Orders Card */}
+              <div className="group relative cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:1.5s]"></div>
+                <div className="relative bg-gradient-to-br from-orange-500/90 to-red-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+                      <Activity className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-white">Lab Orders</h3>
+                      <p className="text-sm text-white/80">Request lab tests</p>
+                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
+                        <Stethoscope className="w-3 h-3" />
+                        <span>Diagnostics</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:1.5s]"></div>
+                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:2.5s]"></div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bottom decoration */}
+            <div className="flex items-center justify-center mt-8 pt-6 border-t border-white/10">
+              <div className="flex items-center gap-2 text-white/60">
+                <Stethoscope className="w-4 h-4 text-cyan-400" />
+                <span className="text-sm">Streamlined clinical workflow</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
