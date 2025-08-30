@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { initialInvoices, detailedPatients, prescriptionManager, labTestManager } from "@/lib/constants";
 import { 
   CheckCircle, 
@@ -28,10 +30,217 @@ import {
   PieChart,
   Zap,
   Shield,
-  Star
+  Star,
+  Eye,
+  MapPin,
+  User,
+  Phone,
+  CreditCard,
+  Pill,
+  TestTube
 } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { NairaIcon } from "@/components/ui/naira-icon";
+
+// Component to display detailed information for critical items
+function CriticalItemDetails({ type, data }: { type: string, data: any }) {
+  const renderContent = () => {
+    switch (type) {
+      case "Critical Patients":
+        const criticalPatients = detailedPatients.filter(p => p.condition === 'Critical');
+        return (
+          <div className="space-y-4">
+            {criticalPatients.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Heart className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                <p>No critical patients at the moment</p>
+              </div>
+            ) : (
+              criticalPatients.map((patient, index) => (
+                <div key={patient.id} className="p-4 border rounded-lg bg-red-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        <span className="font-semibold">{patient.firstName} {patient.lastName}</span>
+                        <Badge variant="destructive" className="text-xs">Critical</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-3 h-3" />
+                          <span>{patient.phone}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-3 h-3" />
+                          <span>{patient.address}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Stethoscope className="w-3 h-3" />
+                          <span>Room: {patient.admission.isAdmitted ? patient.admission.roomNumber : 'Not admitted'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-red-100/50 rounded-lg">
+                    <p className="text-sm text-red-800">
+                      <strong>Urgency:</strong> Requires immediate medical attention
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        );
+
+      case "Overdue Invoices":
+        const overdueInvoices = initialInvoices.filter(inv => inv.status === 'Overdue');
+        return (
+          <div className="space-y-4">
+            {overdueInvoices.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                <p>All invoices are up to date</p>
+              </div>
+            ) : (
+              overdueInvoices.map((invoice, index) => (
+                <div key={invoice.id} className="p-4 border rounded-lg bg-amber-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <CreditCard className="w-4 h-4" />
+                        <span className="font-semibold">Invoice #{invoice.invoiceNumber}</span>
+                        <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800">Overdue</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="flex items-center gap-2">
+                          <User className="w-3 h-3" />
+                          <span>{invoice.patientName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-3 h-3" />
+                          <span>₦{invoice.amount.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-3 h-3" />
+                          <span>Due: {new Date(invoice.dueDate).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-amber-100/50 rounded-lg">
+                    <p className="text-sm text-amber-800">
+                      <strong>Action Required:</strong> Follow up with patient for payment
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        );
+
+      case "Drug Shortages":
+        const unavailablePrescriptions = prescriptionManager.getPrescriptions().filter(p => p.status === 'Unavailable');
+        return (
+          <div className="space-y-4">
+            {unavailablePrescriptions.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                <p>All medications are available</p>
+              </div>
+            ) : (
+              unavailablePrescriptions.map((prescription, index) => (
+                <div key={prescription.id} className="p-4 border rounded-lg bg-orange-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Pill className="w-4 h-4" />
+                        <span className="font-semibold">{prescription.medication}</span>
+                        <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800">Unavailable</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="flex items-center gap-2">
+                          <User className="w-3 h-3" />
+                          <span>Patient: {prescription.patientName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Stethoscope className="w-3 h-3" />
+                          <span>Prescribed by: Dr. {prescription.doctorName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-3 h-3" />
+                          <span>Date: {new Date(prescription.dateIssued).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-orange-100/50 rounded-lg">
+                    <p className="text-sm text-orange-800">
+                      <strong>Action Required:</strong> Restock medication or find alternative
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        );
+
+      case "Pending Tests":
+        const pendingTests = labTestManager.getLabTests().filter(t => t.status === 'Pending');
+        return (
+          <div className="space-y-4">
+            {pendingTests.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <CheckCircle className="w-12 h-12 mx-auto mb-2 text-green-500" />
+                <p>No pending lab tests</p>
+              </div>
+            ) : (
+              pendingTests.map((test, index) => (
+                <div key={test.id} className="p-4 border rounded-lg bg-blue-50/50">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <TestTube className="w-4 h-4" />
+                        <span className="font-semibold">{test.testType}</span>
+                        <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-800">Pending</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="flex items-center gap-2">
+                          <User className="w-3 h-3" />
+                          <span>Patient: {test.patientName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Stethoscope className="w-3 h-3" />
+                          <span>Ordered by: Dr. {test.doctorName}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-3 h-3" />
+                          <span>Ordered: {new Date(test.dateOrdered).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-blue-100/50 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      <strong>Action Required:</strong> Process lab test and update results
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        );
+
+      default:
+        return <p>No details available</p>;
+    }
+  };
+
+  return (
+    <ScrollArea className="h-96">
+      {renderContent()}
+    </ScrollArea>
+  );
+}
 
 export default function AdminDashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -263,11 +472,34 @@ export default function AdminDashboard() {
                   <span className="text-2xl font-bold">{alert.count}</span>
                 </div>
                 <div className="text-sm font-medium">{alert.title}</div>
-                {alert.count > 0 && (
-                  <Button size="sm" variant="ghost" className="w-full mt-2 h-8">
-                    <ArrowUpRight className="w-3 h-3 mr-1" />
-                    View Details
-                  </Button>
+                {alert.count > 0 ? (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button size="sm" variant="ghost" className="w-full mt-2 h-8">
+                        <Eye className="w-3 h-3 mr-1" />
+                        View Details
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <alert.icon className="w-5 h-5" />
+                          {alert.title} Details
+                        </DialogTitle>
+                        <DialogDescription>
+                          {alert.count === 1 
+                            ? `1 item requiring attention`
+                            : `${alert.count} items requiring attention`
+                          }
+                        </DialogDescription>
+                      </DialogHeader>
+                      <CriticalItemDetails type={alert.title} data={alert} />
+                    </DialogContent>
+                  </Dialog>
+                ) : (
+                  <div className="mt-2 text-xs text-muted-foreground text-center">
+                    All clear ✓
+                  </div>
                 )}
               </div>
             ))}
