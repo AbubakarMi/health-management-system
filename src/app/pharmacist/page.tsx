@@ -344,102 +344,70 @@ export default function PharmacistDashboard() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
           </CardHeader>
           
-          <CardContent className="relative pb-8">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <CardContent className="relative pb-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               
               {/* Add Inventory Card */}
               <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse"></div>
-                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
-                  <div className="text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                      <Plus className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
+                  <div className="text-center space-y-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                      <Plus className="w-6 h-6 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white">Add Inventory</h3>
-                      <p className="text-sm text-white/80">Stock new medications</p>
-                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
-                        <Package className="w-3 h-3" />
-                        <span>Inventory Management</span>
-                      </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-white">Add Inventory</h3>
+                      <p className="text-xs text-white/80">Stock medications</p>
                     </div>
                   </div>
-                  
-                  {/* Floating particles */}
-                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping"></div>
-                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:1s]"></div>
                 </div>
               </div>
 
               {/* Dispense Drugs Card */}
               <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:0.5s]"></div>
-                <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
-                  <div className="text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                      <ShoppingCart className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
+                  <div className="text-center space-y-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                      <ShoppingCart className="w-6 h-6 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white">Dispense Drugs</h3>
-                      <p className="text-sm text-white/80">Process prescriptions</p>
-                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
-                        <Pill className="w-3 h-3" />
-                        <span>Medication Dispensing</span>
-                      </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-white">Dispense Drugs</h3>
+                      <p className="text-xs text-white/80">Process prescriptions</p>
                     </div>
                   </div>
-                  
-                  {/* Floating particles */}
-                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:0.5s]"></div>
-                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:1.5s]"></div>
                 </div>
               </div>
 
               {/* Stock Report Card */}
               <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:1s]"></div>
-                <div className="relative bg-gradient-to-br from-blue-500/90 to-purple-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
-                  <div className="text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                      <FileText className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                <div className="relative bg-gradient-to-br from-cyan-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
+                  <div className="text-center space-y-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                      <FileText className="w-6 h-6 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white">Stock Report</h3>
-                      <p className="text-sm text-white/80">Inventory analytics</p>
-                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
-                        <Clipboard className="w-3 h-3" />
-                        <span>Reporting</span>
-                      </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-white">Stock Report</h3>
+                      <p className="text-xs text-white/80">Inventory analytics</p>
                     </div>
                   </div>
-                  
-                  {/* Floating particles */}
-                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:1s]"></div>
-                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:2s]"></div>
                 </div>
               </div>
 
               {/* Analytics Card */}
               <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl blur-lg opacity-75 group-hover:opacity-100 transition-all duration-300 animate-pulse [animation-delay:1.5s]"></div>
-                <div className="relative bg-gradient-to-br from-orange-500/90 to-red-500/90 backdrop-blur-sm p-6 rounded-2xl border border-white/20 shadow-xl transform transition-all duration-300 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:shadow-2xl">
-                  <div className="text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
-                      <BarChart3 className="w-8 h-8 text-white" />
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+                <div className="relative bg-gradient-to-br from-teal-500/90 to-emerald-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
+                  <div className="text-center space-y-3">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                      <BarChart3 className="w-6 h-6 text-white" />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white">Analytics</h3>
-                      <p className="text-sm text-white/80">Performance insights</p>
-                      <div className="flex items-center justify-center gap-1 text-xs text-white/60">
-                        <TrendingUp className="w-3 h-3" />
-                        <span>Data Analysis</span>
-                      </div>
+                    <div className="space-y-1">
+                      <h3 className="text-lg font-bold text-white">Analytics</h3>
+                      <p className="text-xs text-white/80">Performance insights</p>
                     </div>
                   </div>
-                  
-                  {/* Floating particles */}
-                  <div className="absolute top-2 right-2 w-2 h-2 bg-white/40 rounded-full animate-ping [animation-delay:1.5s]"></div>
-                  <div className="absolute bottom-2 left-2 w-1 h-1 bg-white/60 rounded-full animate-pulse [animation-delay:2.5s]"></div>
                 </div>
               </div>
             </div>
