@@ -1,15 +1,34 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { LabVisitsChart } from "@/components/charts/lab-visits-chart";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { labTestManager, LabTest } from "@/lib/constants";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { 
+  ArrowRight, 
+  TestTube, 
+  Activity, 
+  Clock, 
+  CheckCircle, 
+  AlertTriangle,
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Plus,
+  FileText,
+  BarChart3,
+  Zap,
+  Star,
+  Search,
+  FlaskConical
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LabTechDashboard() {
   const [pendingTests, setPendingTests] = useState<LabTest[]>([]);
