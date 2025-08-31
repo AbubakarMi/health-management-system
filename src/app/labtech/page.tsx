@@ -48,6 +48,7 @@ import {
   Video,
   MoreHorizontal,
   Bell,
+  CheckSquare,
   Stethoscope,
   UserCheck,
   ClipboardCheck,
