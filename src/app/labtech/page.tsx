@@ -918,126 +918,214 @@ export default function LabtechDashboard() {
               </Card>
             </TabsContent>
 
-            {/* Enhanced Quick Actions Tab */}
+            {/* Clean Quick Actions Tab */}
             <TabsContent value="quick-actions" className="space-y-6 mt-0">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                 
-                {/* Lab Report Management */}
+                {/* 1. Lab Results Management */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500 text-white">
+                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white">
                       <CardContent className="p-6 text-center space-y-4">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <FileText className="w-8 h-8 text-white" />
+                          <TestTube className="w-8 h-8 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold">Lab Reports</h3>
-                          <p className="text-sm text-white/80">Generate comprehensive reports</p>
+                          <h3 className="text-xl font-bold">Lab Results</h3>
+                          <p className="text-sm text-white/80">View & manage test results</p>
                         </div>
                         <div className="flex justify-center gap-2">
-                          <Badge className="bg-white/20 text-white border-white/30">PDF Export</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Analytics</Badge>
+                          <Badge className="bg-white/20 text-white border-white/30">{labMetrics.totalTests} Tests</Badge>
+                          <Badge className="bg-white/20 text-white border-white/30">Export</Badge>
                         </div>
                       </CardContent>
                     </Card>
                   </DialogTrigger>
-                  <DialogContent className="max-w-3xl">
+                  <DialogContent className="max-w-4xl max-h-[90vh]">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-2 text-xl">
-                        <FileText className="w-6 h-6 text-blue-500" />
-                        Advanced Lab Report Management
+                        <TestTube className="w-6 h-6 text-blue-500" />
+                        Lab Results Management
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-6">
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <Button 
-                          onClick={() => generateLabReportPDF('Complete')}
-                          className="h-32 flex flex-col items-center gap-3 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600"
-                        >
-                          <Download className="w-8 h-8" />
-                          <div>
-                            <div className="font-semibold">Complete Report</div>
-                            <div className="text-xs opacity-80">Full laboratory analysis</div>
-                          </div>
-                        </Button>
-                        
-                        <Button 
-                          onClick={() => generateLabReportPDF('Summary')}
-                          variant="outline" 
-                          className="h-32 flex flex-col items-center gap-3 border-2 hover:bg-muted/50"
-                        >
-                          <BarChart3 className="w-8 h-8" />
-                          <div>
-                            <div className="font-semibold">Summary Report</div>
-                            <div className="text-xs opacity-70">Key metrics overview</div>
-                          </div>
-                        </Button>
-                        
-                        <Button 
-                          onClick={() => exportTestResults('CSV')}
-                          variant="outline" 
-                          className="h-32 flex flex-col items-center gap-3 border-2 hover:bg-muted/50"
-                        >
-                          <Database className="w-8 h-8" />
-                          <div>
-                            <div className="font-semibold">Data Export</div>
-                            <div className="text-xs opacity-70">CSV format</div>
-                          </div>
-                        </Button>
-                        
-                        <Button 
-                          onClick={() => generateLabReportPDF('Critical')}
-                          variant="outline" 
-                          className="h-32 flex flex-col items-center gap-3 border-2 border-red-200 hover:bg-red-50"
-                        >
-                          <AlertTriangle className="w-8 h-8 text-red-500" />
-                          <div>
-                            <div className="font-semibold">Critical Review</div>
-                            <div className="text-xs opacity-70">STAT & urgent tests</div>
-                          </div>
-                        </Button>
-                      </div>
-                      
-                      <div className="p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
-                        <h4 className="font-semibold mb-3 text-blue-900">Current Laboratory Summary</h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-600">{labMetrics.totalTests}</div>
-                            <div className="text-blue-700">Total Tests</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-green-600">{labMetrics.completedTests}</div>
-                            <div className="text-green-700">Completed</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-amber-600">{labMetrics.pendingTests}</div>
-                            <div className="text-amber-700">Pending</div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-2xl font-bold text-blue-600">{labMetrics.completionRate.toFixed(1)}%</div>
-                            <div className="text-blue-700">Rate</div>
-                          </div>
+                    <ScrollArea className="max-h-[75vh]">
+                      <div className="space-y-6">
+                        {/* Quick Export Buttons */}
+                        <div className="grid gap-3 md:grid-cols-4">
+                          <Button 
+                            onClick={() => {
+                              const doc = new (window as any).jsPDF();
+                              doc.setFontSize(20);
+                              doc.setFont('helvetica', 'bold');
+                              doc.text('Complete Lab Results Report', 20, 30);
+                              
+                              doc.setFontSize(12);
+                              doc.setFont('helvetica', 'normal');
+                              doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+                              doc.text(`Total Tests: ${labMetrics.totalTests}`, 20, 65);
+                              doc.text(`Completed: ${labMetrics.completedTests}`, 20, 80);
+                              doc.text(`Completion Rate: ${labMetrics.completionRate.toFixed(1)}%`, 20, 95);
+                              
+                              let y = 120;
+                              labTestResults.forEach((test, index) => {
+                                if (y > 250) {
+                                  doc.addPage();
+                                  y = 30;
+                                }
+                                doc.setFontSize(10);
+                                doc.text(`${test.id} - ${test.patientName}`, 20, y);
+                                doc.text(`${test.testType} | ${test.status}`, 20, y + 12);
+                                y += 25;
+                              });
+                              
+                              doc.save(`complete-lab-results-${new Date().toISOString().slice(0, 10)}.pdf`);
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            PDF Report
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => exportTestResults('CSV')}
+                            variant="outline"
+                          >
+                            <Database className="w-4 h-4 mr-2" />
+                            CSV Export
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const criticalTests = labTestResults.filter(test => test.priority === 'STAT' || test.urgency === 'Critical');
+                              if (criticalTests.length > 0) {
+                                const doc = new (window as any).jsPDF();
+                                doc.setFontSize(18);
+                                doc.setFont('helvetica', 'bold');
+                                doc.text('Critical Test Results Report', 20, 30);
+                                
+                                let y = 60;
+                                criticalTests.forEach((test, index) => {
+                                  if (y > 250) {
+                                    doc.addPage();
+                                    y = 30;
+                                  }
+                                  doc.setFontSize(12);
+                                  doc.setFont('helvetica', 'bold');
+                                  doc.text(`${test.id} - CRITICAL`, 20, y);
+                                  doc.setFont('helvetica', 'normal');
+                                  doc.text(`Patient: ${test.patientName}`, 20, y + 15);
+                                  doc.text(`Test: ${test.testType}`, 20, y + 30);
+                                  doc.text(`Priority: ${test.priority}`, 20, y + 45);
+                                  y += 65;
+                                });
+                                
+                                doc.save(`critical-results-${new Date().toISOString().slice(0, 10)}.pdf`);
+                              } else {
+                                alert('No critical tests found.');
+                              }
+                            }}
+                            variant="outline"
+                            className="border-red-200 hover:bg-red-50 text-red-600"
+                          >
+                            <AlertTriangle className="w-4 h-4 mr-2" />
+                            Critical Only
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const completedTests = labTestResults.filter(test => test.status === 'Completed');
+                              const csvContent = [
+                                ['Test ID', 'Patient', 'Test Type', 'Department', 'Date', 'Results Summary'],
+                                ...completedTests.map(test => [
+                                  test.id,
+                                  test.patientName,
+                                  test.testType,
+                                  test.department,
+                                  test.date,
+                                  test.results.split('\n')[0]
+                                ])
+                              ].map(row => row.join(',')).join('\n');
+                              
+                              const blob = new Blob([csvContent], { type: 'text/csv' });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `completed-results-${new Date().toISOString().slice(0, 10)}.csv`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              URL.revokeObjectURL(url);
+                            }}
+                            variant="outline"
+                            className="border-green-200 hover:bg-green-50 text-green-600"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Completed
+                          </Button>
                         </div>
+                        
+                        {/* Results Table */}
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Recent Test Results</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Test ID</TableHead>
+                                  <TableHead>Patient</TableHead>
+                                  <TableHead>Test Type</TableHead>
+                                  <TableHead>Status</TableHead>
+                                  <TableHead>Actions</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {labTestResults.slice(0, 6).map((test) => (
+                                  <TableRow key={test.id}>
+                                    <TableCell className="font-mono">{test.id}</TableCell>
+                                    <TableCell>{test.patientName}</TableCell>
+                                    <TableCell>{test.testType}</TableCell>
+                                    <TableCell>
+                                      <Badge variant={test.status === 'Completed' ? 'default' : 'secondary'}>
+                                        {test.status}
+                                      </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Button 
+                                        onClick={() => viewTestResult(test)}
+                                        size="sm" 
+                                        variant="ghost"
+                                      >
+                                        <Eye className="w-4 h-4" />
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </CardContent>
+                        </Card>
                       </div>
-                    </div>
+                    </ScrollArea>
                   </DialogContent>
                 </Dialog>
 
-                {/* Equipment Management */}
+                {/* 2. Equipment Management */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white">
+                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 text-white">
                       <CardContent className="p-6 text-center space-y-4">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
                           <Activity className="w-8 h-8 text-white" />
                         </div>
                         <div>
                           <h3 className="text-xl font-bold">Equipment</h3>
-                          <p className="text-sm text-white/80">Monitor & maintain equipment</p>
+                          <p className="text-sm text-white/80">Manage & schedule maintenance</p>
                         </div>
                         <div className="flex justify-center gap-2">
                           <Badge className="bg-white/20 text-white border-white/30">{labMetrics.operationalEquipment}/5 Online</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Scheduling</Badge>
+                          <Badge className="bg-white/20 text-white border-white/30">Schedule</Badge>
                         </div>
                       </CardContent>
                     </Card>
@@ -1046,11 +1134,159 @@ export default function LabtechDashboard() {
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-2 text-xl">
                         <Activity className="w-6 h-6 text-emerald-500" />
-                        Equipment Management Center
+                        Equipment Management & Scheduling
                       </DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="max-h-[75vh]">
                       <div className="space-y-6">
+                        
+                        {/* Quick Actions */}
+                        <div className="grid gap-3 md:grid-cols-4">
+                          <Button 
+                            onClick={() => {
+                              const doc = new (window as any).jsPDF();
+                              doc.setFontSize(18);
+                              doc.setFont('helvetica', 'bold');
+                              doc.text('Equipment Status Report', 20, 30);
+                              
+                              let y = 60;
+                              equipmentData.forEach((eq, index) => {
+                                if (y > 250) {
+                                  doc.addPage();
+                                  y = 30;
+                                }
+                                doc.setFontSize(12);
+                                doc.text(`${eq.id} - ${eq.name}`, 20, y);
+                                doc.text(`Status: ${eq.status} | Location: ${eq.location}`, 20, y + 15);
+                                doc.text(`Last Maintenance: ${eq.lastMaint}`, 20, y + 30);
+                                y += 50;
+                              });
+                              
+                              doc.save(`equipment-status-${new Date().toISOString().slice(0, 10)}.pdf`);
+                            }}
+                            className="bg-emerald-600 hover:bg-emerald-700"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Status Report
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const csvContent = [
+                                ['Equipment ID', 'Name', 'Status', 'Location', 'Last Maintenance', 'Next Due'],
+                                ...equipmentData.map(eq => [eq.id, eq.name, eq.status, eq.location, eq.lastMaint, eq.nextDue])
+                              ].map(row => row.join(',')).join('\n');
+                              
+                              const blob = new Blob([csvContent], { type: 'text/csv' });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `equipment-inventory-${new Date().toISOString().slice(0, 10)}.csv`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              URL.revokeObjectURL(url);
+                            }}
+                            variant="outline"
+                          >
+                            <Database className="w-4 h-4 mr-2" />
+                            Export CSV
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const dueSoon = equipmentData.filter(eq => {
+                                const nextDue = new Date(eq.nextDue);
+                                const today = new Date();
+                                const diffDays = Math.ceil((nextDue.getTime() - today.getTime()) / (1000 * 3600 * 24));
+                                return diffDays <= 30;
+                              });
+                              
+                              if (dueSoon.length > 0) {
+                                const popup = window.open('', '_blank', 'width=600,height=500');
+                                if (popup) {
+                                  popup.document.write(`
+                                    <html>
+                                      <head><title>Maintenance Due Soon</title></head>
+                                      <body style="font-family: system-ui, sans-serif; padding: 20px; background: #fef3c7;">
+                                        <div style="background: #f59e0b; color: white; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                          <h2>⚠️ Maintenance Due Soon</h2>
+                                          <p>${dueSoon.length} equipment(s) need attention</p>
+                                        </div>
+                                        ${dueSoon.map(eq => `
+                                          <div style="background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                                            <strong>${eq.name} (${eq.id})</strong><br>
+                                            Location: ${eq.location}<br>
+                                            Next Due: ${eq.nextDue}
+                                          </div>
+                                        `).join('')}
+                                      </body>
+                                    </html>
+                                  `);
+                                  popup.document.close();
+                                }
+                              } else {
+                                alert('All equipment maintenance is up to date!');
+                              }
+                            }}
+                            variant="outline"
+                            className="border-amber-200 hover:bg-amber-50 text-amber-600"
+                          >
+                            <Clock className="w-4 h-4 mr-2" />
+                            Due Soon
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const popup = window.open('', '_blank', 'width=500,height=600');
+                              if (popup) {
+                                popup.document.write(`
+                                  <html>
+                                    <head><title>Schedule Maintenance</title></head>
+                                    <body style="font-family: system-ui, sans-serif; padding: 20px; background: #f0fdf4;">
+                                      <div style="background: #10b981; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                        <h2>📅 Schedule Maintenance</h2>
+                                      </div>
+                                      <form style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Equipment:</label>
+                                          <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                            ${equipmentData.map(eq => `<option value="${eq.id}">${eq.name} (${eq.id})</option>`).join('')}
+                                          </select>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Maintenance Date:</label>
+                                          <input type="date" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" min="${new Date().toISOString().slice(0, 10)}">
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Type:</label>
+                                          <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                            <option>Routine Maintenance</option>
+                                            <option>Calibration</option>
+                                            <option>Repair</option>
+                                            <option>Deep Cleaning</option>
+                                          </select>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Notes:</label>
+                                          <textarea style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; height: 60px;" placeholder="Additional maintenance notes..."></textarea>
+                                        </div>
+                                        <button type="button" style="background: #10b981; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%;" onclick="alert('Maintenance scheduled successfully!'); window.close();">
+                                          ✅ Schedule Maintenance
+                                        </button>
+                                      </form>
+                                    </body>
+                                  </html>
+                                `);
+                                popup.document.close();
+                              }
+                            }}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Calendar className="w-4 h-4 mr-2" />
+                            Schedule
+                          </Button>
+                        </div>
                         
                         {/* Equipment Overview Cards */}
                         <div className="grid gap-4 md:grid-cols-3">
@@ -1214,75 +1450,566 @@ export default function LabtechDashboard() {
                   </DialogContent>
                 </Dialog>
 
-                {/* Blood Bank Management */}
+                {/* 3. View Test Results */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-red-500 via-rose-500 to-pink-500 text-white">
+                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white">
                       <CardContent className="p-6 text-center space-y-4">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Droplets className="w-8 h-8 text-white" />
+                          <Eye className="w-8 h-8 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold">Blood Bank</h3>
-                          <p className="text-sm text-white/80">Manage blood inventory</p>
+                          <h3 className="text-xl font-bold">View Results</h3>
+                          <p className="text-sm text-white/80">Detailed test result viewer</p>
                         </div>
                         <div className="flex justify-center gap-2">
-                          <Badge className="bg-white/20 text-white border-white/30">8 Types</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Tracking</Badge>
+                          <Badge className="bg-white/20 text-white border-white/30">Detailed View</Badge>
+                          <Badge className="bg-white/20 text-white border-white/30">Print</Badge>
                         </div>
                       </CardContent>
                     </Card>
                   </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
+                  <DialogContent className="max-w-5xl max-h-[90vh]">
                     <DialogHeader>
                       <DialogTitle className="flex items-center gap-2 text-xl">
-                        <Droplets className="w-6 h-6 text-red-500" />
-                        Blood Bank Management System
+                        <Eye className="w-6 h-6 text-purple-500" />
+                        Advanced Test Results Viewer
                       </DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-6">
-                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        {[
-                          { type: 'A+', units: 20, percentage: 85 },
-                          { type: 'O-', units: 15, percentage: 60 },
-                          { type: 'B+', units: 12, percentage: 70 },
-                          { type: 'AB+', units: 8, percentage: 40 },
-                          { type: 'A-', units: 10, percentage: 50 },
-                          { type: 'O+', units: 25, percentage: 95 },
-                          { type: 'B-', units: 6, percentage: 30 },
-                          { type: 'AB-', units: 4, percentage: 20 }
-                        ].map((blood, index) => (
-                          <Card key={blood.type} className={`border-0 shadow-lg ${blood.percentage < 40 ? 'bg-red-50 border-red-200' : blood.percentage < 70 ? 'bg-amber-50 border-amber-200' : 'bg-green-50 border-green-200'}`}>
-                            <CardContent className="p-4 text-center">
-                              <div className="flex items-center justify-center gap-2 mb-2">
-                                <Droplets className={`w-5 h-5 ${blood.percentage < 40 ? 'text-red-500' : blood.percentage < 70 ? 'text-amber-500' : 'text-green-500'}`} />
-                                <span className="font-bold text-lg">{blood.type}</span>
-                              </div>
-                              <div className={`text-2xl font-bold mb-1 ${blood.percentage < 40 ? 'text-red-600' : blood.percentage < 70 ? 'text-amber-600' : 'text-green-600'}`}>
-                                {blood.units}
-                              </div>
-                              <div className="text-xs text-muted-foreground mb-2">units available</div>
-                              <Progress value={blood.percentage} className="h-2" />
-                            </CardContent>
-                          </Card>
-                        ))}
+                    <ScrollArea className="max-h-[75vh]">
+                      <div className="space-y-6">
+                        {/* Quick Filter Buttons */}
+                        <div className="grid gap-3 md:grid-cols-5">
+                          <Button 
+                            onClick={() => {
+                              const completedTests = labTestResults.filter(test => test.status === 'Completed');
+                              // Show completed tests in a popup
+                              const popup = window.open('', '_blank', 'width=800,height=600');
+                              if (popup) {
+                                popup.document.write(`
+                                  <html>
+                                    <head><title>Completed Test Results</title></head>
+                                    <body style="font-family: system-ui, sans-serif; padding: 20px; background: #f0fdf4;">
+                                      <div style="background: #10b981; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                        <h1>✅ Completed Test Results</h1>
+                                        <p>${completedTests.length} completed tests</p>
+                                      </div>
+                                      ${completedTests.map(test => `
+                                        <div style="background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                            <strong style="color: #10b981;">${test.id}</strong>
+                                            <span style="background: #10b981; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${test.status}</span>
+                                          </div>
+                                          <strong>Patient:</strong> ${test.patientName}<br>
+                                          <strong>Test:</strong> ${test.testType}<br>
+                                          <strong>Department:</strong> ${test.department}<br>
+                                          <strong>Date:</strong> ${test.date}<br>
+                                          <details style="margin-top: 10px;">
+                                            <summary style="cursor: pointer; font-weight: 600; color: #059669;">View Results</summary>
+                                            <pre style="background: #f0f9ff; padding: 10px; margin: 10px 0; border-radius: 4px; white-space: pre-wrap; font-size: 12px;">${test.results}</pre>
+                                          </details>
+                                        </div>
+                                      `).join('')}
+                                    </body>
+                                  </html>
+                                `);
+                                popup.document.close();
+                              }
+                            }}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Completed
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const pendingTests = labTestResults.filter(test => test.status === 'Pending' || test.status === 'In Progress');
+                              const popup = window.open('', '_blank', 'width=800,height=600');
+                              if (popup) {
+                                popup.document.write(`
+                                  <html>
+                                    <head><title>Pending Test Results</title></head>
+                                    <body style="font-family: system-ui, sans-serif; padding: 20px; background: #fef3c7;">
+                                      <div style="background: #f59e0b; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                        <h1>⏳ Pending Test Results</h1>
+                                        <p>${pendingTests.length} tests in progress</p>
+                                      </div>
+                                      ${pendingTests.map(test => `
+                                        <div style="background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                            <strong>${test.id}</strong>
+                                            <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">${test.status}</span>
+                                          </div>
+                                          <strong>Patient:</strong> ${test.patientName}<br>
+                                          <strong>Test:</strong> ${test.testType}<br>
+                                          <strong>Priority:</strong> ${test.priority}<br>
+                                          <strong>Date:</strong> ${test.date}
+                                        </div>
+                                      `).join('')}
+                                    </body>
+                                  </html>
+                                `);
+                                popup.document.close();
+                              }
+                            }}
+                            variant="outline"
+                            className="border-amber-200 hover:bg-amber-50 text-amber-600"
+                          >
+                            <Clock className="w-4 h-4 mr-2" />
+                            Pending
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const criticalTests = labTestResults.filter(test => test.priority === 'STAT' || test.status === 'Critical Review');
+                              if (criticalTests.length > 0) {
+                                const popup = window.open('', '_blank', 'width=800,height=600');
+                                if (popup) {
+                                  popup.document.write(`
+                                    <html>
+                                      <head><title>Critical Test Results</title></head>
+                                      <body style="font-family: system-ui, sans-serif; padding: 20px; background: #fef2f2;">
+                                        <div style="background: #ef4444; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                          <h1>🚨 Critical Test Results</h1>
+                                          <p>${criticalTests.length} critical tests</p>
+                                        </div>
+                                        ${criticalTests.map(test => `
+                                          <div style="background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid #ef4444; animation: blink 2s infinite;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                              <strong style="color: #ef4444;">${test.id}</strong>
+                                              <span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; animation: pulse 1s infinite;">${test.priority}</span>
+                                            </div>
+                                            <strong>Patient:</strong> ${test.patientName}<br>
+                                            <strong>Test:</strong> ${test.testType}<br>
+                                            <strong>Status:</strong> ${test.status}<br>
+                                            <strong>Results:</strong><br>
+                                            <pre style="background: #fef2f2; padding: 10px; margin: 10px 0; border-radius: 4px; white-space: pre-wrap; font-size: 12px;">${test.results}</pre>
+                                          </div>
+                                        `).join('')}
+                                        <style>
+                                          @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.7; } }
+                                          @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+                                        </style>
+                                      </body>
+                                    </html>
+                                  `);
+                                  popup.document.close();
+                                }
+                              } else {
+                                alert('No critical tests at this time.');
+                              }
+                            }}
+                            variant="outline"
+                            className="border-red-200 hover:bg-red-50 text-red-600"
+                          >
+                            <AlertTriangle className="w-4 h-4 mr-2" />
+                            Critical
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              // Export all detailed results to PDF
+                              const doc = new (window as any).jsPDF();
+                              doc.setFontSize(18);
+                              doc.setFont('helvetica', 'bold');
+                              doc.text('Detailed Lab Results Report', 20, 30);
+                              
+                              let y = 60;
+                              labTestResults.forEach((test, index) => {
+                                if (y > 220) {
+                                  doc.addPage();
+                                  y = 30;
+                                }
+                                
+                                doc.setFontSize(14);
+                                doc.setFont('helvetica', 'bold');
+                                doc.text(`${test.id} - ${test.patientName}`, 20, y);
+                                
+                                doc.setFontSize(10);
+                                doc.setFont('helvetica', 'normal');
+                                doc.text(`Test: ${test.testType}`, 20, y + 15);
+                                doc.text(`Department: ${test.department}`, 20, y + 25);
+                                doc.text(`Status: ${test.status} | Priority: ${test.priority}`, 20, y + 35);
+                                doc.text(`Date: ${test.date}`, 20, y + 45);
+                                
+                                // Add results with word wrap
+                                const resultLines = doc.splitTextToSize(test.results, 160);
+                                doc.text(resultLines, 20, y + 60);
+                                
+                                y += 80 + (resultLines.length * 5);
+                                
+                                // Add separator line
+                                doc.setDrawColor(200, 200, 200);
+                                doc.line(20, y, 190, y);
+                                y += 15;
+                              });
+                              
+                              doc.save(`detailed-lab-results-${new Date().toISOString().slice(0, 10)}.pdf`);
+                            }}
+                            variant="outline"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Export PDF
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              // Print all results
+                              const popup = window.open('', '_blank', 'width=900,height=700');
+                              if (popup) {
+                                popup.document.write(`
+                                  <html>
+                                    <head>
+                                      <title>Lab Results - Print View</title>
+                                      <style>
+                                        @media print {
+                                          .no-print { display: none; }
+                                        }
+                                        body { font-family: system-ui, sans-serif; padding: 20px; }
+                                        .header { background: #3b82f6; color: white; padding: 20px; text-align: center; margin-bottom: 30px; }
+                                        .test-result { background: white; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid; }
+                                        .test-id { font-size: 18px; font-weight: bold; color: #1e40af; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 15px; }
+                                        .results-section { background: #f8fafc; padding: 15px; border-radius: 6px; margin-top: 15px; }
+                                        .print-btn { background: #3b82f6; color: white; padding: 15px 30px; border: none; border-radius: 6px; cursor: pointer; margin: 20px; }
+                                      </style>
+                                    </head>
+                                    <body>
+                                      <div class="header">
+                                        <h1>🧪 Laboratory Test Results</h1>
+                                        <p>Careflux Hospital - Generated on ${new Date().toLocaleDateString()}</p>
+                                      </div>
+                                      <button class="print-btn no-print" onclick="window.print()">🖨️ Print Results</button>
+                                      ${labTestResults.map(test => `
+                                        <div class="test-result">
+                                          <div class="test-id">${test.id} - ${test.patientName}</div>
+                                          <div><strong>Test Type:</strong> ${test.testType}</div>
+                                          <div><strong>Department:</strong> ${test.department}</div>
+                                          <div><strong>Status:</strong> ${test.status}</div>
+                                          <div><strong>Priority:</strong> ${test.priority}</div>
+                                          <div><strong>Date:</strong> ${test.date}</div>
+                                          <div><strong>Technician:</strong> ${test.technician}</div>
+                                          <div class="results-section">
+                                            <strong>Results:</strong><br>
+                                            <pre style="white-space: pre-wrap; font-family: inherit; margin-top: 10px;">${test.results}</pre>
+                                          </div>
+                                        </div>
+                                      `).join('')}
+                                    </body>
+                                  </html>
+                                `);
+                                popup.document.close();
+                              }
+                            }}
+                            variant="outline"
+                            className="border-blue-200 hover:bg-blue-50 text-blue-600"
+                          >
+                            <FileText className="w-4 h-4 mr-2" />
+                            Print View
+                          </Button>
+                        </div>
+                        
+                        {/* Interactive Results Grid */}
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                          {labTestResults.map((test, index) => (
+                            <Card 
+                              key={test.id} 
+                              className={`border-0 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] ${
+                                test.status === 'Completed' ? 'bg-green-50 border-green-200' :
+                                test.status === 'Critical Review' ? 'bg-red-50 border-red-200' :
+                                test.status === 'In Progress' ? 'bg-blue-50 border-blue-200' :
+                                'bg-amber-50 border-amber-200'
+                              }`}
+                              onClick={() => viewTestResult(test)}
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex justify-between items-start mb-3">
+                                  <div className="font-mono text-sm font-bold">{test.id}</div>
+                                  <Badge 
+                                    variant={test.status === 'Completed' ? 'default' : 'secondary'}
+                                    className={`text-xs ${
+                                      test.status === 'Completed' ? 'bg-green-500 hover:bg-green-600' :
+                                      test.status === 'Critical Review' ? 'bg-red-500 hover:bg-red-600' :
+                                      'bg-blue-500 hover:bg-blue-600'
+                                    }`}
+                                  >
+                                    {test.status}
+                                  </Badge>
+                                </div>
+                                <h4 className="font-semibold text-sm mb-2">{test.patientName}</h4>
+                                <p className="text-xs text-muted-foreground mb-2">{test.testType}</p>
+                                <div className="flex justify-between items-center text-xs">
+                                  <span className="text-muted-foreground">{test.date}</span>
+                                  <Badge 
+                                    variant={test.priority === 'STAT' ? 'destructive' : 'outline'}
+                                    className={`text-xs ${
+                                      test.priority === 'STAT' ? 'animate-pulse' : ''
+                                    }`}
+                                  >
+                                    {test.priority}
+                                  </Badge>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
                       </div>
-                      
-                      <div className="flex gap-2 justify-center">
-                        <Button variant="outline" className="flex items-center gap-2">
-                          <Eye className="w-4 h-4" />
-                          View Full Inventory
-                        </Button>
-                        <Button variant="outline" className="flex items-center gap-2">
-                          <Download className="w-4 h-4" />
-                          Export Report
-                        </Button>
-                        <Button variant="outline" className="flex items-center gap-2">
-                          <Plus className="w-4 h-4" />
-                          Add Donation
-                        </Button>
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+
+                {/* 4. Sample Management */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 text-white">
+                      <CardContent className="p-6 text-center space-y-4">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                          <Beaker className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold">Sample Management</h3>
+                          <p className="text-sm text-white/80">Track & manage lab samples</p>
+                        </div>
+                        <div className="flex justify-center gap-2">
+                          <Badge className="bg-white/20 text-white border-white/30">Tracking</Badge>
+                          <Badge className="bg-white/20 text-white border-white/30">Quality Control</Badge>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-5xl max-h-[90vh]">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2 text-xl">
+                        <Beaker className="w-6 h-6 text-orange-500" />
+                        Sample Management System
+                      </DialogTitle>
+                    </DialogHeader>
+                    <ScrollArea className="max-h-[75vh]">
+                      <div className="space-y-6">
+                        {/* Sample Management Actions */}
+                        <div className="grid gap-3 md:grid-cols-4">
+                          <Button 
+                            onClick={() => {
+                              const popup = window.open('', '_blank', 'width=500,height=600');
+                              if (popup) {
+                                popup.document.write(`
+                                  <html>
+                                    <head><title>New Sample Registration</title></head>
+                                    <body style="font-family: system-ui, sans-serif; padding: 20px; background: #fff7ed;">
+                                      <div style="background: #ea580c; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                        <h2>🧪 Register New Sample</h2>
+                                      </div>
+                                      <form style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Sample ID:</label>
+                                          <input type="text" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="AUTO-GENERATED" disabled>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Patient ID:</label>
+                                          <input type="text" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="Enter patient ID">
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Sample Type:</label>
+                                          <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                            <option>Blood</option>
+                                            <option>Urine</option>
+                                            <option>Tissue</option>
+                                            <option>Swab</option>
+                                            <option>Fluid</option>
+                                          </select>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Collection Date/Time:</label>
+                                          <input type="datetime-local" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" value="${new Date().toISOString().slice(0, 16)}">
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Storage Requirements:</label>
+                                          <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                            <option>Room Temperature</option>
+                                            <option>Refrigerated (2-8°C)</option>
+                                            <option>Frozen (-20°C)</option>
+                                            <option>Deep Frozen (-80°C)</option>
+                                          </select>
+                                        </div>
+                                        <div style="margin-bottom: 15px;">
+                                          <label style="display: block; margin-bottom: 5px; font-weight: 600;">Priority:</label>
+                                          <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                            <option>Routine</option>
+                                            <option>Urgent</option>
+                                            <option>STAT</option>
+                                          </select>
+                                        </div>
+                                        <button type="button" style="background: #ea580c; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; width: 100%;" onclick="alert('Sample registered successfully with ID: S' + Math.random().toString().slice(2,8)); window.close();">
+                                          ✅ Register Sample
+                                        </button>
+                                      </form>
+                                    </body>
+                                  </html>
+                                `);
+                                popup.document.close();
+                              }
+                            }}
+                            className="bg-orange-600 hover:bg-orange-700"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            New Sample
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              // Generate sample tracking report
+                              const sampleData = [
+                                { id: 'S001', patient: 'Musa Adebayo', type: 'Blood', status: 'Processing', priority: 'Routine' },
+                                { id: 'S002', patient: 'Zainab Lawal', type: 'Urine', status: 'Completed', priority: 'Urgent' },
+                                { id: 'S003', patient: 'Ibrahim Ali', type: 'Tissue', status: 'Storage', priority: 'STAT' },
+                                { id: 'S004', patient: 'Halima Abubakar', type: 'Blood', status: 'Processing', priority: 'Routine' },
+                                { id: 'S005', patient: 'Muhammad Bello', type: 'Fluid', status: 'Received', priority: 'Urgent' }
+                              ];
+                              
+                              const csvContent = [
+                                ['Sample ID', 'Patient', 'Type', 'Status', 'Priority', 'Date'],
+                                ...sampleData.map(sample => [
+                                  sample.id, sample.patient, sample.type, sample.status, sample.priority, new Date().toLocaleDateString()
+                                ])
+                              ].map(row => row.join(',')).join('\n');
+                              
+                              const blob = new Blob([csvContent], { type: 'text/csv' });
+                              const url = URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = `sample-tracking-${new Date().toISOString().slice(0, 10)}.csv`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              URL.revokeObjectURL(url);
+                            }}
+                            variant="outline"
+                          >
+                            <Database className="w-4 h-4 mr-2" />
+                            Track Samples
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              const popup = window.open('', '_blank', 'width=600,height=500');
+                              if (popup) {
+                                popup.document.write(`
+                                  <html>
+                                    <head><title>Quality Control Dashboard</title></head>
+                                    <body style="font-family: system-ui, sans-serif; padding: 20px; background: #f0f9ff;">
+                                      <div style="background: #0ea5e9; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                                        <h2>🔍 Quality Control Dashboard</h2>
+                                        <p>Sample quality monitoring</p>
+                                      </div>
+                                      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                                        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #10b981;">
+                                          <div style="font-size: 24px; font-weight: bold; color: #10b981;">98.5%</div>
+                                          <div style="color: #666;">Quality Pass Rate</div>
+                                        </div>
+                                        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #f59e0b;">
+                                          <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">3</div>
+                                          <div style="color: #666;">Samples on Hold</div>
+                                        </div>
+                                        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #3b82f6;">
+                                          <div style="font-size: 24px; font-weight: bold; color: #3b82f6;">156</div>
+                                          <div style="color: #666;">Samples Today</div>
+                                        </div>
+                                        <div style="background: white; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #ef4444;">
+                                          <div style="font-size: 24px; font-weight: bold; color: #ef4444;">2</div>
+                                          <div style="color: #666;">Critical Issues</div>
+                                        </div>
+                                      </div>
+                                      <div style="background: white; padding: 20px; border-radius: 8px;">
+                                        <h3 style="margin-top: 0;">Recent QC Events</h3>
+                                        <div style="border-left: 4px solid #10b981; padding-left: 10px; margin-bottom: 10px;">
+                                          <strong>Temperature Check Passed</strong><br>
+                                          <small>Storage Unit A - 2 hours ago</small>
+                                        </div>
+                                        <div style="border-left: 4px solid #f59e0b; padding-left: 10px; margin-bottom: 10px;">
+                                          <strong>Sample Integrity Warning</strong><br>
+                                          <small>Sample S003 - 4 hours ago</small>
+                                        </div>
+                                        <div style="border-left: 4px solid #10b981; padding-left: 10px;">
+                                          <strong>Calibration Completed</strong><br>
+                                          <small>Chemistry Analyzer - 6 hours ago</small>
+                                        </div>
+                                      </div>
+                                    </body>
+                                  </html>
+                                `);
+                                popup.document.close();
+                              }
+                            }}
+                            variant="outline"
+                            className="border-blue-200 hover:bg-blue-50 text-blue-600"
+                          >
+                            <Shield className="w-4 h-4 mr-2" />
+                            Quality Control
+                          </Button>
+                          
+                          <Button 
+                            onClick={() => {
+                              // Sample inventory report
+                              const doc = new (window as any).jsPDF();
+                              doc.setFontSize(18);
+                              doc.setFont('helvetica', 'bold');
+                              doc.text('Sample Inventory Report', 20, 30);
+                              
+                              doc.setFontSize(12);
+                              doc.setFont('helvetica', 'normal');
+                              doc.text(`Generated: ${new Date().toLocaleDateString()}`, 20, 50);
+                              
+                              const sampleStats = [
+                                'Total Samples in Storage: 1,247',
+                                'Samples Processed Today: 156',
+                                'Pending Analysis: 23',
+                                'Quality Control Pass Rate: 98.5%',
+                                'Storage Capacity Used: 67%'
+                              ];
+                              
+                              let y = 80;
+                              sampleStats.forEach(stat => {
+                                doc.text(stat, 20, y);
+                                y += 15;
+                              });
+                              
+                              doc.save(`sample-inventory-${new Date().toISOString().slice(0, 10)}.pdf`);
+                            }}
+                            variant="outline"
+                            className="border-green-200 hover:bg-green-50 text-green-600"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Inventory Report
+                          </Button>
+                        </div>
+                        
+                        {/* Sample Status Overview */}
+                        <div className="grid gap-4 md:grid-cols-4">
+                          {[
+                            { status: 'Received', count: 45, color: 'blue', icon: 'checkmark' },
+                            { status: 'Processing', count: 28, color: 'orange', icon: 'processing' },
+                            { status: 'Completed', count: 156, color: 'green', icon: 'completed' },
+                            { status: 'On Hold', count: 3, color: 'red', icon: 'warning' }
+                          ].map((item, index) => (
+                            <Card key={item.status} className={`border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer bg-${item.color}-50 border-${item.color}-200`}>
+                              <CardContent className="p-4 text-center">
+                                <div className="flex items-center justify-center gap-2 mb-2">
+                                  {item.status === 'Received' && <CheckSquare className="w-5 h-5 text-blue-500" />}
+                                  {item.status === 'Processing' && <Clock className="w-5 h-5 text-orange-500" />}
+                                  {item.status === 'Completed' && <CheckCircle className="w-5 h-5 text-green-500" />}
+                                  {item.status === 'On Hold' && <AlertTriangle className="w-5 h-5 text-red-500" />}
+                                  <span className="font-semibold">{item.status}</span>
+                                </div>
+                                <div className={`text-2xl font-bold mb-1 text-${item.color}-600`}>
+                                  {item.count}
+                                </div>
+                                <div className="text-xs text-muted-foreground">samples</div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    </ScrollArea>
                   </DialogContent>
                 </Dialog>
 
