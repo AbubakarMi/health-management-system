@@ -170,6 +170,9 @@ export default function LabtechDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [showAlerts, setShowAlerts] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(new Date());
   
   const currentUser = users.find(u => u.role === 'labtech') || users[3]; // Khalid Ahmed
 
@@ -484,6 +487,21 @@ export default function LabtechDashboard() {
     }
   };
 
+  // Handle alerts button
+  const handleAlertsClick = () => {
+    setShowAlerts(!showAlerts);
+  };
+
+  // Handle refresh button
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    // Simulate refresh delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setLastRefresh(new Date());
+    setIsRefreshing(false);
+    // You can add actual data refresh logic here
+  };
+
   // View equipment details
   const viewEquipmentDetails = (equipment: any) => {
     const popup = window.open('', '_blank', 'width=700,height=600');
@@ -619,7 +637,7 @@ export default function LabtechDashboard() {
         </div>
         
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={handleAlertsClick}>
             <Bell className="w-4 h-4 mr-2" />
             Alerts
             {labMetrics.criticalTests > 0 && (
@@ -628,12 +646,59 @@ export default function LabtechDashboard() {
               </Badge>
             )}
           </Button>
-          <Button variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </Button>
         </div>
       </div>
+
+      {/* Alerts Panel */}
+      {showAlerts && (
+        <Card className="border-l-4 border-l-red-500 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-red-600">
+              <Bell className="w-5 h-5" />
+              System Alerts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {labMetrics.criticalTests > 0 && (
+              <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-red-800">Critical Test Results</h4>
+                  <p className="text-sm text-red-600">{labMetrics.criticalTests} test(s) require immediate attention</p>
+                </div>
+              </div>
+            )}
+            
+            {equipmentData.filter(eq => eq.status === 'Down' || eq.status === 'Maintenance').map(eq => (
+              <div key={eq.id} className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <Wrench className="w-5 h-5 text-amber-500 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-amber-800">Equipment Issue</h4>
+                  <p className="text-sm text-amber-600">{eq.name} is currently {eq.status.toLowerCase()}</p>
+                </div>
+              </div>
+            ))}
+            
+            {labTestResults.filter(test => test.priority === 'STAT').length > 0 && (
+              <div className="flex items-start gap-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                <Clock className="w-5 h-5 text-purple-500 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-purple-800">STAT Orders</h4>
+                  <p className="text-sm text-purple-600">{labTestResults.filter(test => test.priority === 'STAT').length} urgent test(s) pending</p>
+                </div>
+              </div>
+            )}
+            
+            <div className="text-xs text-gray-500 mt-4">
+              Last updated: {lastRefresh.toLocaleTimeString()}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Enhanced Metrics Cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
