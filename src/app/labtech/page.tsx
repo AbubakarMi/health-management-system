@@ -609,7 +609,7 @@ export default function LabtechDashboard() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-900 dark:via-blue-950 dark:to-teal-950 p-6 transition-colors duration-300">
       {/* Enhanced Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -618,10 +618,10 @@ export default function LabtechDashboard() {
               <TestTube className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-gradient-success">
                 Laboratory Dashboard
               </h1>
-              <p className="text-muted-foreground text-lg">Advanced laboratory management system</p>
+              <p className="text-muted-foreground dark:text-slate-300 text-lg">Advanced laboratory management system</p>
               <div className="flex items-center gap-4 mt-1">
                 <Badge variant="outline" className="text-xs">
                   <UserCheck className="w-3 h-3 mr-1" />

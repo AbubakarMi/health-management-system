@@ -83,9 +83,9 @@ export default function FinanceDashboard() {
   const recentTransactions = initialInvoices.slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950 transition-colors duration-300">
       {/* Floating Header */}
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-white/20 shadow-lg">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800/20 shadow-lg transition-colors duration-300">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -96,10 +96,10 @@ export default function FinanceDashboard() {
                 </div>
               </div>
               <div>
-                <h1 className="text-3xl font-black bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-700 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-black text-gradient-primary">
                   Finance Command Center
                 </h1>
-                <p className="text-slate-600 font-medium">Professional Financial Management System</p>
+                <p className="text-slate-600 dark:text-slate-300 font-medium transition-colors duration-300">Professional Financial Management System</p>
               </div>
               <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 font-semibold animate-pulse">
                 <Sparkles className="w-4 h-4 mr-2" />
@@ -109,8 +109,8 @@ export default function FinanceDashboard() {
             
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-sm font-medium text-slate-500">{currentTime.toLocaleDateString()}</div>
-                <div className="text-lg font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{currentTime.toLocaleDateString()}</div>
+                <div className="text-lg font-bold text-gradient-primary">
                   {currentTime.toLocaleTimeString()}
                 </div>
               </div>
@@ -168,10 +168,10 @@ export default function FinanceDashboard() {
               subtitle: "Above target"
             }
           ].map((metric, index) => (
-            <Card key={metric.title} className="group relative overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105 animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+            <Card key={metric.title} className="group relative overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105 animate-fade-in-up card-premium" style={{ animationDelay: `${index * 0.1}s` }}>
               {/* Animated Background */}
               <div className={`absolute inset-0 bg-gradient-to-br ${metric.bg} opacity-60`}></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/30 to-transparent dark:from-white/10 dark:via-white/5 dark:to-transparent"></div>
               
               {/* Glowing Border */}
               <div className={`absolute inset-0 bg-gradient-to-r ${metric.gradient} opacity-20 blur-xl group-hover:opacity-40 transition-opacity duration-500`}></div>
@@ -179,9 +179,9 @@ export default function FinanceDashboard() {
               <CardContent className="relative p-6 space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wider">{metric.title}</p>
-                    <p className="text-3xl font-black text-slate-900">{metric.value}</p>
-                    <p className="text-sm text-slate-600">{metric.subtitle}</p>
+                    <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">{metric.title}</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-slate-100">{metric.value}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{metric.subtitle}</p>
                   </div>
                   <div className={`relative p-3 rounded-2xl bg-gradient-to-r ${metric.gradient} shadow-xl group-hover:scale-110 transition-transform duration-300`}>
                     <metric.icon className="w-7 h-7 text-white" />
@@ -194,7 +194,7 @@ export default function FinanceDashboard() {
                     {metric.change.startsWith('+') ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDownIcon className="w-3 h-3 mr-1" />}
                     {metric.change}
                   </Badge>
-                  <span className="text-xs font-medium text-slate-500">{metric.progress?.toFixed(0)}%</span>
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{metric.progress?.toFixed(0)}%</span>
                 </div>
                 <Progress value={metric.progress} className="h-2 bg-white/50" />
               </CardContent>
@@ -203,7 +203,7 @@ export default function FinanceDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-800 dark:via-blue-900 dark:to-indigo-900 card-premium">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -211,10 +211,10 @@ export default function FinanceDashboard() {
                   <Crown className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                  <CardTitle className="text-2xl font-bold text-gradient-primary">
                     Finance Operations Center
                   </CardTitle>
-                  <CardDescription>Streamlined financial management and operations</CardDescription>
+                  <CardDescription className="dark:text-slate-300">Streamlined financial management and operations</CardDescription>
                 </div>
               </div>
             </div>
@@ -509,16 +509,16 @@ export default function FinanceDashboard() {
         </Card>
 
         {/* Financial Alerts - Premium Design */}
-        <Card className="border-0 shadow-2xl bg-white/90 backdrop-blur-xl">
-          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50">
+        <Card className="border-0 shadow-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl card-premium">
+          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-blue-900">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl shadow-lg">
                   <AlertTriangle className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-slate-900">Financial Intelligence Center</CardTitle>
-                  <CardDescription className="text-slate-600">Real-time monitoring & predictive analytics</CardDescription>
+                  <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">Financial Intelligence Center</CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-300">Real-time monitoring & predictive analytics</CardDescription>
                 </div>
               </div>
               <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 font-semibold">
@@ -571,8 +571,8 @@ export default function FinanceDashboard() {
                         <alert.icon className="w-6 h-6 text-white" />
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-black text-slate-900">{alert.count}</div>
-                        <div className="text-sm font-semibold text-slate-600">{alert.title}</div>
+                        <div className="text-3xl font-black text-slate-900 dark:text-slate-100">{alert.count}</div>
+                        <div className="text-sm font-semibold text-slate-600 dark:text-slate-300">{alert.title}</div>
                       </div>
                     </div>
                     {alert.count > 0 && alert.status === 'urgent' && (
@@ -591,10 +591,10 @@ export default function FinanceDashboard() {
         {/* Charts and Transactions - Premium Layout */}
         <div className="grid gap-8 lg:grid-cols-5">
           <div className="lg:col-span-3">
-            <Card className="border-0 shadow-2xl bg-white overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 border-b">
+            <Card className="border-0 shadow-2xl bg-white dark:bg-gray-900 overflow-hidden card-premium">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-blue-900 border-b">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl font-bold text-slate-900">Financial Performance Analytics</CardTitle>
+                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Financial Performance Analytics</CardTitle>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm">
                       <RefreshCw className="w-4 h-4 mr-1" />
@@ -613,14 +613,14 @@ export default function FinanceDashboard() {
             </Card>
           </div>
           
-          <Card className="lg:col-span-2 border-0 shadow-2xl bg-white">
-            <CardHeader className="bg-gradient-to-r from-slate-50 to-emerald-50 border-b">
+          <Card className="lg:col-span-2 border-0 shadow-2xl bg-white dark:bg-gray-900 card-premium">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-emerald-50 dark:from-slate-800 dark:to-emerald-900 border-b">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl font-bold text-slate-900">Transaction Stream</CardTitle>
-                  <CardDescription className="text-slate-600">Real-time payment activity</CardDescription>
+                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Transaction Stream</CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-300">Real-time payment activity</CardDescription>
                 </div>
-                <Badge className="bg-green-100 text-green-800 px-3 py-1 font-semibold">
+                <Badge className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-3 py-1 font-semibold">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
                   LIVE
                 </Badge>
@@ -629,26 +629,26 @@ export default function FinanceDashboard() {
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-slate-100 hover:bg-slate-50">
-                    <TableHead className="font-bold text-slate-700">Invoice</TableHead>
-                    <TableHead className="font-bold text-slate-700">Patient</TableHead>
-                    <TableHead className="font-bold text-slate-700">Amount</TableHead>
-                    <TableHead className="font-bold text-slate-700">Status</TableHead>
+                  <TableRow className="border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Invoice</TableHead>
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Patient</TableHead>
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Amount</TableHead>
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentTransactions.map((t, index) => (
-                    <TableRow key={t.id} className="hover:bg-slate-50 transition-colors group">
-                      <TableCell className="font-semibold text-slate-900">{t.id}</TableCell>
+                    <TableRow key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group">
+                      <TableCell className="font-semibold text-slate-900 dark:text-slate-100">{t.id}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="w-8 h-8">
                             <AvatarFallback className="text-xs">{t.patientName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                           </Avatar>
-                          <span className="text-slate-700 font-medium">{t.patientName}</span>
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{t.patientName}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="font-bold text-slate-900">₦{t.amount.toLocaleString()}</TableCell>
+                      <TableCell className="font-bold text-slate-900 dark:text-slate-100">₦{t.amount.toLocaleString()}</TableCell>
                       <TableCell>
                         <Badge 
                           variant={t.status === 'Pending' ? 'secondary' : t.status === 'Overdue' ? 'destructive' : 'default'} 

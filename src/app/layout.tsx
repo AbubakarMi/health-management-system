@@ -24,10 +24,10 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <ThemeProvider
-            attribute="class"
             defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
+            enableSystemTheme={true}
+            enableTransitionOnChange={true}
+            storageKey="health-management-theme"
         >
             <ShortcutsProvider>
                 <div className="flex-grow">{children}</div>
