@@ -402,10 +402,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-gray-300 text-center text-sm text-gray-600">
-            <p>© 2025 <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent hover:from-teal-500 hover:to-cyan-500 transition-all duration-300">Nubenta Technology Limited</a>. All rights reserved.</p>
-            <p className="mt-2 text-xs">
-              Powered by <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-teal-600 hover:text-teal-500 transition-colors duration-300 underline decoration-teal-400">Nubenta Technology Limited</a>
-            </p>
+            <p>© 2025 Powered by <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent hover:from-teal-500 hover:to-cyan-500 transition-all duration-300">Nubenta Technology Limited</a>. All rights reserved.</p>
           </div>
         </div>
       </footer>

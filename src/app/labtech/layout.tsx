@@ -42,8 +42,7 @@ export default function LabTechLayout({
                     <footer className="py-4 px-6 text-center text-sm text-muted-foreground border-t bg-gradient-to-r from-card via-card to-primary/5">
                         <div className="flex items-center justify-center gap-2">
                           <div className="w-2 h-2 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
-                          <span>Powered by <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-semibold hover:from-teal-500 hover:to-cyan-500 transition-all duration-300">Nubenta Technology Limited</a></span>
-                          <span className="text-xs">© 2025</span>
+                          <span>© 2025 Powered by <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-semibold hover:from-teal-500 hover:to-cyan-500 transition-all duration-300">Nubenta Technology Limited</a></span>
                         </div>
                     </footer>
                 </div>

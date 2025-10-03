@@ -102,71 +102,71 @@
   }
 
   .dark {
-    /* Lab Tech Dark Theme - Professional Teal Aesthetic */
-    --background: 220 13% 9%;
-    --foreground: 0 0% 98%;
+    /* Modern Dark Theme - Clean Teal & Slate Aesthetic */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 217 19% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 217 19% 12%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 180 100% 50%;
-    --primary-rgb: 0, 255, 255;
-    --primary-foreground: 217 19% 12%;
+    --primary: 173 80% 40%;
+    --primary-rgb: 20, 184, 166;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 25% 17%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 217 33% 22%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 215 25% 17%;
-    --muted-foreground: 217 10% 65%;
+    --muted: 215 20% 25%;
+    --muted-foreground: 217 10% 70%;
 
-    --accent: 180 84% 20%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 173 80% 35%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 91% 71%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 180 100% 50%;
+    --border: 215 28% 25%;
+    --input: 215 28% 25%;
+    --ring: 173 80% 40%;
 
     --radius: 0.5rem;
 
-    /* Lab Tech Dark Color System */
-    --surface: 217 19% 15%;
-    --surface-variant: 215 25% 20%;
-    --outline: 217 10% 35%;
-    --outline-variant: 215 15% 25%;
+    /* Modern Dark Color System */
+    --surface: 217 33% 20%;
+    --surface-variant: 217 33% 25%;
+    --outline: 217 10% 45%;
+    --outline-variant: 215 15% 30%;
 
-    /* Status Colors - World-Class Dark */
-    --success: 142 76% 36%;
-    --success-foreground: 142 84% 2%;
+    /* Status Colors - Modern Dark */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
-    --warning-foreground: 48 96% 5%;
+    --warning-foreground: 0 0% 100%;
     --error: 0 72% 51%;
-    --error-foreground: 0 86% 2%;
+    --error-foreground: 0 0% 100%;
     --info: 199 89% 48%;
-    --info-foreground: 199 100% 4%;
+    --info-foreground: 0 0% 100%;
 
     /* Dark Shadows and Effects */
-    --shadow-color: 220 3% 2%;
-    --shadow-elevation-low: 0px 1px 2px hsla(var(--shadow-color) / 0.24), 0px 1px 3px hsla(var(--shadow-color) / 0.16);
-    --shadow-elevation-medium: 0px 4px 6px hsla(var(--shadow-color) / 0.24), 0px 2px 4px hsla(var(--shadow-color) / 0.16);
-    --shadow-elevation-high: 0px 10px 15px hsla(var(--shadow-color) / 0.32), 0px 4px 6px hsla(var(--shadow-color) / 0.24);
-    
+    --shadow-color: 220 40% 2%;
+    --shadow-elevation-low: 0px 1px 3px hsla(var(--shadow-color) / 0.3), 0px 1px 2px hsla(var(--shadow-color) / 0.2);
+    --shadow-elevation-medium: 0px 4px 8px hsla(var(--shadow-color) / 0.3), 0px 2px 4px hsla(var(--shadow-color) / 0.2);
+    --shadow-elevation-high: 0px 12px 24px hsla(var(--shadow-color) / 0.4), 0px 4px 8px hsla(var(--shadow-color) / 0.3);
+
     /* Premium Dark Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(180 100% 50%) 0%, hsl(162 100% 55%) 100%);
-    --gradient-surface: linear-gradient(135deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 17.5%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(173 80% 40%) 0%, hsl(189 85% 40%) 100%);
+    --gradient-surface: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(217 33% 17%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
 
     /* Enhanced Chart Colors for Dark Mode */
-    --chart-1: 180 100% 60%;
-    --chart-2: 162 100% 60%;
-    --chart-3: 195 100% 60%;
-    --chart-4: 285 100% 75%;
-    --chart-5: 45 100% 70%;
+    --chart-1: 173 80% 50%;
+    --chart-2: 189 85% 50%;
+    --chart-3: 158 70% 50%;
+    --chart-4: 285 75% 65%;
+    --chart-5: 45 85% 60%;
 
     /* Professional Role-Based Colors */
     --finance-primary: 260 100% 70%;
