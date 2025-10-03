@@ -52,7 +52,7 @@ export default function AdminLayout({
                         <footer className="py-4 px-6 text-center text-sm text-muted-foreground border-t bg-gradient-to-r from-card via-card to-primary/5">
                             <div className="flex items-center justify-center gap-2">
                               <div className="w-2 h-2 bg-gradient-to-r from-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
-                              <span className="nubenta-gradient-text font-semibold">Powered by Nubenta Technology</span>
+                              <span className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-semibold">Powered by Nubenta Technology Limited</span>
                               <span className="text-xs">© 2025</span>
                             </div>
                         </footer>

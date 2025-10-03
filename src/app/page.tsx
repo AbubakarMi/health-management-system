@@ -116,9 +116,9 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-2 hover:border-teal-200 transition-all hover:shadow-lg">
+            <Card className="border-2 hover:border-teal-200 transition-all hover:shadow-lg transform hover:-translate-y-2 duration-300 animate-slide-in-left [animation-delay:0.1s]">
               <CardHeader>
-                <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4 animate-bounce-in">
                   <Building2 className="w-6 h-6 text-teal-600" />
                 </div>
                 <CardTitle>Multi-Tenant Architecture</CardTitle>
@@ -128,9 +128,9 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-cyan-200 transition-all hover:shadow-lg">
+            <Card className="border-2 hover:border-cyan-200 transition-all hover:shadow-lg transform hover:-translate-y-2 duration-300 animate-scale-up [animation-delay:0.2s]">
               <CardHeader>
-                <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mb-4 animate-bounce-in [animation-delay:0.1s]">
                   <Users className="w-6 h-6 text-cyan-600" />
                 </div>
                 <CardTitle>Patient Management</CardTitle>
@@ -140,9 +140,9 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-emerald-200 transition-all hover:shadow-lg">
+            <Card className="border-2 hover:border-emerald-200 transition-all hover:shadow-lg transform hover:-translate-y-2 duration-300 animate-slide-in-right [animation-delay:0.3s]">
               <CardHeader>
-                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4 animate-bounce-in [animation-delay:0.2s]">
                   <Activity className="w-6 h-6 text-emerald-600" />
                 </div>
                 <CardTitle>Real-Time Analytics</CardTitle>
@@ -152,9 +152,9 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-purple-200 transition-all hover:shadow-lg">
+            <Card className="border-2 hover:border-purple-200 transition-all hover:shadow-lg transform hover:-translate-y-2 duration-300 animate-slide-in-left [animation-delay:0.4s]">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4 animate-bounce-in [animation-delay:0.3s]">
                   <Shield className="w-6 h-6 text-purple-600" />
                 </div>
                 <CardTitle>Enterprise Security</CardTitle>
@@ -164,9 +164,9 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-blue-200 transition-all hover:shadow-lg">
+            <Card className="border-2 hover:border-blue-200 transition-all hover:shadow-lg transform hover:-translate-y-2 duration-300 animate-scale-up [animation-delay:0.5s]">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 animate-bounce-in [animation-delay:0.4s]">
                   <Zap className="w-6 h-6 text-blue-600" />
                 </div>
                 <CardTitle>AI-Powered Insights</CardTitle>
@@ -176,9 +176,9 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-orange-200 transition-all hover:shadow-lg">
+            <Card className="border-2 hover:border-orange-200 transition-all hover:shadow-lg transform hover:-translate-y-2 duration-300 animate-slide-in-right [animation-delay:0.6s]">
               <CardHeader>
-                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4 animate-bounce-in [animation-delay:0.5s]">
                   <Globe className="w-6 h-6 text-orange-600" />
                 </div>
                 <CardTitle>Cloud-Based Platform</CardTitle>
@@ -383,7 +383,8 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-            <p>© 2025 Nubenta Technology. All rights reserved.</p>
+            <p>© 2025 <span className="font-semibold text-teal-400">Nubenta Technology Limited</span>. All rights reserved.</p>
+            <p className="mt-2 text-xs text-gray-600">Powered by Nubenta Technology Limited</p>
           </div>
         </div>
       </footer>
