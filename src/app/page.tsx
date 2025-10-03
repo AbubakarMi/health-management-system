@@ -23,21 +23,30 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-teal-50 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl animate-float-delayed"></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-float-delayed [animation-delay:2s]"></div>
+        <div className="absolute bottom-20 left-1/4 w-80 h-80 bg-emerald-400/15 rounded-full blur-3xl animate-float-delayed [animation-delay:4s]"></div>
+        <div className="absolute -bottom-10 -right-10 w-96 h-96 bg-blue-400/15 rounded-full blur-3xl animate-float-delayed [animation-delay:6s]"></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center gap-3 animate-slide-in-left">
+              <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse-glow">
+                <Heart className="w-7 h-7 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent animate-gradient-shift">
                 CareFlux
               </span>
             </div>
             <Link href="/login">
-              <Button className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white">
+              <Button className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-slide-in-right h-12 px-6">
+                <Lock className="w-4 h-4 mr-2" />
                 Staff Login
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -47,56 +56,66 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative pt-40 pb-28 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium animate-bounce-in">
-              <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse-glow"></div>
+          <div className="text-center space-y-10">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full text-teal-800 text-sm font-semibold shadow-lg animate-bounce-in border border-teal-200">
+              <div className="w-3 h-3 bg-teal-500 rounded-full animate-pulse-glow shadow-lg shadow-teal-500/50"></div>
+              <Zap className="w-4 h-4" />
               Multi-Hospital Cloud Platform
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight animate-fade-in-up">
-              Healthcare Management
-              <br />
-              <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent animate-gradient-shift">
-                Reimagined for Scale
-              </span>
-            </h1>
+            <div className="space-y-6">
+              <h1 className="text-6xl md:text-8xl font-black text-gray-900 leading-tight animate-fade-in-up tracking-tight">
+                Healthcare Management
+                <br />
+                <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent animate-gradient-shift inline-block mt-2">
+                  Reimagined for Scale
+                </span>
+              </h1>
 
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Empower multiple hospitals with a unified, AI-powered healthcare management system.
-              Streamline operations, enhance patient care, and unlock insights across your entire network.
-            </p>
+              <div className="relative inline-block">
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-400/20 to-cyan-400/20 blur-2xl animate-pulse-slow"></div>
+                <p className="relative text-2xl md:text-3xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium animate-fade-in-up [animation-delay:0.2s]">
+                  Empower <span className="text-teal-600 font-bold">multiple hospitals</span> with a unified, <span className="text-cyan-600 font-bold">AI-powered</span> healthcare management system.
+                </p>
+              </div>
+            </div>
 
-            <div className="flex items-center justify-center gap-4 flex-wrap animate-scale-up [animation-delay:0.3s]">
+            <div className="flex items-center justify-center gap-6 flex-wrap animate-scale-up [animation-delay:0.4s] pt-4">
               <Link href="/login">
-                <Button size="lg" className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white h-14 px-8 text-lg transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
-                  Get Started
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                <Button size="lg" className="bg-gradient-to-r from-teal-500 via-cyan-500 to-emerald-500 hover:from-teal-600 hover:via-cyan-600 hover:to-emerald-600 text-white h-16 px-10 text-xl font-bold transform hover:scale-110 transition-all duration-500 shadow-2xl hover:shadow-3xl rounded-2xl group">
+                  Get Started Now
+                  <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-2 transform hover:scale-105 transition-all duration-300">
+              <Button size="lg" variant="outline" className="h-16 px-10 text-xl font-bold border-3 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transform hover:scale-110 transition-all duration-500 rounded-2xl">
+                <Activity className="w-6 h-6 mr-3" />
                 Watch Demo
               </Button>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 max-w-4xl mx-auto">
-              <div className="text-center animate-fade-in-up [animation-delay:0.4s]">
-                <div className="text-4xl font-bold text-teal-600 animate-scale-up">500+</div>
-                <div className="text-gray-600 mt-1">Hospitals</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-16 max-w-5xl mx-auto">
+              <div className="group text-center animate-fade-in-up [animation-delay:0.6s] p-6 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-black bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent animate-scale-up mb-2">500+</div>
+                <div className="text-gray-700 font-semibold text-lg">Hospitals</div>
+                <Building2 className="w-6 h-6 mx-auto mt-3 text-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              <div className="text-center animate-fade-in-up [animation-delay:0.5s]">
-                <div className="text-4xl font-bold text-cyan-600 animate-scale-up">1M+</div>
-                <div className="text-gray-600 mt-1">Patients</div>
+              <div className="group text-center animate-fade-in-up [animation-delay:0.7s] p-6 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-600 to-emerald-600 bg-clip-text text-transparent animate-scale-up mb-2">1M+</div>
+                <div className="text-gray-700 font-semibold text-lg">Patients</div>
+                <Users className="w-6 h-6 mx-auto mt-3 text-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              <div className="text-center animate-fade-in-up [animation-delay:0.6s]">
-                <div className="text-4xl font-bold text-emerald-600 animate-scale-up">99.9%</div>
-                <div className="text-gray-600 mt-1">Uptime</div>
+              <div className="group text-center animate-fade-in-up [animation-delay:0.8s] p-6 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent animate-scale-up mb-2">99.9%</div>
+                <div className="text-gray-700 font-semibold text-lg">Uptime</div>
+                <Shield className="w-6 h-6 mx-auto mt-3 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-              <div className="text-center animate-fade-in-up [animation-delay:0.7s]">
-                <div className="text-4xl font-bold text-blue-600 animate-scale-up">24/7</div>
-                <div className="text-gray-600 mt-1">Support</div>
+              <div className="group text-center animate-fade-in-up [animation-delay:0.9s] p-6 rounded-2xl hover:bg-white/50 transition-all duration-300 hover:scale-105">
+                <div className="text-5xl md:text-6xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent animate-scale-up mb-2">24/7</div>
+                <div className="text-gray-700 font-semibold text-lg">Support</div>
+                <Clock className="w-6 h-6 mx-auto mt-3 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             </div>
           </div>
@@ -356,35 +375,37 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-gradient-to-br from-slate-50 via-teal-50 to-cyan-50 border-t border-gray-200 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Heart className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold">CareFlux</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">CareFlux</span>
             </div>
 
-            <div className="flex items-center gap-6 text-sm text-gray-400">
+            <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-green-400" />
+                <Shield className="w-4 h-4 text-green-500" />
                 <span>HIPAA Compliant</span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 text-yellow-400" />
+                <Star className="w-4 h-4 text-yellow-500" />
                 <span>ISO 27001</span>
               </div>
               <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-blue-400" />
+                <Lock className="w-4 h-4 text-blue-500" />
                 <span>SOC 2 Type II</span>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-            <p>© 2025 <span className="font-semibold text-teal-400">Nubenta Technology Limited</span>. All rights reserved.</p>
-            <p className="mt-2 text-xs text-gray-600">Powered by Nubenta Technology Limited</p>
+          <div className="mt-8 pt-8 border-t border-gray-300 text-center text-sm text-gray-600">
+            <p>© 2025 <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent hover:from-teal-500 hover:to-cyan-500 transition-all duration-300">Nubenta Technology Limited</a>. All rights reserved.</p>
+            <p className="mt-2 text-xs">
+              Powered by <a href="https://nubenta.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-teal-600 hover:text-teal-500 transition-colors duration-300 underline decoration-teal-400">Nubenta Technology Limited</a>
+            </p>
           </div>
         </div>
       </footer>
