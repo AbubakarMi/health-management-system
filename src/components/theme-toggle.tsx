@@ -56,8 +56,8 @@ export function ThemeToggle() {
       value: "dark", 
       label: "Dark Mode",
       icon: Moon,
-      description: "Easy on your eyes",
-      gradient: "from-slate-400 to-slate-600",
+      description: "Lab tech aesthetic",
+      gradient: "from-teal-400 to-cyan-600",
     },
     {
       value: "system",
@@ -186,7 +186,7 @@ export function ThemeToggle() {
               variant="outline" 
               className={`
                 capitalize font-medium border-border/50 text-xs px-2 py-1
-                ${resolvedTheme === 'dark' ? 'bg-slate-900/50 text-slate-300' : 'bg-amber-50 text-amber-700'}
+                ${resolvedTheme === 'dark' ? 'bg-teal-900/50 text-teal-300' : 'bg-amber-50 text-amber-700'}
               `}
             >
               {resolvedTheme} mode

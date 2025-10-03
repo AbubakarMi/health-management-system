@@ -83,7 +83,7 @@ export default function FinanceDashboard() {
   const recentTransactions = initialInvoices.slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-900 dark:via-blue-950 dark:to-teal-950 transition-colors duration-300">
       {/* Floating Header */}
       <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800/20 shadow-lg transition-colors duration-300">
         <div className="container mx-auto px-6 py-4">
@@ -203,11 +203,11 @@ export default function FinanceDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-800 dark:via-blue-900 dark:to-indigo-900 card-premium">
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-800 dark:via-blue-900 dark:to-teal-900 card-premium">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl">
                   <Crown className="w-6 h-6 text-white" />
                 </div>
                 <div>
