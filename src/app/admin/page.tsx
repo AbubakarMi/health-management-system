@@ -38,14 +38,8 @@ import {
   CreditCard,
   Pill,
   TestTube,
-  Sparkles,
-  X,
-  Save
+  Sparkles
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { NairaIcon } from "@/components/ui/naira-icon";
@@ -253,27 +247,6 @@ function CriticalItemDetails({ type, data }: { type: string, data: any }) {
 export default function AdminDashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const router = useRouter();
-  
-  // Modal states for Quick Actions
-  const [addPatientModal, setAddPatientModal] = useState(false);
-  const [scheduleModal, setScheduleModal] = useState(false);
-  const [patientForm, setPatientForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    age: '',
-    gender: '',
-    condition: '',
-    admissionType: 'Outpatient'
-  });
-  const [scheduleForm, setScheduleForm] = useState({
-    patientName: '',
-    appointmentDate: '',
-    appointmentTime: '',
-    department: '',
-    doctor: '',
-    notes: ''
-  });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -553,333 +526,155 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions Section */}
-      <div className="relative">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-500/5 via-cyan-500/5 to-emerald-500/5 rounded-3xl blur-3xl"></div>
-        
-        <Card className="relative border-0 shadow-2xl bg-gradient-to-br from-slate-900/90 via-teal-900/90 to-cyan-900/90 backdrop-blur-xl overflow-hidden">
-          {/* Animated background elements */}
-          <div className="absolute inset-0">
-            <div className="absolute top-4 left-4 w-32 h-32 bg-gradient-to-r from-teal-400/20 to-cyan-500/20 rounded-full blur-2xl animate-float"></div>
-            <div className="absolute bottom-4 right-4 w-24 h-24 bg-gradient-to-r from-cyan-400/20 to-emerald-500/20 rounded-full blur-2xl animate-float [animation-delay:2s]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.1)_1px,_transparent_0)] bg-[size:30px_30px] opacity-20"></div>
-          </div>
-          
-          {/* Header */}
-          <CardHeader className="relative text-center pb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-2xl shadow-lg animate-glow mb-4">
-              <Zap className="w-8 h-8 text-white" />
+      <div className="relative animate-fade-in-up" style={{ animationDelay: "1.1s" }}>
+        <Card className="border-2 shadow-lg bg-card">
+          <CardHeader className="text-center pb-4">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl shadow-lg mb-4">
+              <Zap className="w-7 h-7 text-white" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white mb-2">
+            <CardTitle className="text-2xl font-bold">
               Quick Actions
             </CardTitle>
-            <CardDescription className="text-white/70 text-lg">
-              Streamline your workflow with instant access to key functions
+            <CardDescription className="text-base">
+              Access essential hospital operations instantly
             </CardDescription>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-cyan-500 to-emerald-500"></div>
           </CardHeader>
-          
-          <CardContent className="relative pb-6">
+
+          <CardContent className="pb-6">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              
+
               {/* Add Patient Card */}
-              <Dialog open={addPatientModal} onOpenChange={setAddPatientModal}>
-                <DialogTrigger asChild>
-                  <div className="group relative cursor-pointer">
-                    <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                      <div className="text-center space-y-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Plus className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="space-y-1">
-                          <h3 className="text-lg font-bold text-white">Add Patient</h3>
-                          <p className="text-xs text-white/80">Register new records</p>
-                        </div>
-                      </div>
-                    </div>
+              <div
+                onClick={() => router.push('/admin/patients/create')}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-teal-500 bg-card hover:bg-teal-50 dark:hover:bg-teal-950/20 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-6 h-6 text-white" />
                   </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      <Plus className="w-5 h-5 text-teal-500" />
-                      Add New Patient
-                    </DialogTitle>
-                    <DialogDescription>
-                      Register a new patient in the system with their basic information.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                          id="name"
-                          placeholder="Patient full name"
-                          value={patientForm.name}
-                          onChange={(e) => setPatientForm({...patientForm, name: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="patient@email.com"
-                          value={patientForm.email}
-                          onChange={(e) => setPatientForm({...patientForm, email: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          placeholder="+234 800 000 0000"
-                          value={patientForm.phone}
-                          onChange={(e) => setPatientForm({...patientForm, phone: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="age">Age</Label>
-                        <Input
-                          id="age"
-                          type="number"
-                          placeholder="25"
-                          value={patientForm.age}
-                          onChange={(e) => setPatientForm({...patientForm, age: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="gender">Gender</Label>
-                        <Select value={patientForm.gender} onValueChange={(value) => setPatientForm({...patientForm, gender: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="admissionType">Admission Type</Label>
-                        <Select value={patientForm.admissionType} onValueChange={(value) => setPatientForm({...patientForm, admissionType: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Outpatient">Outpatient</SelectItem>
-                            <SelectItem value="Inpatient">Inpatient</SelectItem>
-                            <SelectItem value="Emergency">Emergency</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="condition">Initial Condition/Notes</Label>
-                      <Textarea
-                        id="condition"
-                        placeholder="Brief description of patient's condition or reason for visit"
-                        value={patientForm.condition}
-                        onChange={(e) => setPatientForm({...patientForm, condition: e.target.value})}
-                        rows={3}
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Add Patient</h3>
+                    <p className="text-xs text-muted-foreground">Register new records</p>
                   </div>
-                  <div className="flex justify-end gap-3">
-                    <Button variant="outline" onClick={() => setAddPatientModal(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={() => {
-                      // Here you would typically call an API to create the patient
-                      console.log('Creating patient:', patientForm);
-                      setAddPatientModal(false);
-                      setPatientForm({
-                        name: '', email: '', phone: '', age: '', gender: '', condition: '', admissionType: 'Outpatient'
-                      });
-                    }}>
-                      <Save className="w-4 h-4 mr-2" />
-                      Create Patient
-                    </Button>
+                </div>
+              </div>
+
+              {/* Manage Staff Card */}
+              <div
+                onClick={() => router.push('/admin/staff')}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-purple-500 bg-card hover:bg-purple-50 dark:hover:bg-purple-950/20 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Shield className="w-6 h-6 text-white" />
                   </div>
-                </DialogContent>
-              </Dialog>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Manage Staff</h3>
+                    <p className="text-xs text-muted-foreground">User access & roles</p>
+                  </div>
+                </div>
+              </div>
 
               {/* View Reports Card */}
-              <div 
+              <div
                 onClick={() => router.push('/admin/reports')}
-                className="group relative cursor-pointer"
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-emerald-500 bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <BarChart3 className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">View Reports</h3>
-                      <p className="text-xs text-white/80">Analytics & insights</p>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">View Reports</h3>
+                    <p className="text-xs text-muted-foreground">Analytics & insights</p>
                   </div>
                 </div>
               </div>
 
-              {/* Schedule Card */}
-              <Dialog open={scheduleModal} onOpenChange={setScheduleModal}>
-                <DialogTrigger asChild>
-                  <div className="group relative cursor-pointer">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-cyan-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                      <div className="text-center space-y-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Calendar className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="space-y-1">
-                          <h3 className="text-lg font-bold text-white">Schedule</h3>
-                          <p className="text-xs text-white/80">Appointments</p>
-                        </div>
-                      </div>
-                    </div>
+              {/* Admissions Card */}
+              <div
+                onClick={() => router.push('/admin/admissions')}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-cyan-500 bg-card hover:bg-cyan-50 dark:hover:bg-cyan-950/20 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Building2 className="w-6 h-6 text-white" />
                   </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-cyan-500" />
-                      Schedule Appointment
-                    </DialogTitle>
-                    <DialogDescription>
-                      Schedule a new appointment for a patient with a healthcare provider.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="patientName">Patient Name</Label>
-                        <Input
-                          id="patientName"
-                          placeholder="Search or enter patient name"
-                          value={scheduleForm.patientName}
-                          onChange={(e) => setScheduleForm({...scheduleForm, patientName: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="department">Department</Label>
-                        <Select value={scheduleForm.department} onValueChange={(value) => setScheduleForm({...scheduleForm, department: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select department" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Cardiology">Cardiology</SelectItem>
-                            <SelectItem value="Neurology">Neurology</SelectItem>
-                            <SelectItem value="Orthopedics">Orthopedics</SelectItem>
-                            <SelectItem value="Pediatrics">Pediatrics</SelectItem>
-                            <SelectItem value="General Medicine">General Medicine</SelectItem>
-                            <SelectItem value="Emergency">Emergency</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="appointmentDate">Date</Label>
-                        <Input
-                          id="appointmentDate"
-                          type="date"
-                          value={scheduleForm.appointmentDate}
-                          onChange={(e) => setScheduleForm({...scheduleForm, appointmentDate: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="appointmentTime">Time</Label>
-                        <Input
-                          id="appointmentTime"
-                          type="time"
-                          value={scheduleForm.appointmentTime}
-                          onChange={(e) => setScheduleForm({...scheduleForm, appointmentTime: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="doctor">Assigned Doctor</Label>
-                      <Select value={scheduleForm.doctor} onValueChange={(value) => setScheduleForm({...scheduleForm, doctor: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select doctor" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Dr. Aisha Bello">Dr. Aisha Bello (Cardiology)</SelectItem>
-                          <SelectItem value="Dr. Ibrahim Musa">Dr. Ibrahim Musa (Neurology)</SelectItem>
-                          <SelectItem value="Dr. Fatima Aliyu">Dr. Fatima Aliyu (Pediatrics)</SelectItem>
-                          <SelectItem value="Dr. Mohammed Sani">Dr. Mohammed Sani (Orthopedics)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="notes">Appointment Notes</Label>
-                      <Textarea
-                        id="notes"
-                        placeholder="Additional notes or reason for appointment"
-                        value={scheduleForm.notes}
-                        onChange={(e) => setScheduleForm({...scheduleForm, notes: e.target.value})}
-                        rows={3}
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Admissions</h3>
+                    <p className="text-xs text-muted-foreground">Manage admissions</p>
                   </div>
-                  <div className="flex justify-end gap-3">
-                    <Button variant="outline" onClick={() => setScheduleModal(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={() => {
-                      // Here you would typically call an API to schedule the appointment
-                      console.log('Scheduling appointment:', scheduleForm);
-                      setScheduleModal(false);
-                      setScheduleForm({
-                        patientName: '', appointmentDate: '', appointmentTime: '', department: '', doctor: '', notes: ''
-                      });
-                    }}>
-                      <Save className="w-4 h-4 mr-2" />
-                      Schedule Appointment
-                    </Button>
+                </div>
+              </div>
+
+              {/* Billing Card */}
+              <div
+                onClick={() => router.push('/admin/billing')}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-amber-500 bg-card hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <DollarSign className="w-6 h-6 text-white" />
                   </div>
-                </DialogContent>
-              </Dialog>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Billing</h3>
+                    <p className="text-xs text-muted-foreground">Invoice & payments</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pharmacy Card */}
+              <div
+                onClick={() => router.push('/admin/pharmacy')}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-rose-500 bg-card hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-rose-500 to-red-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Pill className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Pharmacy</h3>
+                    <p className="text-xs text-muted-foreground">Medication & stock</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lab Tests Card */}
+              <div
+                onClick={() => router.push('/admin/lab')}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-indigo-500 bg-card hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-all duration-300 hover:shadow-lg"
+              >
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <TestTube className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Lab Tests</h3>
+                    <p className="text-xs text-muted-foreground">Laboratory tests</p>
+                  </div>
+                </div>
+              </div>
 
               {/* Analytics Card */}
-              <div 
+              <div
                 onClick={() => router.push('/admin/analytics')}
-                className="group relative cursor-pointer"
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-teal-500 bg-card hover:bg-teal-50 dark:hover:bg-teal-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-teal-500/90 to-emerald-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <PieChart className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Analytics</h3>
-                      <p className="text-xs text-white/80">AI-Powered insights</p>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <PieChart className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Analytics</h3>
+                    <p className="text-xs text-muted-foreground">AI-powered data</p>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            {/* Bottom decoration */}
-            <div className="flex items-center justify-center mt-6 pt-4 border-t border-white/10">
-              <div className="flex items-center gap-2 text-white/60">
-                <Zap className="w-4 h-4 text-cyan-400" />
-                <span className="text-sm">Instant access to essential tools</span>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
     </div>
   );
 }

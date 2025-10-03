@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
@@ -13,8 +12,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 import { initialInvoices } from "@/lib/constants";
-import { CheckCircle, Clock, FileWarning, Plus, FileText, Calculator, TrendingUp, TrendingDown, BarChart3, CreditCard, DollarSign, Star, Zap, Users, AlertTriangle, Calendar, Building, Phone, Mail, Percent } from "lucide-react";
+import { 
+  CheckCircle, Clock, FileWarning, Plus, FileText, Calculator, TrendingUp, TrendingDown, 
+  BarChart3, CreditCard, DollarSign, Star, Zap, Users, AlertTriangle, Calendar, Building, 
+  Phone, Mail, Percent, ArrowUpRight, Activity, Target, Shield, Crown, Sparkles,
+  Eye, Download, RefreshCw, Filter, Search, MoreHorizontal, Bell, Banknote,
+  Wallet, Receipt, PieChart, LineChart, TrendingDown as TrendingDownIcon,
+  ChevronRight, ArrowRight, Coins, HandCoins
+} from "lucide-react";
 import { NairaIcon } from "@/components/ui/naira-icon";
 import { useRouter } from "next/navigation";
 
@@ -57,7 +65,7 @@ export default function FinanceDashboard() {
     const outstandingRate = totalBilled > 0 ? (outstandingAmount / totalBilled) * 100 : 0;
     const totalInvoices = initialInvoices.length;
     const paidInvoices = initialInvoices.filter(inv => inv.status === 'Paid').length;
-    const monthlyGrowth = 15.8; // Mock data
+    const monthlyGrowth = 15.8;
     
     return { 
       totalBilled, 
@@ -72,290 +80,175 @@ export default function FinanceDashboard() {
     };
   }, []);
 
-  const statCards = [
-    {
-      title: "Total Revenue",
-      value: `₦${financeMetrics.totalBilled.toLocaleString()}`,
-      subtitle: `${financeMetrics.paymentRate.toFixed(1)}% collected`,
-      icon: DollarSign,
-      trend: "+20.1%",
-      trendUp: true,
-      color: "from-emerald-400 to-teal-400",
-      progress: financeMetrics.paymentRate
-    },
-    {
-      title: "Payments Received",
-      value: `₦${financeMetrics.totalPaid.toLocaleString()}`,
-      subtitle: `${financeMetrics.paidInvoices}/${financeMetrics.totalInvoices} invoices`,
-      icon: CheckCircle,
-      trend: "+12.5%",
-      trendUp: true,
-      color: "from-green-400 to-emerald-400",
-      progress: (financeMetrics.paidInvoices / financeMetrics.totalInvoices) * 100
-    },
-    {
-      title: "Outstanding Amount",
-      value: `₦${financeMetrics.outstandingAmount.toLocaleString()}`,
-      subtitle: `${financeMetrics.outstandingRate.toFixed(1)}% of total`,
-      icon: Clock,
-      trend: "+30.2%",
-      trendUp: false,
-      color: "from-amber-400 to-orange-400",
-      progress: financeMetrics.outstandingRate
-    },
-    {
-      title: "Monthly Growth",
-      value: `${financeMetrics.monthlyGrowth}%`,
-      subtitle: `${financeMetrics.overdueInvoices} overdue invoices`,
-      icon: TrendingUp,
-      trend: "+5.3%",
-      trendUp: true,
-      color: "from-blue-400 to-cyan-400",
-      progress: financeMetrics.monthlyGrowth
-    }
-  ];
-
-  const alertCards = [
-    {
-      title: "Overdue Invoices",
-      count: financeMetrics.overdueInvoices,
-      status: "urgent",
-      icon: FileWarning,
-      color: "bg-red-500/10 text-red-600 border-red-200"
-    },
-    {
-      title: "Pending Payments",
-      count: initialInvoices.filter(inv => inv.status === 'Pending').length,
-      status: "warning",
-      icon: Clock,
-      color: "bg-amber-500/10 text-amber-600 border-amber-200"
-    },
-    {
-      title: "Processed Today",
-      count: 12, // Mock data
-      status: "info",
-      icon: CheckCircle,
-      color: "bg-green-500/10 text-green-600 border-green-200"
-    },
-    {
-      title: "Total Invoices",
-      count: financeMetrics.totalInvoices,
-      status: "neutral",
-      icon: Users,
-      color: "bg-blue-500/10 text-blue-600 border-blue-200"
-    }
-  ];
-
   const recentTransactions = initialInvoices.slice(0, 5);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 rounded-xl">
-              <DollarSign className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold nubenta-gradient-text">
-                Finance Control Center
-              </h1>
-              <p className="text-muted-foreground">
-                Revenue management and financial analytics
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <div className="text-sm font-medium text-muted-foreground">
-              {currentTime.toLocaleDateString()}
-            </div>
-            <div className="text-lg font-bold nubenta-gradient-text">
-              {currentTime.toLocaleTimeString()}
-            </div>
-          </div>
-          <div className="px-4 py-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 text-white rounded-full text-sm font-semibold animate-pulse-slow">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              Live Revenue
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Key Metrics Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((card, index) => (
-          <Card 
-            key={card.title} 
-            className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-fade-in-up bg-gradient-to-br from-card via-card to-primary/5"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${card.color}`} />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {card.title}
-              </CardTitle>
-              <div className={`p-2 rounded-lg bg-gradient-to-r ${card.color}`}>
-                <card.icon className="h-4 w-4 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-baseline justify-between">
-                <div className="text-2xl font-bold">{card.value}</div>
-                <Badge 
-                  variant={card.trendUp ? "default" : "destructive"}
-                  className="text-xs"
-                >
-                  {card.trendUp ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                  {card.trend}
-                </Badge>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{card.subtitle}</span>
-                  <span>{card.progress?.toFixed(0)}%</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-900 dark:via-blue-950 dark:to-teal-950 transition-colors duration-300">
+      {/* Floating Header */}
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800/20 shadow-lg transition-colors duration-300">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-600 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
+                <div className="relative bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-700 p-3 rounded-2xl shadow-2xl">
+                  <Crown className="w-8 h-8 text-white" />
                 </div>
-                <Progress value={card.progress} className="h-2" />
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Alert Cards */}
-      <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            Financial Alerts & Status
-          </CardTitle>
-          <CardDescription>
-            Key financial metrics requiring attention
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {alertCards.map((alert, index) => (
-              <div 
-                key={alert.title}
-                className={`p-4 rounded-lg border ${alert.color} hover:shadow-md transition-all duration-200 animate-fade-in-up`}
-                style={{ animationDelay: `${(index + 4) * 0.1}s` }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <alert.icon className="w-5 h-5" />
-                  <span className="text-2xl font-bold">{alert.count}</span>
-                </div>
-                <div className="text-sm font-medium">{alert.title}</div>
-                {alert.count > 0 && alert.status === 'urgent' && (
-                  <Button size="sm" variant="ghost" className="w-full mt-2 h-8">
-                    <AlertTriangle className="w-3 h-3 mr-1" />
-                    Action Required
-                  </Button>
-                )}
+              <div>
+                <h1 className="text-3xl font-black text-gradient-primary">
+                  Finance Command Center
+                </h1>
+                <p className="text-slate-600 dark:text-slate-300 font-medium transition-colors duration-300">Professional Financial Management System</p>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-5">
-        <div className="lg:col-span-3">
-          <FinancialOverviewChart />
-        </div>
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>Latest invoices and their payment status.</CardDescription>
-          </CardHeader>
-          <CardContent>
-             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice ID</TableHead>
-                  <TableHead>Patient</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recentTransactions.map((t) => (
-                  <TableRow key={t.id}>
-                    <TableCell className="font-medium">{t.id}</TableCell>
-                    <TableCell>{t.patientName}</TableCell>
-                    <TableCell>₦{t.amount.toFixed(2)}</TableCell>
-                     <TableCell>
-                      <Badge variant={
-                          t.status === 'Pending' ? 'secondary' : t.status === 'Overdue' ? 'destructive' : 'default'
-                      } className={t.status === 'Paid' ? 'bg-green-500' : ''}>{t.status}</Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Quick Actions Section */}
-      <div className="relative">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 via-emerald-500/5 to-teal-500/5 rounded-3xl blur-3xl"></div>
-        
-        <Card className="relative border-0 shadow-2xl bg-gradient-to-br from-slate-900/90 via-green-900/90 to-emerald-900/90 backdrop-blur-xl overflow-hidden">
-          {/* Animated background elements */}
-          <div className="absolute inset-0">
-            <div className="absolute top-4 left-4 w-32 h-32 bg-gradient-to-r from-green-400/20 to-emerald-500/20 rounded-full blur-2xl animate-float"></div>
-            <div className="absolute bottom-4 right-4 w-24 h-24 bg-gradient-to-r from-emerald-400/20 to-teal-500/20 rounded-full blur-2xl animate-float [animation-delay:2s]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.1)_1px,_transparent_0)] bg-[size:30px_30px] opacity-20"></div>
-          </div>
-          
-          {/* Header */}
-          <CardHeader className="relative text-center pb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl shadow-lg animate-glow mb-4">
-              <DollarSign className="w-8 h-8 text-white" />
+              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 font-semibold animate-pulse">
+                <Sparkles className="w-4 h-4 mr-2" />
+                AI-POWERED
+              </Badge>
             </div>
-            <CardTitle className="text-3xl font-bold text-white mb-2">
-              Quick Finance Actions
-            </CardTitle>
-            <CardDescription className="text-white/70 text-lg">
-              Essential financial tools for efficient revenue management
-            </CardDescription>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-500"></div>
-          </CardHeader>
-          
-          <CardContent className="relative pb-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{currentTime.toLocaleDateString()}</div>
+                <div className="text-lg font-bold text-gradient-primary">
+                  {currentTime.toLocaleTimeString()}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-400 to-teal-500 text-white rounded-full font-semibold shadow-lg">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                LIVE
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-6 py-8 space-y-8">
+        {/* Hero Stats Dashboard */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              title: "Total Revenue",
+              value: `₦${financeMetrics.totalBilled.toLocaleString()}`,
+              change: "+24.8%",
+              icon: Banknote,
+              gradient: "from-emerald-400 via-green-500 to-teal-600",
+              bg: "from-emerald-50 to-green-100",
+              progress: financeMetrics.paymentRate,
+              subtitle: `${financeMetrics.paymentRate.toFixed(1)}% collected`
+            },
+            {
+              title: "Payments Received", 
+              value: `₦${financeMetrics.totalPaid.toLocaleString()}`,
+              change: "+18.2%",
+              icon: Wallet,
+              gradient: "from-blue-400 via-indigo-500 to-purple-600",
+              bg: "from-blue-50 to-indigo-100",
+              progress: (financeMetrics.paidInvoices / financeMetrics.totalInvoices) * 100,
+              subtitle: `${financeMetrics.paidInvoices}/${financeMetrics.totalInvoices} invoices`
+            },
+            {
+              title: "Outstanding Amount",
+              value: `₦${financeMetrics.outstandingAmount.toLocaleString()}`,
+              change: "-8.4%",
+              icon: Receipt,
+              gradient: "from-amber-400 via-orange-500 to-red-500",
+              bg: "from-amber-50 to-orange-100",
+              progress: financeMetrics.outstandingRate,
+              subtitle: `${financeMetrics.outstandingRate.toFixed(1)}% pending`
+            },
+            {
+              title: "Monthly Growth",
+              value: `${financeMetrics.monthlyGrowth}%`,
+              change: "+5.7%",
+              icon: TrendingUp,
+              gradient: "from-violet-400 via-purple-500 to-pink-600",
+              bg: "from-violet-50 to-purple-100",
+              progress: financeMetrics.monthlyGrowth * 3,
+              subtitle: "Above target"
+            }
+          ].map((metric, index) => (
+            <Card key={metric.title} className="group relative overflow-hidden border-0 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105 animate-fade-in-up card-premium" style={{ animationDelay: `${index * 0.1}s` }}>
+              {/* Animated Background */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${metric.bg} opacity-60`}></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-white/30 to-transparent dark:from-white/10 dark:via-white/5 dark:to-transparent"></div>
               
-              {/* Create Invoice Card */}
+              {/* Glowing Border */}
+              <div className={`absolute inset-0 bg-gradient-to-r ${metric.gradient} opacity-20 blur-xl group-hover:opacity-40 transition-opacity duration-500`}></div>
+              
+              <CardContent className="relative p-6 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider">{metric.title}</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-slate-100">{metric.value}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{metric.subtitle}</p>
+                  </div>
+                  <div className={`relative p-3 rounded-2xl bg-gradient-to-r ${metric.gradient} shadow-xl group-hover:scale-110 transition-transform duration-300`}>
+                    <metric.icon className="w-7 h-7 text-white" />
+                    <div className={`absolute inset-0 bg-gradient-to-r ${metric.gradient} rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300`}></div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <Badge variant={metric.change.startsWith('+') ? 'default' : 'destructive'} className="font-bold">
+                    {metric.change.startsWith('+') ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDownIcon className="w-3 h-3 mr-1" />}
+                    {metric.change}
+                  </Badge>
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{metric.progress?.toFixed(0)}%</span>
+                </div>
+                <Progress value={metric.progress} className="h-2 bg-white/50" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Quick Actions */}
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-800 dark:via-blue-900 dark:to-teal-900 card-premium">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold text-gradient-primary">
+                    Finance Operations Center
+                  </CardTitle>
+                  <CardDescription className="dark:text-slate-300">Streamlined financial management and operations</CardDescription>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="pb-8">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {/* Quick Invoice */}
               <Dialog open={createInvoiceModal} onOpenChange={setCreateInvoiceModal}>
                 <DialogTrigger asChild>
-                  <div className="group relative cursor-pointer">
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                      <div className="text-center space-y-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Plus className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="space-y-1">
-                          <h3 className="text-lg font-bold text-white">Create Invoice</h3>
-                          <p className="text-xs text-white/80">Generate new invoices</p>
-                        </div>
+                  <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 text-white">
+                    <CardContent className="p-6 text-center space-y-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                        <Plus className="w-8 h-8 text-white" />
                       </div>
-                    </div>
-                  </div>
+                      <div>
+                        <h3 className="text-xl font-bold">Create Invoice</h3>
+                        <p className="text-sm text-white/80">Generate invoices instantly</p>
+                      </div>
+                      <div className="flex justify-center gap-2">
+                        <Badge className="bg-white/20 text-white border-white/30">Quick Setup</Badge>
+                        <Badge className="bg-white/20 text-white border-white/30">Professional</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <Plus className="w-5 h-5 text-emerald-500" />
-                      Create New Invoice
+                      Create Lightning Invoice
                     </DialogTitle>
                     <DialogDescription>
-                      Generate a new invoice for patient services
+                      Generate professional invoices with AI assistance
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
@@ -449,32 +342,33 @@ export default function FinanceDashboard() {
                 </DialogContent>
               </Dialog>
 
-              {/* Payment Processing Card */}
+              {/* Smart Payment */}
               <Dialog open={processPaymentModal} onOpenChange={setProcessPaymentModal}>
                 <DialogTrigger asChild>
-                  <div className="group relative cursor-pointer">
-                    <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                    <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                      <div className="text-center space-y-3">
-                        <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <CreditCard className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="space-y-1">
-                          <h3 className="text-lg font-bold text-white">Process Payment</h3>
-                          <p className="text-xs text-white/80">Handle transactions</p>
-                        </div>
+                  <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white">
+                    <CardContent className="p-6 text-center space-y-4">
+                      <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                        <CreditCard className="w-8 h-8 text-white" />
                       </div>
-                    </div>
-                  </div>
+                      <div>
+                        <h3 className="text-xl font-bold">Process Payment</h3>
+                        <p className="text-sm text-white/80">Handle payments efficiently</p>
+                      </div>
+                      <div className="flex justify-center gap-2">
+                        <Badge className="bg-white/20 text-white border-white/30">Multiple Methods</Badge>
+                        <Badge className="bg-white/20 text-white border-white/30">Secure</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </DialogTrigger>
                 <DialogContent className="max-w-xl">
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-teal-500" />
-                      Quick Payment Processing
+                      <CreditCard className="w-5 h-5 text-blue-500" />
+                      Smart Payment Processing
                     </DialogTitle>
                     <DialogDescription>
-                      Process payment for existing invoice
+                      Process payments with lightning speed
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
@@ -557,7 +451,7 @@ export default function FinanceDashboard() {
                         className="flex-1"
                       >
                         <Building className="w-4 h-4 mr-2" />
-                        Full Payment Center
+                        Payment Center
                       </Button>
                       <Button 
                         onClick={() => setProcessPaymentModal(false)} 
@@ -566,7 +460,7 @@ export default function FinanceDashboard() {
                         Cancel
                       </Button>
                       <Button 
-                        className="bg-teal-600 hover:bg-teal-700" 
+                        className="bg-blue-600 hover:bg-blue-700" 
                         disabled={!paymentForm.invoiceId || !paymentForm.paymentMethod}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
@@ -577,54 +471,206 @@ export default function FinanceDashboard() {
                 </DialogContent>
               </Dialog>
 
-              {/* Financial Reports Card */}
-              <div 
-                onClick={() => router.push('/finance/reports')}
-                className="group relative cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-cyan-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <BarChart3 className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Financial Reports</h3>
-                      <p className="text-xs text-white/80">Revenue analytics</p>
-                    </div>
+              {/* Financial Reports */}
+              <Card onClick={() => router.push('/finance/reports')} className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white">
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                    <BarChart3 className="w-8 h-8 text-white" />
                   </div>
-                </div>
-              </div>
+                  <div>
+                    <h3 className="text-xl font-bold">Financial Reports</h3>
+                    <p className="text-sm text-white/80">Advanced analytics & insights</p>
+                  </div>
+                  <div className="flex justify-center gap-2">
+                    <Badge className="bg-white/20 text-white border-white/30">Analytics</Badge>
+                    <Badge className="bg-white/20 text-white border-white/30">Export</Badge>
+                  </div>
+                </CardContent>
+              </Card>
 
-              {/* Budget Calculator Card */}
-              <div 
-                onClick={() => router.push('/finance/budget')}
-                className="group relative cursor-pointer"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-teal-500/90 to-emerald-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <Calculator className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Budget Calculator</h3>
-                      <p className="text-xs text-white/80">Financial planning</p>
-                    </div>
+              {/* Budget Calculator */}
+              <Card onClick={() => router.push('/finance/budget')} className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 text-white">
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
+                    <Calculator className="w-8 h-8 text-white" />
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Bottom decoration */}
-            <div className="flex items-center justify-center mt-8 pt-6 border-t border-white/10">
-              <div className="flex items-center gap-2 text-white/60">
-                <DollarSign className="w-4 h-4 text-green-400" />
-                <span className="text-sm">Streamlined financial operations</span>
-              </div>
+                  <div>
+                    <h3 className="text-xl font-bold">Budget Management</h3>
+                    <p className="text-sm text-white/80">Smart financial planning</p>
+                  </div>
+                  <div className="flex justify-center gap-2">
+                    <Badge className="bg-white/20 text-white border-white/30">Forecasting</Badge>
+                    <Badge className="bg-white/20 text-white border-white/30">Analysis</Badge>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </CardContent>
         </Card>
+
+        {/* Financial Alerts - Premium Design */}
+        <Card className="border-0 shadow-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl card-premium">
+          <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-blue-900">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl shadow-lg">
+                  <AlertTriangle className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <CardTitle className="text-2xl font-bold text-slate-900 dark:text-slate-100">Financial Intelligence Center</CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-300">Real-time monitoring & predictive analytics</CardDescription>
+                </div>
+              </div>
+              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 font-semibold">
+                <Activity className="w-4 h-4 mr-2" />
+                LIVE MONITORING
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {[
+                {
+                  title: "Critical Overdue",
+                  count: financeMetrics.overdueInvoices,
+                  status: "urgent",
+                  icon: FileWarning,
+                  gradient: "from-red-500 to-rose-600",
+                  bg: "from-red-50 to-rose-100"
+                },
+                {
+                  title: "Pending Payments",
+                  count: initialInvoices.filter(inv => inv.status === 'Pending').length,
+                  status: "warning", 
+                  icon: Clock,
+                  gradient: "from-amber-500 to-yellow-600",
+                  bg: "from-amber-50 to-yellow-100"
+                },
+                {
+                  title: "Processed Today",
+                  count: 12,
+                  status: "success",
+                  icon: CheckCircle,
+                  gradient: "from-emerald-500 to-green-600", 
+                  bg: "from-emerald-50 to-green-100"
+                },
+                {
+                  title: "Total Active",
+                  count: financeMetrics.totalInvoices,
+                  status: "info",
+                  icon: Users,
+                  gradient: "from-blue-500 to-indigo-600",
+                  bg: "from-blue-50 to-indigo-100"
+                }
+              ].map((alert, index) => (
+                <Card key={alert.title} className={`group relative overflow-hidden border-0 shadow-lg bg-gradient-to-br ${alert.bg} hover:shadow-xl transition-all duration-300 hover:scale-105`}>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${alert.gradient} opacity-5`}></div>
+                  <CardContent className="relative p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`p-3 rounded-xl bg-gradient-to-r ${alert.gradient} shadow-lg group-hover:scale-110 transition-transform`}>
+                        <alert.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-slate-900 dark:text-slate-100">{alert.count}</div>
+                        <div className="text-sm font-semibold text-slate-600 dark:text-slate-300">{alert.title}</div>
+                      </div>
+                    </div>
+                    {alert.count > 0 && alert.status === 'urgent' && (
+                      <div className="flex items-center gap-2 text-xs text-red-600 font-medium">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        Immediate action required
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Charts and Transactions - Premium Layout */}
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="lg:col-span-3">
+            <Card className="border-0 shadow-2xl bg-white dark:bg-gray-900 overflow-hidden card-premium">
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-blue-900 border-b">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Financial Performance Analytics</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm">
+                      <RefreshCw className="w-4 h-4 mr-1" />
+                      Refresh
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Download className="w-4 h-4 mr-1" />
+                      Export
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <FinancialOverviewChart />
+              </CardContent>
+            </Card>
+          </div>
+          
+          <Card className="lg:col-span-2 border-0 shadow-2xl bg-white dark:bg-gray-900 card-premium">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-emerald-50 dark:from-slate-800 dark:to-emerald-900 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Transaction Stream</CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-300">Real-time payment activity</CardDescription>
+                </div>
+                <Badge className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-3 py-1 font-semibold">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                  LIVE
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Invoice</TableHead>
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Patient</TableHead>
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Amount</TableHead>
+                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentTransactions.map((t, index) => (
+                    <TableRow key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group">
+                      <TableCell className="font-semibold text-slate-900 dark:text-slate-100">{t.id}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="w-8 h-8">
+                            <AvatarFallback className="text-xs">{t.patientName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <span className="text-slate-700 dark:text-slate-300 font-medium">{t.patientName}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-bold text-slate-900 dark:text-slate-100">₦{t.amount.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={t.status === 'Pending' ? 'secondary' : t.status === 'Overdue' ? 'destructive' : 'default'} 
+                          className={`font-semibold shadow-sm ${
+                            t.status === 'Paid' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 
+                            t.status === 'Pending' ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' :
+                            'bg-red-100 text-red-800 hover:bg-red-200'
+                          }`}
+                        >
+                          {t.status === 'Paid' && <CheckCircle className="w-3 h-3 mr-1" />}
+                          {t.status === 'Pending' && <Clock className="w-3 h-3 mr-1" />}
+                          {t.status === 'Overdue' && <AlertTriangle className="w-3 h-3 mr-1" />}
+                          {t.status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

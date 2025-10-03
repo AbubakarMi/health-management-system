@@ -363,6 +363,7 @@ const initialPrescriptions: Prescription[] = [
 ];
 
 export type LabTest = {
+    date: string;
     dateOrdered: string | number | Date;
     doctorName: ReactNode;
     patientName: ReactNode;
