@@ -527,56 +527,34 @@ export default function AdminDashboard() {
 
       {/* Quick Actions Section */}
       <div className="relative animate-fade-in-up" style={{ animationDelay: "1.1s" }}>
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5 rounded-3xl blur-3xl"></div>
-
-        <Card className="relative border-0 shadow-2xl bg-gradient-to-br from-slate-900/95 via-blue-900/95 to-indigo-900/95 backdrop-blur-xl overflow-hidden">
-          {/* Animated background elements */}
-          <div className="absolute inset-0">
-            <div className="absolute top-4 left-4 w-32 h-32 bg-gradient-to-r from-cyan-400/20 to-blue-500/20 rounded-full blur-2xl animate-float-delayed"></div>
-            <div className="absolute bottom-4 right-4 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-pink-500/20 rounded-full blur-2xl animate-float-delayed [animation-delay:2s]"></div>
-            <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-gradient-to-r from-emerald-400/10 to-teal-500/10 rounded-full blur-3xl animate-float-delayed [animation-delay:4s]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.1)_1px,_transparent_0)] bg-[size:30px_30px] opacity-20"></div>
-          </div>
-
-          {/* Header */}
-          <CardHeader className="relative text-center pb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-2xl shadow-lg shadow-cyan-500/50 animate-pulse-glow mb-4 animate-rotate-in">
-              <Sparkles className="w-8 h-8 text-white" />
+        <Card className="border-2 shadow-lg bg-card">
+          <CardHeader className="text-center pb-4">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl shadow-lg mb-4">
+              <Zap className="w-7 h-7 text-white" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white mb-2 animate-fade-in-up">
-              ⚡ Quick Actions Hub
+            <CardTitle className="text-2xl font-bold">
+              Quick Actions
             </CardTitle>
-            <CardDescription className="text-white/70 text-lg animate-fade-in-up [animation-delay:0.1s]">
-              Streamline your workflow with instant access to essential functions
+            <CardDescription className="text-base">
+              Access essential hospital operations instantly
             </CardDescription>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-cyan-500 to-emerald-500 animate-gradient-shift"></div>
           </CardHeader>
 
-          <CardContent className="relative pb-8">
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <CardContent className="pb-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 
               {/* Add Patient Card */}
               <div
                 onClick={() => router.push('/admin/patients/create')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.1s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-teal-500 bg-card hover:bg-teal-50 dark:hover:bg-teal-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-teal-500 to-cyan-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <Users className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Add Patient</h3>
-                      <p className="text-sm text-white/90">Register new patient records</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Quick access</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Add Patient</h3>
+                    <p className="text-xs text-muted-foreground">Register new records</p>
                   </div>
                 </div>
               </div>
@@ -584,24 +562,15 @@ export default function AdminDashboard() {
               {/* Manage Staff Card */}
               <div
                 onClick={() => router.push('/admin/staff')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.2s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-purple-500 bg-card hover:bg-purple-50 dark:hover:bg-purple-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-purple-500 to-pink-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <Shield className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Manage Staff</h3>
-                      <p className="text-sm text-white/90">Control user access & roles</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Team management</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Shield className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Manage Staff</h3>
+                    <p className="text-xs text-muted-foreground">User access & roles</p>
                   </div>
                 </div>
               </div>
@@ -609,24 +578,15 @@ export default function AdminDashboard() {
               {/* View Reports Card */}
               <div
                 onClick={() => router.push('/admin/reports')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.3s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-emerald-500 bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-emerald-500 to-teal-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <BarChart3 className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">View Reports</h3>
-                      <p className="text-sm text-white/90">Analytics & data insights</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Business intelligence</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">View Reports</h3>
+                    <p className="text-xs text-muted-foreground">Analytics & insights</p>
                   </div>
                 </div>
               </div>
@@ -634,24 +594,15 @@ export default function AdminDashboard() {
               {/* Admissions Card */}
               <div
                 onClick={() => router.push('/admin/admissions')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.4s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-cyan-500 bg-card hover:bg-cyan-50 dark:hover:bg-cyan-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-cyan-500 to-blue-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <Building2 className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Admissions</h3>
-                      <p className="text-sm text-white/90">Manage patient admissions</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Bed management</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Building2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Admissions</h3>
+                    <p className="text-xs text-muted-foreground">Manage admissions</p>
                   </div>
                 </div>
               </div>
@@ -659,24 +610,15 @@ export default function AdminDashboard() {
               {/* Billing Card */}
               <div
                 onClick={() => router.push('/admin/billing')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.5s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-amber-500 bg-card hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-amber-500 to-orange-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <DollarSign className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Billing</h3>
-                      <p className="text-sm text-white/90">Invoice & payment tracking</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Financial management</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <DollarSign className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Billing</h3>
+                    <p className="text-xs text-muted-foreground">Invoice & payments</p>
                   </div>
                 </div>
               </div>
@@ -684,24 +626,15 @@ export default function AdminDashboard() {
               {/* Pharmacy Card */}
               <div
                 onClick={() => router.push('/admin/pharmacy')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.6s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-rose-500 bg-card hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-rose-400 to-red-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-rose-500 to-red-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <Pill className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Pharmacy</h3>
-                      <p className="text-sm text-white/90">Medication & inventory</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Stock management</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-rose-500 to-red-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Pill className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Pharmacy</h3>
+                    <p className="text-xs text-muted-foreground">Medication & stock</p>
                   </div>
                 </div>
               </div>
@@ -709,24 +642,15 @@ export default function AdminDashboard() {
               {/* Lab Tests Card */}
               <div
                 onClick={() => router.push('/admin/lab')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.7s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-indigo-500 bg-card hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-indigo-500 to-purple-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <TestTube className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Lab Tests</h3>
-                      <p className="text-sm text-white/90">Laboratory management</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>Test tracking</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <TestTube className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Lab Tests</h3>
+                    <p className="text-xs text-muted-foreground">Laboratory tests</p>
                   </div>
                 </div>
               </div>
@@ -734,34 +658,17 @@ export default function AdminDashboard() {
               {/* Analytics Card */}
               <div
                 onClick={() => router.push('/admin/analytics')}
-                className="group relative cursor-pointer animate-scale-up"
-                style={{ animationDelay: "0.8s" }}
+                className="group relative cursor-pointer p-4 rounded-xl border-2 border-border hover:border-teal-500 bg-card hover:bg-teal-50 dark:hover:bg-teal-950/20 transition-all duration-300 hover:shadow-lg"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-emerald-500 rounded-2xl blur-md opacity-40 group-hover:opacity-70 transition-all duration-500 group-hover:blur-lg"></div>
-                <div className="relative bg-gradient-to-br from-teal-500 to-emerald-500 backdrop-blur-sm p-6 rounded-2xl border border-white/30 shadow-xl transform transition-all duration-500 group-hover:scale-105 group-hover:-translate-y-2 group-hover:shadow-2xl overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  <div className="relative text-center space-y-4">
-                    <div className="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl group-hover:bg-white/30 group-hover:rotate-12 transition-all duration-500 shadow-lg">
-                      <PieChart className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-white group-hover:scale-105 transition-transform duration-300">Analytics</h3>
-                      <p className="text-sm text-white/90">AI-powered insights</p>
-                      <div className="flex items-center justify-center gap-2 text-xs text-white/70 pt-2">
-                        <Star className="w-3 h-3 fill-white" />
-                        <span>Advanced metrics</span>
-                      </div>
-                    </div>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <PieChart className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Analytics</h3>
+                    <p className="text-xs text-muted-foreground">AI-powered data</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Bottom decoration */}
-            <div className="flex items-center justify-center mt-10 pt-6 border-t border-white/10">
-              <div className="flex items-center gap-3 text-white/60 animate-pulse-slow">
-                <Zap className="w-5 h-5 text-yellow-400" />
-                <span className="text-sm font-medium">Lightning-fast access to essential hospital operations</span>
               </div>
             </div>
           </CardContent>
