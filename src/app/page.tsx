@@ -50,15 +50,15 @@ export default function LandingPage() {
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <div className="text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium">
-              <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-teal-100 rounded-full text-teal-700 text-sm font-medium animate-bounce-in">
+              <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse-glow"></div>
               Multi-Hospital Cloud Platform
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight animate-fade-in-up">
               Healthcare Management
               <br />
-              <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent animate-gradient-shift">
                 Reimagined for Scale
               </span>
             </h1>
@@ -68,34 +68,34 @@ export default function LandingPage() {
               Streamline operations, enhance patient care, and unlock insights across your entire network.
             </p>
 
-            <div className="flex items-center justify-center gap-4 flex-wrap">
+            <div className="flex items-center justify-center gap-4 flex-wrap animate-scale-up [animation-delay:0.3s]">
               <Link href="/login">
-                <Button size="lg" className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white h-14 px-8 text-lg">
+                <Button size="lg" className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white h-14 px-8 text-lg transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-2xl">
                   Get Started
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-2">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg border-2 transform hover:scale-105 transition-all duration-300">
                 Watch Demo
               </Button>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 max-w-4xl mx-auto">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-teal-600">500+</div>
+              <div className="text-center animate-fade-in-up [animation-delay:0.4s]">
+                <div className="text-4xl font-bold text-teal-600 animate-scale-up">500+</div>
                 <div className="text-gray-600 mt-1">Hospitals</div>
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-cyan-600">1M+</div>
+              <div className="text-center animate-fade-in-up [animation-delay:0.5s]">
+                <div className="text-4xl font-bold text-cyan-600 animate-scale-up">1M+</div>
                 <div className="text-gray-600 mt-1">Patients</div>
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-emerald-600">99.9%</div>
+              <div className="text-center animate-fade-in-up [animation-delay:0.6s]">
+                <div className="text-4xl font-bold text-emerald-600 animate-scale-up">99.9%</div>
                 <div className="text-gray-600 mt-1">Uptime</div>
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-blue-600">24/7</div>
+              <div className="text-center animate-fade-in-up [animation-delay:0.7s]">
+                <div className="text-4xl font-bold text-blue-600 animate-scale-up">24/7</div>
                 <div className="text-gray-600 mt-1">Support</div>
               </div>
             </div>
