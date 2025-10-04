@@ -56,14 +56,9 @@ export function AppHeader({ role }: AppHeaderProps) {
       <div className="flex items-center gap-4">
           <SidebarTrigger className="md:hidden" />
           <div className="flex flex-col space-y-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-lg font-semibold md:text-2xl font-headline nubenta-gradient-text animate-glow">
-                  Welcome, {role}!
-              </h1>
-              <div className="px-3 py-1 text-xs font-medium bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-500 text-white rounded-full animate-pulse-slow">
-                Powered by Nubenta
-              </div>
-            </div>
+            <h1 className="text-lg font-semibold md:text-2xl font-headline nubenta-gradient-text animate-glow">
+                Welcome, {role}!
+            </h1>
             <p className="text-xs text-muted-foreground h-4 font-medium">
                 {currentDateTime ? format(currentDateTime, 'eeee, MMMM dd, yyyy | hh:mm:ss a') : ''}
             </p>
