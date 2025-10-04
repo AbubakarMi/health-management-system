@@ -55,13 +55,19 @@ export function AppHeader({ role }: AppHeaderProps) {
     <header className="sticky top-0 z-10 flex h-20 items-center gap-4 border-b bg-background/80 backdrop-blur-md px-4 md:px-6 animate-fade-in">
       <div className="flex items-center gap-4">
           <SidebarTrigger className="md:hidden" />
-          <div className="flex flex-col space-y-1">
-            <h1 className="text-lg font-semibold md:text-2xl font-headline nubenta-gradient-text animate-glow">
-                Welcome, {role}!
-            </h1>
-            <p className="text-xs text-muted-foreground h-4 font-medium">
-                {currentDateTime ? format(currentDateTime, 'eeee, MMMM dd, yyyy | hh:mm:ss a') : ''}
-            </p>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-xl shadow-lg">
+              <span className="text-2xl font-bold text-white">{role.charAt(0).toUpperCase()}</span>
+            </div>
+            <div className="flex flex-col space-y-1">
+              <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent">
+                  Welcome back, {role}!
+              </h1>
+              <p className="text-xs md:text-sm text-muted-foreground font-medium flex items-center gap-2">
+                  <span className="hidden md:inline">📅</span>
+                  {currentDateTime ? format(currentDateTime, 'eeee, MMMM dd, yyyy | hh:mm:ss a') : ''}
+              </p>
+            </div>
           </div>
       </div>
       <div className="flex flex-1 items-center justify-end gap-4 md:gap-2 lg:gap-4">

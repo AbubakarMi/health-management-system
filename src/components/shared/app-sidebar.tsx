@@ -35,12 +35,12 @@ export function AppSidebar({ role }: AppSidebarProps) {
     <Sidebar>
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary/90 rounded-full flex items-center justify-center font-bold text-primary-foreground text-lg font-headline">
-                C
+            <div className="w-10 h-10 bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-xl flex items-center justify-center font-bold text-white text-lg font-headline shadow-lg">
+                N
             </div>
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold font-headline">Careflux</h2>
-            <Badge variant="secondary" className="w-fit">{role.charAt(0).toUpperCase() + role.slice(1)}</Badge>
+            <h2 className="text-lg font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent font-headline">Nubenta Care</h2>
+            <Badge variant="secondary" className="w-fit text-xs">{role.charAt(0).toUpperCase() + role.slice(1)}</Badge>
           </div>
         </div>
       </SidebarHeader>
