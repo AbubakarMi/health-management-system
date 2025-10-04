@@ -5,8 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { ShortcutsProvider } from '@/components/advanced/keyboard-shortcuts';
 
 export const metadata: Metadata = {
-  title: 'Careflux - Powered by Nubenta Technology',
-  description: 'A World-Class Hospital Management System - Powered by Nubenta Technology',
+  title: 'Nubenta Care - Hospital Management System',
+  description: 'A World-Class Hospital Management System - Powered by Nubenta Technology Limited',
 };
 
 export default function RootLayout({

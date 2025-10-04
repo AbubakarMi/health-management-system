@@ -41,7 +41,7 @@ export default function LandingPage() {
                 <Heart className="w-7 h-7 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent animate-gradient-shift">
-                CareFlux
+                Nubenta Care
               </span>
             </div>
             <Link href="/login">
@@ -260,7 +260,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Why Healthcare Networks Choose CareFlux
+                Why Healthcare Networks Choose Nubenta Care
               </h2>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -360,7 +360,7 @@ export default function LandingPage() {
               Ready to Transform Your Hospital Network?
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Join hundreds of hospitals already using CareFlux to deliver better healthcare
+              Join hundreds of hospitals already using Nubenta Care to deliver better healthcare
             </p>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link href="/login">
@@ -382,7 +382,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
                 <Heart className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">CareFlux</span>
+              <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Nubenta Care</span>
             </div>
 
             <div className="flex items-center gap-6 text-sm text-gray-600">
