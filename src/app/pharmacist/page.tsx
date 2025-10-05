@@ -8,11 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useState, useMemo } from "react";
-import { prescriptionManager, Prescription } from "@/lib/constants";
-import { 
-  Pill, 
-  Package, 
-  AlertTriangle, 
+import {
+  Pill,
+  Package,
+  AlertTriangle,
   Clipboard,
   TrendingUp,
   TrendingDown,
@@ -27,26 +26,73 @@ import {
   Star,
   Zap,
   ShoppingCart,
-  BarChart3
+  BarChart3,
+  Loader2
 } from "lucide-react";
 
+interface DBPrescription {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctorName: string;
+  medication: string;
+  dosage: string;
+  frequency: string;
+  duration: string;
+  status: 'Pending' | 'Filled' | 'Unavailable';
+  dateIssued: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export default function PharmacistDashboard() {
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [prescriptions, setPrescriptions] = useState<DBPrescription[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  
+
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
-    const handleUpdate = (updatedPrescriptions: Prescription[]) => {
-        setPrescriptions(updatedPrescriptions);
-    }
-    handleUpdate(prescriptionManager.getPrescriptions());
-    const unsubscribe = prescriptionManager.subscribe(handleUpdate);
-    return () => unsubscribe();
+    fetchPrescriptions();
+    // Refresh every 10 seconds for real-time updates
+    const interval = setInterval(fetchPrescriptions, 10000);
+    return () => clearInterval(interval);
   }, []);
+
+  const fetchPrescriptions = async () => {
+    try {
+      const response = await fetch('/api/prescriptions');
+      if (response.ok) {
+        const data = await response.json();
+        setPrescriptions(data);
+      }
+    } catch (error) {
+      console.error('Error fetching prescriptions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updatePrescriptionStatus = async (id: string, status: 'Pending' | 'Filled' | 'Unavailable') => {
+    try {
+      const response = await fetch(`/api/prescriptions/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        // Refresh prescriptions after update
+        fetchPrescriptions();
+      }
+    } catch (error) {
+      console.error('Error updating prescription:', error);
+    }
+  };
 
   const pharmacyMetrics = useMemo(() => {
     const totalPrescriptions = prescriptions.length;
@@ -158,43 +204,43 @@ export default function PharmacistDashboard() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 rounded-xl">
-              <Pill className="w-6 h-6 text-white" />
+            <div className="p-2 sm:p-3 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 rounded-xl shadow-lg">
+              <Pill className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold nubenta-gradient-text">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
                 Pharmacy Operations Center
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Medication management and dispensing overview
               </p>
             </div>
           </div>
         </div>
-        
-        <div className="flex items-center gap-4">
+
+        <div className="flex items-center justify-between lg:justify-end gap-3 sm:gap-4">
           <div className="text-right">
-            <div className="text-sm font-medium text-muted-foreground">
+            <div className="text-xs sm:text-sm font-medium text-muted-foreground">
               {currentTime.toLocaleDateString()}
             </div>
-            <div className="text-lg font-bold nubenta-gradient-text">
+            <div className="text-base sm:text-lg font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               {currentTime.toLocaleTimeString()}
             </div>
           </div>
-          <div className="px-4 py-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 text-white rounded-full text-sm font-semibold animate-pulse-slow">
+          <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500 text-white rounded-full text-xs sm:text-sm font-semibold shadow-lg">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              Live Inventory
+              <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>Live Inventory</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Key Metrics Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => (
           <Card 
             key={card.title} 
@@ -245,7 +291,7 @@ export default function PharmacistDashboard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {alertCards.map((alert, index) => (
               <div 
                 key={alert.title}
@@ -318,105 +364,73 @@ export default function PharmacistDashboard() {
       </div>
 
       {/* Quick Actions Section */}
-      <div className="relative">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-cyan-500/5 rounded-3xl blur-3xl"></div>
-        
-        <Card className="relative border-0 shadow-2xl bg-gradient-to-br from-slate-900/90 via-emerald-900/90 to-teal-900/90 backdrop-blur-xl overflow-hidden">
-          {/* Animated background elements */}
-          <div className="absolute inset-0">
-            <div className="absolute top-4 left-4 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-teal-500/20 rounded-full blur-2xl animate-float"></div>
-            <div className="absolute bottom-4 right-4 w-24 h-24 bg-gradient-to-r from-teal-400/20 to-cyan-500/20 rounded-full blur-2xl animate-float [animation-delay:2s]"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(255,255,255,0.1)_1px,_transparent_0)] bg-[size:30px_30px] opacity-20"></div>
-          </div>
-          
-          {/* Header */}
-          <CardHeader className="relative text-center pb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl shadow-lg animate-glow mb-4">
-              <Pill className="w-8 h-8 text-white" />
+      <div className="relative animate-fade-in-up" style={{ animationDelay: "1.0s" }}>
+        <Card className="border-2 shadow-lg bg-card">
+          <CardHeader className="text-center pb-4">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-lg mb-4">
+              <Pill className="w-7 h-7 text-white" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white mb-2">
+            <CardTitle className="text-2xl font-bold">
               Quick Pharmacy Actions
             </CardTitle>
-            <CardDescription className="text-white/70 text-lg">
+            <CardDescription className="text-base">
               Essential pharmacy tools for efficient medication management
             </CardDescription>
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
           </CardHeader>
-          
-          <CardContent className="relative pb-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              
+
+          <CardContent className="pb-6">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+
               {/* Add Inventory Card */}
-              <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-emerald-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <Plus className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Add Inventory</h3>
-                      <p className="text-xs text-white/80">Stock medications</p>
-                    </div>
+              <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-emerald-500 bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 hover:shadow-lg">
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <Plus className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Add Inventory</h3>
+                    <p className="text-xs text-muted-foreground">Stock medications</p>
                   </div>
                 </div>
               </div>
 
               {/* Dispense Drugs Card */}
-              <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-teal-500/90 to-cyan-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <ShoppingCart className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Dispense Drugs</h3>
-                      <p className="text-xs text-white/80">Process prescriptions</p>
-                    </div>
+              <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-teal-500 bg-card hover:bg-teal-50 dark:hover:bg-teal-950/20 transition-all duration-300 hover:shadow-lg">
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <ShoppingCart className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Dispense Drugs</h3>
+                    <p className="text-xs text-muted-foreground">Process prescriptions</p>
                   </div>
                 </div>
               </div>
 
               {/* Stock Report Card */}
-              <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-cyan-500/90 to-teal-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <FileText className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Stock Report</h3>
-                      <p className="text-xs text-white/80">Inventory analytics</p>
-                    </div>
+              <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-cyan-500 bg-card hover:bg-cyan-50 dark:hover:bg-cyan-950/20 transition-all duration-300 hover:shadow-lg">
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Stock Report</h3>
+                    <p className="text-xs text-muted-foreground">Inventory analytics</p>
                   </div>
                 </div>
               </div>
 
               {/* Analytics Card */}
-              <div className="group relative cursor-pointer">
-                <div className="absolute inset-0 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-xl blur-sm opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-                <div className="relative bg-gradient-to-br from-teal-500/90 to-emerald-500/90 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-lg transform transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-xl">
-                  <div className="text-center space-y-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                      <BarChart3 className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="space-y-1">
-                      <h3 className="text-lg font-bold text-white">Analytics</h3>
-                      <p className="text-xs text-white/80">Performance insights</p>
-                    </div>
+              <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-blue-500 bg-card hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all duration-300 hover:shadow-lg">
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                    <BarChart3 className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-foreground">Analytics</h3>
+                    <p className="text-xs text-muted-foreground">Performance insights</p>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            {/* Bottom decoration */}
-            <div className="flex items-center justify-center mt-8 pt-6 border-t border-white/10">
-              <div className="flex items-center gap-2 text-white/60">
-                <Pill className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm">Streamlined pharmacy operations</span>
               </div>
             </div>
           </CardContent>

@@ -85,47 +85,49 @@ export default function FinanceDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 dark:from-slate-900 dark:via-blue-950 dark:to-teal-950 transition-colors duration-300">
       {/* Floating Header */}
-      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-white/20 dark:border-gray-800/20 shadow-lg transition-colors duration-300">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+      <div className="sticky top-0 z-50 backdrop-blur-xl bg-white/90 dark:bg-gray-900/90 border-b border-white/20 dark:border-gray-800/20 shadow-xl transition-all duration-300">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-600 rounded-2xl blur-lg opacity-75 animate-pulse"></div>
                 <div className="relative bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-700 p-3 rounded-2xl shadow-2xl">
-                  <Crown className="w-8 h-8 text-white" />
+                  <Wallet className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
               </div>
               <div>
-                <h1 className="text-3xl font-black text-gradient-primary">
+                <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   Finance Command Center
                 </h1>
-                <p className="text-slate-600 dark:text-slate-300 font-medium transition-colors duration-300">Professional Financial Management System</p>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">Professional Financial Management System</p>
               </div>
-              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-4 py-2 font-semibold animate-pulse">
-                <Sparkles className="w-4 h-4 mr-2" />
+            </div>
+
+            <div className="flex items-center gap-3 sm:gap-4 w-full lg:w-auto justify-between lg:justify-end">
+              <Badge className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 font-semibold shadow-lg">
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 AI-POWERED
               </Badge>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-sm font-medium text-slate-500 dark:text-slate-400">{currentTime.toLocaleDateString()}</div>
-                <div className="text-lg font-bold text-gradient-primary">
-                  {currentTime.toLocaleTimeString()}
+              <div className="flex items-center gap-3">
+                <div className="text-right hidden sm:block">
+                  <div className="text-xs font-medium text-slate-500 dark:text-slate-400">{currentTime.toLocaleDateString()}</div>
+                  <div className="text-sm sm:text-base font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                    {currentTime.toLocaleTimeString()}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-400 to-teal-500 text-white rounded-full font-semibold shadow-lg">
-                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                LIVE
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-400 to-teal-500 text-white rounded-full font-semibold shadow-lg">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <span className="text-xs sm:text-sm">LIVE</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8 space-y-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Hero Stats Dashboard */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
               title: "Total Revenue",
@@ -220,8 +222,8 @@ export default function FinanceDashboard() {
             </div>
           </CardHeader>
           
-          <CardContent className="pb-8">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <CardContent className="pb-6 sm:pb-8">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {/* Quick Invoice */}
               <Dialog open={createInvoiceModal} onOpenChange={setCreateInvoiceModal}>
                 <DialogTrigger asChild>
@@ -527,8 +529,8 @@ export default function FinanceDashboard() {
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 {
                   title: "Critical Overdue",
@@ -589,20 +591,20 @@ export default function FinanceDashboard() {
         </Card>
 
         {/* Charts and Transactions - Premium Layout */}
-        <div className="grid gap-8 lg:grid-cols-5">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-5">
           <div className="lg:col-span-3">
             <Card className="border-0 shadow-2xl bg-white dark:bg-gray-900 overflow-hidden card-premium">
-              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-blue-900 border-b">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Financial Performance Analytics</CardTitle>
+              <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 dark:from-slate-800 dark:to-blue-900 border-b p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Financial Performance Analytics</CardTitle>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm">
-                      <RefreshCw className="w-4 h-4 mr-1" />
-                      Refresh
+                      <RefreshCw className="w-4 h-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Refresh</span>
                     </Button>
                     <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4 mr-1" />
-                      Export
+                      <Download className="w-4 h-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Export</span>
                     </Button>
                   </div>
                 </div>
@@ -612,62 +614,64 @@ export default function FinanceDashboard() {
               </CardContent>
             </Card>
           </div>
-          
+
           <Card className="lg:col-span-2 border-0 shadow-2xl bg-white dark:bg-gray-900 card-premium">
-            <CardHeader className="bg-gradient-to-r from-slate-50 to-emerald-50 dark:from-slate-800 dark:to-emerald-900 border-b">
-              <div className="flex items-center justify-between">
+            <CardHeader className="bg-gradient-to-r from-slate-50 to-emerald-50 dark:from-slate-800 dark:to-emerald-900 border-b p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <CardTitle className="text-xl font-bold text-slate-900 dark:text-slate-100">Transaction Stream</CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-300">Real-time payment activity</CardDescription>
+                  <CardTitle className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Transaction Stream</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">Real-time payment activity</CardDescription>
                 </div>
-                <Badge className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-3 py-1 font-semibold">
+                <Badge className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-3 py-1 font-semibold w-fit">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
                   LIVE
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Invoice</TableHead>
-                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Patient</TableHead>
-                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Amount</TableHead>
-                    <TableHead className="font-bold text-slate-700 dark:text-slate-300">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentTransactions.map((t, index) => (
-                    <TableRow key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group">
-                      <TableCell className="font-semibold text-slate-900 dark:text-slate-100">{t.id}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Avatar className="w-8 h-8">
-                            <AvatarFallback className="text-xs">{t.patientName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                          </Avatar>
-                          <span className="text-slate-700 dark:text-slate-300 font-medium">{t.patientName}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-bold text-slate-900 dark:text-slate-100">₦{t.amount.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={t.status === 'Pending' ? 'secondary' : t.status === 'Overdue' ? 'destructive' : 'default'} 
-                          className={`font-semibold shadow-sm ${
-                            t.status === 'Paid' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 
-                            t.status === 'Pending' ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' :
-                            'bg-red-100 text-red-800 hover:bg-red-200'
-                          }`}
-                        >
-                          {t.status === 'Paid' && <CheckCircle className="w-3 h-3 mr-1" />}
-                          {t.status === 'Pending' && <Clock className="w-3 h-3 mr-1" />}
-                          {t.status === 'Overdue' && <AlertTriangle className="w-3 h-3 mr-1" />}
-                          {t.status}
-                        </Badge>
-                      </TableCell>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                      <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Invoice</TableHead>
+                      <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Patient</TableHead>
+                      <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Amount</TableHead>
+                      <TableHead className="font-bold text-slate-700 dark:text-slate-300 text-xs sm:text-sm">Status</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {recentTransactions.map((t, index) => (
+                      <TableRow key={t.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group">
+                        <TableCell className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">{t.id}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="w-7 h-7 sm:w-8 sm:h-8">
+                              <AvatarFallback className="text-xs">{t.patientName.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-slate-700 dark:text-slate-300 font-medium text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">{t.patientName}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-bold text-slate-900 dark:text-slate-100 text-xs sm:text-sm whitespace-nowrap">₦{t.amount.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={t.status === 'Pending' ? 'secondary' : t.status === 'Overdue' ? 'destructive' : 'default'}
+                            className={`font-semibold shadow-sm text-xs ${
+                              t.status === 'Paid' ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' :
+                              t.status === 'Pending' ? 'bg-amber-100 text-amber-800 hover:bg-amber-200' :
+                              'bg-red-100 text-red-800 hover:bg-red-200'
+                            }`}
+                          >
+                            {t.status === 'Paid' && <CheckCircle className="w-3 h-3 mr-1" />}
+                            {t.status === 'Pending' && <Clock className="w-3 h-3 mr-1" />}
+                            {t.status === 'Overdue' && <AlertTriangle className="w-3 h-3 mr-1" />}
+                            {t.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -156,7 +156,7 @@ export default function Page() {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            )))}
+                            ))}
                         </TableBody>
                     </Table>
                 </CardContent>

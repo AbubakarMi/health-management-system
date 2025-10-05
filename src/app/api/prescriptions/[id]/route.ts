@@ -5,13 +5,11 @@ import { testConnection } from '@/lib/db';
 // GET single prescription
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     await testConnection();
-    const { id } = await params;
-
-    const prescription = await Prescription.findByPk(id);
+    const prescription = await Prescription.findByPk(params.id);
 
     if (!prescription) {
       return NextResponse.json(
@@ -33,14 +31,13 @@ export async function GET(
 // PUT update prescription
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     await testConnection();
-    const { id } = await params;
     const body = await request.json();
 
-    const prescription = await Prescription.findByPk(id);
+    const prescription = await Prescription.findByPk(params.id);
 
     if (!prescription) {
       return NextResponse.json(
@@ -50,6 +47,7 @@ export async function PUT(
     }
 
     await prescription.update(body);
+
     return NextResponse.json(prescription);
   } catch (error: any) {
     console.error('Error updating prescription:', error);
@@ -63,13 +61,12 @@ export async function PUT(
 // DELETE prescription
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     await testConnection();
-    const { id } = await params;
 
-    const prescription = await Prescription.findByPk(id);
+    const prescription = await Prescription.findByPk(params.id);
 
     if (!prescription) {
       return NextResponse.json(
@@ -79,6 +76,7 @@ export async function DELETE(
     }
 
     await prescription.destroy();
+
     return NextResponse.json({ message: 'Prescription deleted successfully' });
   } catch (error: any) {
     console.error('Error deleting prescription:', error);

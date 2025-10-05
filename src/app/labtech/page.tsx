@@ -68,7 +68,23 @@ import {
 import { detailedPatients, messageManager, users, Role } from "@/lib/constants";
 import { generateInvoicePdf } from "@/lib/pdf-generator";
 
-// Enhanced lab test results data
+// Database Lab Test Interface
+interface DBLabTest {
+  id: string;
+  patientId: string;
+  patientName: string;
+  doctorName: string;
+  testType: string;
+  status: 'Pending' | 'In Progress' | 'Completed';
+  dateOrdered: string;
+  dateCompleted?: string;
+  results?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Enhanced lab test results data (fallback for when DB is empty)
 const labTestResults = [
   { 
     id: "LAB001", 
@@ -154,18 +170,22 @@ const equipmentData = [
 ];
 
 export default function LabtechDashboard() {
+  // Database state
+  const [dbLabTests, setDbLabTests] = useState<DBLabTest[]>([]);
+  const [loading, setLoading] = useState(true);
+
   // Main state
   const [selectedTest, setSelectedTest] = useState<any>(null);
   const [selectedEquipment, setSelectedEquipment] = useState<any>(null);
   const [maintenanceDate, setMaintenanceDate] = useState<Date>();
   const [maintenanceNotes, setMaintenanceNotes] = useState("");
-  
+
   // Chat state
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [conversations, setConversations] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
-  
+
   // UI state
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -173,8 +193,50 @@ export default function LabtechDashboard() {
   const [showAlerts, setShowAlerts] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
-  
+
   const currentUser = users.find(u => u.role === 'labtech') || users[3]; // Khalid Ahmed
+
+  // Fetch lab tests from database
+  useEffect(() => {
+    fetchLabTests();
+    // Auto-refresh every 10 seconds for real-time updates
+    const interval = setInterval(fetchLabTests, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchLabTests = async () => {
+    try {
+      const response = await fetch('/api/lab-tests');
+      if (response.ok) {
+        const data = await response.json();
+        setDbLabTests(data);
+      }
+    } catch (error) {
+      console.error('Error fetching lab tests:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateLabTestStatus = async (id: string, status: 'Pending' | 'In Progress' | 'Completed', results?: string) => {
+    try {
+      const updateData: any = { status };
+      if (results) updateData.results = results;
+      if (status === 'Completed') updateData.dateCompleted = new Date().toISOString();
+
+      const response = await fetch(`/api/lab-tests/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
+      });
+
+      if (response.ok) {
+        fetchLabTests(); // Refresh data
+      }
+    } catch (error) {
+      console.error('Error updating lab test:', error);
+    }
+  };
 
   // Initialize chat conversations
   useEffect(() => {
@@ -184,24 +246,26 @@ export default function LabtechDashboard() {
     setMessages(allMessages);
   }, []);
 
-  // Enhanced lab metrics calculation
+  // Enhanced lab metrics calculation - Use DB data if available, fallback to constants
+  const activeLabTests = dbLabTests.length > 0 ? dbLabTests : labTestResults;
+
   const labMetrics = useMemo(() => {
-    const filteredTests = labTestResults.filter(test => {
-      const matchesSearch = searchTerm === "" || 
+    const filteredTests = activeLabTests.filter(test => {
+      const matchesSearch = searchTerm === "" ||
         test.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         test.testType.toLowerCase().includes(searchTerm.toLowerCase()) ||
         test.id.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const matchesStatus = statusFilter === "all" || test.status === statusFilter;
-      const matchesPriority = priorityFilter === "all" || test.priority === priorityFilter;
-      
+      const matchesPriority = priorityFilter === "all" || (test as any).priority === priorityFilter;
+
       return matchesSearch && matchesStatus && matchesPriority;
     });
-    
-    const totalTests = labTestResults.length;
-    const completedTests = labTestResults.filter(test => test.status === 'Completed').length;
-    const pendingTests = labTestResults.filter(test => test.status === 'Pending').length;
-    const inProgressTests = labTestResults.filter(test => test.status === 'In Progress').length;
+
+    const totalTests = activeLabTests.length;
+    const completedTests = activeLabTests.filter(test => test.status === 'Completed').length;
+    const pendingTests = activeLabTests.filter(test => test.status === 'Pending').length;
+    const inProgressTests = activeLabTests.filter(test => test.status === 'In Progress').length;
     const criticalReview = labTestResults.filter(test => test.status === 'Critical Review').length;
     const statTests = labTestResults.filter(test => test.priority === 'STAT').length;
     const criticalTests = labTestResults.filter(test => test.urgency === 'Critical').length;
@@ -231,7 +295,7 @@ export default function LabtechDashboard() {
       filteredTests,
       departmentStats
     };
-  }, [searchTerm, statusFilter, priorityFilter]);
+  }, [searchTerm, statusFilter, priorityFilter, dbLabTests]);
 
   // Chat functions
   const sendMessage = (content: string) => {
@@ -986,26 +1050,22 @@ export default function LabtechDashboard() {
 
             {/* Clean Quick Actions Tab */}
             <TabsContent value="quick-actions" className="space-y-6 mt-0">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+
                 {/* 1. Lab Results Management */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white">
-                      <CardContent className="p-6 text-center space-y-4">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <TestTube className="w-8 h-8 text-white" />
+                    <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-blue-500 bg-card hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-center space-y-3">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                          <TestTube className="w-6 h-6 text-white" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-bold">Lab Results</h3>
-                          <p className="text-sm text-white/80">View & manage test results</p>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-foreground">Lab Results</h3>
+                          <p className="text-xs text-muted-foreground">View & manage test results</p>
                         </div>
-                        <div className="flex justify-center gap-2">
-                          <Badge className="bg-white/20 text-white border-white/30">{labMetrics.totalTests} Tests</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Export</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </DialogTrigger>
                   <DialogContent className="max-w-4xl max-h-[90vh]">
                     <DialogHeader>
@@ -1180,21 +1240,17 @@ export default function LabtechDashboard() {
                 {/* 2. Equipment Management */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 text-white">
-                      <CardContent className="p-6 text-center space-y-4">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Activity className="w-8 h-8 text-white" />
+                    <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-emerald-500 bg-card hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-center space-y-3">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                          <Activity className="w-6 h-6 text-white" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-bold">Equipment</h3>
-                          <p className="text-sm text-white/80">Manage & schedule maintenance</p>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-foreground">Equipment</h3>
+                          <p className="text-xs text-muted-foreground">Manage & schedule maintenance</p>
                         </div>
-                        <div className="flex justify-center gap-2">
-                          <Badge className="bg-white/20 text-white border-white/30">{labMetrics.operationalEquipment}/5 Online</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Schedule</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </DialogTrigger>
                   <DialogContent className="max-w-6xl max-h-[90vh]">
                     <DialogHeader>
@@ -1519,21 +1575,17 @@ export default function LabtechDashboard() {
                 {/* 3. View Test Results */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 text-white">
-                      <CardContent className="p-6 text-center space-y-4">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Eye className="w-8 h-8 text-white" />
+                    <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-purple-500 bg-card hover:bg-purple-50 dark:hover:bg-purple-950/20 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-center space-y-3">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                          <Eye className="w-6 h-6 text-white" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-bold">View Results</h3>
-                          <p className="text-sm text-white/80">Detailed test result viewer</p>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-foreground">View Results</h3>
+                          <p className="text-xs text-muted-foreground">Detailed test result viewer</p>
                         </div>
-                        <div className="flex justify-center gap-2">
-                          <Badge className="bg-white/20 text-white border-white/30">Detailed View</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Print</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </DialogTrigger>
                   <DialogContent className="max-w-5xl max-h-[90vh]">
                     <DialogHeader>
@@ -1827,21 +1879,17 @@ export default function LabtechDashboard() {
                 {/* 4. Sample Management */}
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Card className="group cursor-pointer border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 text-white">
-                      <CardContent className="p-6 text-center space-y-4">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl group-hover:bg-white/30 transition-all duration-300">
-                          <Beaker className="w-8 h-8 text-white" />
+                    <div className="group cursor-pointer p-4 rounded-xl border-2 border-border hover:border-orange-500 bg-card hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-center space-y-3">
+                        <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                          <Beaker className="w-6 h-6 text-white" />
                         </div>
-                        <div>
-                          <h3 className="text-xl font-bold">Sample Management</h3>
-                          <p className="text-sm text-white/80">Track & manage lab samples</p>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-foreground">Sample Management</h3>
+                          <p className="text-xs text-muted-foreground">Track & manage lab samples</p>
                         </div>
-                        <div className="flex justify-center gap-2">
-                          <Badge className="bg-white/20 text-white border-white/30">Tracking</Badge>
-                          <Badge className="bg-white/20 text-white border-white/30">Quality Control</Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
+                      </div>
+                    </div>
                   </DialogTrigger>
                   <DialogContent className="max-w-5xl max-h-[90vh]">
                     <DialogHeader>
