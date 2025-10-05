@@ -163,36 +163,49 @@ export default function CreatePatientPage() {
 
     const onSubmit = async (values: PatientFormData) => {
         if (isSubmitting) return; // Prevent duplicate submissions
-        
+
         setIsSubmitting(true);
-        
+
         try {
-            // Check for duplicate patients by name and date of birth
-            const existingPatients = patientManager.getPatients();
-            const duplicateFound = existingPatients.some(patient => 
-                patient.name.toLowerCase() === values.name.toLowerCase() &&
-                patient.dateOfBirth === format(values.dateOfBirth, "yyyy-MM-dd")
-            );
-            
-            if (duplicateFound) {
-                toast({
-                    variant: "destructive",
-                    title: "Duplicate Patient Detected",
-                    description: `A patient with the name "${values.name}" and same date of birth already exists.`,
-                });
-                return;
+            // Split name into first and last name
+            const nameParts = values.name.trim().split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || nameParts[0];
+
+            // Prepare patient data for PostgreSQL
+            const patientData = {
+                firstName,
+                lastName,
+                email: null, // Optional field - null instead of empty string
+                phone: values.phone,
+                dateOfBirth: values.dateOfBirth.toISOString(),
+                gender: values.gender,
+                address: values.address,
+                bloodGroup: values.bloodType,
+                emergencyContact: values.emergencyContactName,
+                emergencyPhone: values.emergencyContactPhone,
+                condition: 'Stable' as const,
+                isAdmitted: false,
+                roomNumber: null
+            };
+
+            // Save to PostgreSQL database
+            const response = await fetch('/api/patients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(patientData)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.details || 'Failed to save patient');
             }
-            
-            const newPatientId = `P${Date.now()}`;
-            const clinicalSummary = `
-Initial Appointment: ${values.appointmentType} to ${values.department}.
-Known Allergies: ${values.allergies || 'None specified'}.
-Past Medical History: ${values.pastMedicalHistory || 'None specified'}.
-Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
-            `.trim();
-            
+
+            const savedPatient = await response.json();
+
+            // Also save to local storage for backward compatibility
             const newPatient = {
-                id: newPatientId,
+                id: savedPatient.id,
                 name: values.name,
                 gender: values.gender,
                 dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
@@ -202,7 +215,7 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                 lastVisit: format(new Date(), "yyyy-MM-dd"),
                 bloodType: values.bloodType,
                 assignedDoctor: 'Dr. Aisha Bello',
-                clinicalSummary,
+                clinicalSummary: `Initial Appointment: ${values.appointmentType} to ${values.department}.`,
                 medicalHistory: [],
                 prescriptions: [],
                 labTests: [],
@@ -217,19 +230,24 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
                 emergencyContactRelationship: values.emergencyContactRelationship,
                 emergencyContactPhone: values.emergencyContactPhone
             };
-            
+
             patientManager.getPatients().push(newPatient);
-            
+
             // Store created patient for success modal
             setCreatedPatient(newPatient);
             setShowSuccessModal(true);
-            
-        } catch (error) {
+
+            toast({
+                title: "Patient Saved to Database",
+                description: `${values.name} has been successfully saved to PostgreSQL database.`,
+            });
+
+        } catch (error: any) {
             console.error('Error creating patient:', error);
             toast({
                 variant: "destructive",
                 title: "Creation Failed",
-                description: "An error occurred while creating the patient record. Please try again.",
+                description: error.message || "An error occurred while creating the patient record. Please try again.",
             });
         } finally {
             setIsSubmitting(false);
@@ -742,54 +760,87 @@ Family Medical History: ${values.familyMedicalHistory || 'None specified'}.
 
             {/* Success Modal with Print Card Option */}
             <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-                <DialogContent className="max-w-md w-full mx-4 sm:mx-auto">
-                    <DialogHeader className="text-center">
-                        <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                            <CheckCircle className="w-6 h-6 text-green-600" />
+                <DialogContent className="max-w-lg w-full mx-4 sm:mx-auto">
+                    <DialogHeader className="text-center space-y-3">
+                        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mb-2 ring-4 ring-green-50">
+                            <CheckCircle className="w-8 h-8 text-green-600" />
                         </div>
-                        <DialogTitle className="text-center">Patient Created Successfully!</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                            Patient Created Successfully!
+                        </DialogTitle>
                     </DialogHeader>
-                    
+
                     {createdPatient && (
-                        <div className="space-y-4 text-center">
-                            <div className="p-4 bg-gray-50 rounded-lg">
-                                <h3 className="font-semibold text-lg">{createdPatient.name}</h3>
-                                <p className="text-sm text-gray-600">Patient ID: <span className="font-mono font-bold">{createdPatient.id}</span></p>
-                                <p className="text-sm text-gray-600">Date of Birth: {format(new Date(createdPatient.dateOfBirth), 'PPP')}</p>
-                                <p className="text-sm text-gray-600">Blood Type: <span className="font-semibold text-red-600">{createdPatient.bloodType}</span></p>
+                        <div className="space-y-6 py-4">
+                            {/* Patient Avatar */}
+                            {createdPatient.avatarUrl && (
+                                <div className="flex justify-center">
+                                    <img
+                                        src={createdPatient.avatarUrl}
+                                        alt={createdPatient.name}
+                                        className="w-24 h-24 rounded-full object-cover border-4 border-green-100 shadow-lg"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Patient Details Card */}
+                            <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 space-y-3">
+                                <h3 className="font-bold text-xl text-center text-gray-900">{createdPatient.name}</h3>
+
+                                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-300">
+                                    <div className="space-y-1">
+                                        <p className="text-xs text-gray-500 font-medium uppercase">Patient ID</p>
+                                        <p className="text-sm font-mono font-bold text-gray-900">{createdPatient.id.substring(0, 12)}...</p>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-xs text-gray-500 font-medium uppercase">Blood Type</p>
+                                        <p className="text-sm font-bold text-red-600">{createdPatient.bloodType}</p>
+                                    </div>
+
+                                    <div className="space-y-1 col-span-2">
+                                        <p className="text-xs text-gray-500 font-medium uppercase">Date of Birth</p>
+                                        <p className="text-sm font-semibold text-gray-900">{format(new Date(createdPatient.dateOfBirth), 'PPP')}</p>
+                                    </div>
+
+                                    <div className="space-y-1 col-span-2">
+                                        <p className="text-xs text-gray-500 font-medium uppercase">Gender</p>
+                                        <p className="text-sm font-semibold text-gray-900">{createdPatient.gender}</p>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <div className="text-sm text-gray-600">
-                                The patient record has been successfully created and saved to the system.
+
+                            <div className="text-center text-sm text-gray-600 bg-green-50 p-3 rounded-lg border border-green-100">
+                                <p className="font-medium">✅ Record saved to PostgreSQL database</p>
                             </div>
                         </div>
                     )}
 
-                    <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
+                    <DialogFooter className="flex flex-col sm:flex-row gap-3 pt-2">
                         <Button
                             variant="outline"
                             onClick={handlePrintCard}
                             disabled={isGeneratingCard}
-                            className="w-full sm:w-auto"
+                            className="w-full sm:flex-1"
                         >
                             {isGeneratingCard ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Generating...
+                                    Generating Card...
                                 </>
                             ) : (
                                 <>
                                     <CreditCard className="mr-2 h-4 w-4" />
-                                    {createdPatient?.avatarUrl ? 'Generate AI-Enhanced ID Card' : 'Print ID Card'}
+                                    {createdPatient?.avatarUrl ? 'Generate AI ID Card' : 'Print ID Card'}
                                 </>
                             )}
                         </Button>
                         <Button
                             onClick={handleContinueToProfile}
-                            className="w-full sm:w-auto"
+                            className="w-full sm:flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                         >
                             <UserPlus className="mr-2 h-4 w-4" />
-                            View Profile
+                            View Patient Profile
                         </Button>
                     </DialogFooter>
                 </DialogContent>

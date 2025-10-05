@@ -1,31 +1,70 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { detailedPatients as initialPatients, Patient } from "@/lib/constants";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, PlusCircle, Search } from "lucide-react";
+import { ArrowRight, PlusCircle, Search, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
+interface DBPatient {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+    phone: string;
+    dateOfBirth: string;
+    gender: string;
+    address: string;
+    bloodGroup?: string;
+    emergencyContact?: string;
+    emergencyPhone?: string;
+    condition?: string;
+    isAdmitted: boolean;
+    roomNumber?: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 export default function Page() {
     const [searchQuery, setSearchQuery] = useState("");
+    const [patients, setPatients] = useState<DBPatient[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const patients = useMemo(() => {
-        const activePatients = initialPatients.filter(p => p.condition !== 'Deceased');
+    useEffect(() => {
+        fetchPatients();
+    }, []);
+
+    const fetchPatients = async () => {
+        try {
+            const response = await fetch('/api/patients');
+            if (response.ok) {
+                const data = await response.json();
+                setPatients(data);
+            }
+        } catch (error) {
+            console.error('Error fetching patients:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filteredPatients = useMemo(() => {
+        const activePatients = patients.filter(p => p.condition !== 'Deceased');
         if (!searchQuery) {
             return activePatients;
         }
-        return activePatients.filter(patient =>
-            patient.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            patient.id.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery]);
+        return activePatients.filter(patient => {
+            const fullName = `${patient.firstName} ${patient.lastName}`.toLowerCase();
+            return fullName.includes(searchQuery.toLowerCase()) ||
+                   patient.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                   patient.phone.includes(searchQuery);
+        });
+    }, [searchQuery, patients]);
 
     return (
         <>
@@ -67,32 +106,47 @@ export default function Page() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {patients.map((patient) => (
-                                 <TableRow key={patient.id} className="cursor-pointer">
-                                    <TableCell className="font-medium">
-                                        <Link href={`/admin/patients/${patient.id}`} className="flex items-center gap-3">
-                                            <Avatar>
-                                                <AvatarImage src={patient.avatarUrl} alt={patient.name} data-ai-hint="person" />
-                                                <AvatarFallback>{patient.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
-                                            {patient.name}
-                                        </Link>
+                            {loading ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center py-8">
+                                        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+                                        <p className="mt-2 text-muted-foreground">Loading patients...</p>
                                     </TableCell>
-                                    <TableCell>
-                                         <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
-                                            {patient.id}
-                                        </Link>
+                                </TableRow>
+                            ) : filteredPatients.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                                        No patients found
                                     </TableCell>
-                                    <TableCell>
-                                         <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
-                                            <Badge variant={patient.condition === 'Critical' ? 'destructive' : 'secondary'}>{patient.condition}</Badge>
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
-                                            {patient.lastVisit}
-                                        </Link>
-                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                filteredPatients.map((patient) => (
+                                    <TableRow key={patient.id} className="cursor-pointer">
+                                        <TableCell className="font-medium">
+                                            <Link href={`/admin/patients/${patient.id}`} className="flex items-center gap-3">
+                                                <Avatar>
+                                                    <AvatarFallback>{patient.firstName.charAt(0)}{patient.lastName.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                {patient.firstName} {patient.lastName}
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                                {patient.id.substring(0, 8)}...
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                                <Badge variant={patient.condition === 'Critical' ? 'destructive' : 'secondary'}>
+                                                    {patient.condition || 'Stable'}
+                                                </Badge>
+                                            </Link>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Link href={`/admin/patients/${patient.id}`} className="block w-full h-full">
+                                                {new Date(patient.createdAt).toLocaleDateString()}
+                                            </Link>
+                                        </TableCell>
                                     <TableCell className="text-right">
                                         <Button asChild variant="ghost" size="icon">
                                             <Link href={`/admin/patients/${patient.id}`}>
@@ -102,7 +156,7 @@ export default function Page() {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )))}
                         </TableBody>
                     </Table>
                 </CardContent>
